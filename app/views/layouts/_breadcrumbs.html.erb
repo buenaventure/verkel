@@ -1,0 +1,20 @@
+<% if @breadcrumbs && !@breadcrumbs.empty? %>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <% @breadcrumbs.each do |breadcrumb| %>
+        <li class="breadcrumb-item">
+          <% begin %>
+          <%= link_to *breadcrumb %>
+          <% rescue StandardError => e %>
+          <span class="text-danger">
+            Breadcrumb Error
+            <% if Rails.env.development? %>
+            <%= e %>
+            <% end %>
+          </span>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+  </nav>
+<% end %>

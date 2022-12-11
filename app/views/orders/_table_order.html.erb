@@ -1,0 +1,27 @@
+<% if @order.ordered? || @order.delivered? %>
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Drucken', [@order, format: :pdf], class: 'btn btn-sm btn-secondary' %>
+  <%= link_to 'Mengen bearbeiten', edit_quantities_order_path(@order), class: 'btn btn-sm btn-primary' %>
+</div>
+<% end %>
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Artikel</th>
+      <th class="text-right">Bestellmenge</th>
+      <% if @order.delivered? || @order.stored? %>
+      <th class="text-right">Liefermenge</th>
+      <% end %>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody id="order_articles">
+    <% @order_articles.each do |order_article| %>
+      <%= render partial: 'order_articles/row', locals: { order_article: order_article } %>
+    <% end %>
+  </tbody>
+</table>
+
+<h3>Artikel hinzufügen</h3>
+<%= render 'order_articles/new', order_article: @order.order_articles.new %>

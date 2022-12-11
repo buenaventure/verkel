@@ -1,0 +1,26 @@
+<h1>manuelle Mahlzeit-Teilnahmen in Gruppe <%= @group.display_name %></h1>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Meal</th>
+      <th>Participant</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @group_meal_participations.each do |group_meal_participation| %>
+      <tr>
+        <td><%= link_to group_meal_participation.meal, group_meal_participation.meal %></td>
+        <td><%= link_to group_meal_participation.participant, group_meal_participation.participant %></td>
+        <td><%= link_to 'Bearbeiten', edit_group_meal_participation_path(group_meal_participation) %></td>
+        <td><%= link_to 'Löschen', group_meal_participation, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'Neue manuelle Mahlzeit-Teilnahme', new_group_group_meal_participation_path(@group), class: 'btn btn-primary' %>

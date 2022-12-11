@@ -1,0 +1,26 @@
+<h1>Kochgruppen - Ernährungsbesonderheiten</h1>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>int. Name</th>
+      <th>Ernährungsbesonderheiten</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @groups.each do |group| %>
+      <tr>
+        <td><%= group.name %></td>
+        <td><%= group.internal_name %></td>
+        <td>
+          <% data = DietParticipant.where(participant_id: @group_participants.fetch(group.id, [])).group(:diet_id).count %>
+          <% @diets.select{ |d| data[d.id] }.each do |diet| %>
+            <%= diet %>: <%= data[diet.id] %><br />
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

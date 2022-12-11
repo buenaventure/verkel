@@ -1,0 +1,27 @@
+ <%= turbo_frame_tag dom_id(article), class: "list-group-item list-group-item-action flex-column align-items-start" do %>
+  <div class="d-flex w-100 justify-content-between">
+    <div>
+      <%= link_to "#{article.supplier} - #{ article.ingredient}", article, data: {turbo_frame: '_top'} %><br/>
+      <small><%= article.ingredient.commodity_group %></small>
+    </div>
+    <div class="row">
+      <div class="col text-right">
+        <% if article_stock_action.status.present? %>
+          <span class="text-<%= article_stock_action.status == :success ? 'success' : 'danger' %>">
+            <%= article_stock_action.result %>
+          </span>
+        <% end %>
+        <% if article.packing_type == 'bulk' %>
+          <%= article.quantity_unit_stock.humanize %>
+        <% else %>
+          <%= number_with_delimiter article.stock %><br/>
+          à <%= article.quantity_unit.humanize %>
+        <% end %>
+      </div>
+      <%= simple_form_for article_stock_action, url: update_stock_article_path(article), class: 'col' do |f|%>
+        <%= f.input :action, class: 'form-control text-right', label: false, placeholder: (article.packing_type == 'bulk' ? 'g' : '') %>
+      <% end %>
+    </div>
+  </div>
+  <% if article.name %><div class="mb-1"><%= article.name %></div><% end %>
+<% end %>

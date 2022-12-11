@@ -1,0 +1,32 @@
+<h1>
+  <%= link_to @group, @group %> -
+  <%= link_to l(@box.datetime), @box %> -
+  <%= link_to @ingredient, @ingredient %>
+</h1>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Mahlzeit</th>
+      <th>Teilnehmer*in</th>
+      <th class="text-right">Bedarf</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @calculations.each do |calculation| %>
+    <tr>
+      <td><%= link_to calculation.meal, calculation.meal %></td>
+      <td><%= link_to calculation.participant, calculation.participant %></td>
+      <td class="text-right"><%= calculation.quantity_unit.humanize %></td>
+    </tr>
+  <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"></td>
+      <td class="text-right">
+        Summe <%= QuantityUnit.sum(@calculations.map(&:quantity_unit)).map(&:humanize).join(', ') %>
+      </td>
+    </tr>
+  </tfoot>
+</table>

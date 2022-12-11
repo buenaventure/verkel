@@ -1,0 +1,46 @@
+<h1>
+  <%= link_to @group_box.group.display_name, @group_box.group %> -
+  <%= link_to l(@group_box.datetime), @group_box.box %>
+</h1>
+
+<h2>Bedarf</h2>
+<table class="table table-sm">
+  <tr>
+    <th>Kategorie</th>
+    <th>Zutat</th>
+    <th class="text-right">Bedarf</th>
+    <th></th>
+  </tr>
+  <% @group_box.ingredients.each do |ingredient| %>
+    <tr>
+      <td><%= ingredient.commodity_group %></td>
+      <td><%= link_to ingredient.name, ingredient %></td>
+      <td class="text-right">
+      <% @group_box.unit_sums_by_ingredient.fetch(ingredient.id, []).each do |unit_sum| %>
+        <%= unit_sum.humanize %>
+      <% end %>
+      </td>
+      <td><%= link_to 'Berechnungsdetails', box_group_ingredient_path(@group_box.box, @group_box.group, ingredient), class: 'btn btn-sm btn-default' %></td>
+    </tr>
+  <% end %>
+</table>
+
+<h2>Extra-Zutaten</h2>
+<%= render 'extra_ingredients/table' %>
+
+<%= link_to 'Extra Zutat hinzufügen', new_box_group_extra_ingredient_path(@group_box.box, @group_box.group), class: 'btn btn-primary' %>
+
+<h2>Packliste</h2>
+<table class="table table-sm">
+  <tr>
+    <th>Artikel</th>
+    <th class="text-right">Packmenge</th>
+    <th></th>
+  </tr>
+  <% @group_box.group_box_articles.each do |group_box_article| %>
+    <tr>
+      <td><%= link_to group_box_article.article.packing_name, group_box_article.article %></td>
+      <td class="text-right"><%= group_box_article.humanize_quantity %></td>
+    </tr>
+  <% end %>
+</table>

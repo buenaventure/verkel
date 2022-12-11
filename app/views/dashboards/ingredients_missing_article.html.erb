@@ -1,0 +1,19 @@
+<%= turbo_frame_tag 'ingredients_missing_article' do %>
+  <% if @ingredients_missing_article.any? %>
+  <div class="card border-danger">
+    <%= link_to ingredients_missing_article_dashboard_path, class: "card-header" do %>
+      Zutaten ohne Artikel
+    <% end %>
+    <div class="card-body">
+      <p>Es gibt <%= @ingredients_missing_article.count %> Zutaten mit Bedarf, bei denen kein Artikel angelegt und somit kein Lieferant zugeordnet ist.</p>
+      <ul>
+        <% @ingredients_missing_article.take(5).each do |ingredient| %>
+        <li><%= link_to ingredient, ingredient %></li>
+        <% end %>
+        <%= content_tag('li', '…') if @ingredients_missing_article.count > 5 %>
+      </ul>
+      <%= link_to 'Zutaten', ingredients_path, class: 'card-link btn btn-primary' %>
+    </div>
+  </div>
+  <% end %>
+<% end %>

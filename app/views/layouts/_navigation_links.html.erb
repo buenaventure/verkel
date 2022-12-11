@@ -1,0 +1,34 @@
+<%# add navigation links to this file %>
+<% if user_signed_in? %>
+<li class="nav-item"><%= link_to 'Menü', meals_path, class: 'nav-link' %></li>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" href="#"><span class="sr-only">ausklappen</span></a>
+  <div class="dropdown-menu">
+    <%= link_to 'Rezepte', recipes_path, class: 'dropdown-item' %>
+  </div>
+</li>
+<li class="nav-item"><%= link_to 'LAGA', laga_articles_path, class: 'nav-link' %></li>
+<li class="nav-item"><%= link_to 'Zutaten', ingredients_path, class: 'nav-link' %></li>
+<li class="nav-item"><%= link_to 'Artikel', articles_path, class: 'nav-link' %></li>
+<li class="nav-item"><%= link_to 'Lieferanten', suppliers_path, class: 'nav-link' %></li>
+<li class="nav-item"><%= link_to 'Bestellungen', orders_path, class: 'nav-link' %></li>
+<li class="nav-item"><%= link_to 'Kisten', boxes_path, class: 'nav-link' %></li>
+<li class="nav-item"><%= link_to 'Kochgruppen', groups_path, class: 'nav-link' %></li>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" href="#"><span class="sr-only">ausklappen</span></a>
+  <div class="dropdown-menu">
+    <%= link_to 'Teilnehmende', participants_path, class: 'dropdown-item' %>
+    <%= link_to 'Ernährungsweisen', diets_path, class: 'dropdown-item' %>
+  </div>
+</li>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Berechnen</a>
+  <div class="dropdown-menu">
+    <%= link_to 'Bedarf neu berechnen', demand_calculation_path, data: { turbo_method: :post }, class: 'dropdown-item' %>
+    <%= link_to 'Packen neu planen', packing_calculation_path, data: { turbo_method: :post }, class: 'dropdown-item' %>
+  </div>
+</li>
+<li class="nav-item"><%= link_to 'Packstraßen', packing_lanes_path, class: 'nav-link' %></li>
+<% if can? :manage, User %><li class="nav-item"><%= link_to 'Benutzer', users_path, class: 'nav-link' %></li><% end %>
+<% if can? :manage, :import %><li class="nav-item"><%= link_to 'Import', import_path, class: 'nav-link' %></li><% end %>
+<% end %>

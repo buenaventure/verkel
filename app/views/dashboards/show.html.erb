@@ -1,0 +1,11 @@
+<h1>VerKeL <small>Verpflegungs-Kisten-Logistik</small></h1>
+
+<%= turbo_frame_tag 'groups_missing_packing_lane', src: groups_missing_packing_lane_dashboard_path, target: '_top' do %>Überprüfe Gruppen ohne Packstraße…<% end %>
+<%= turbo_frame_tag 'ingredients_missing_article', src: ingredients_missing_article_dashboard_path, target: '_top' do %>Überprüfe Zutaten ohne Artikel…<% end %>
+<%= turbo_frame_tag 'ingredients_without_box', src: ingredients_without_box_dashboard_path, target: '_top' do %>Überprüfe Zutaten ohne Kiste…<% end %>
+<%= turbo_frame_tag 'recipes_without_content', src: recipes_without_content_dashboard_path, target: '_top' do %>Überprüfe Rezepte ohne Inhalt…<% end %>
+<%= turbo_frame_tag 'missing_ingredients', src: missing_ingredients_dashboard_path, target: '_top' do %>Überprüfe Sondereinkauf…<% end %>
+<%= turbo_frame_tag 'upcoming_order_requirements', src: upcoming_order_requirements_dashboard_path, target: '_top' do %>Überprüfe Bestellbedarf…<% end %>
+<%= turbo_frame_tag 'upcoming_orders', src: upcoming_orders_dashboard_path, target: '_top' do %>Überprüfe Bestellungen…<% end %>
+<%= turbo_frame_tag 'upcoming_boxes', src: upcoming_boxes_dashboard_path, target: '_top' do %>Überprüfe nächste Kisten…<% end %>
+<!-- Bestellungen mit Problemen oder demnächst -->

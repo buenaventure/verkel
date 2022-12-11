@@ -1,0 +1,39 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Löschen', @order, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
+  <%= link_to 'Bearbeiten', edit_order_path(@order), class: 'btn btn-primary' %>
+  <%= link_to 'Zurück', orders_path, class: 'btn btn-light' %>
+</div>
+
+<h1>Bestellung bei <%= link_to @order.supplier, @order.supplier %></h1>
+
+<dl>
+  <dt>Abdeckungszeitraum</dt>
+  <dd>Von <%= I18n.l @order.coverage_begin %> (Liefertermin) bis <%= I18n.l @order.coverage_end %></dd>
+  <dt>Bestellsumme</dt><dd><%= euro @order.price_ordered %></dd>
+  <dt>Status</dt>
+  <dd>
+    <%= I18n.t("activerecord.enums.order.state.#{@order.state}") %>
+    <div class="btn-group" role="group">
+      <% if @order.orderable? %>
+      <%= link_to 'bestellen', order_order_path(@order), data: { turbo_method: :post, turbo_confirm: 'Bist du sicher zu bestellen?' }, class: 'btn btn-sm btn-success' %>
+      <% end %>
+      <% if @order.deliverable? %>
+      <%= link_to 'liefern', deliver_order_path(@order), data: { turbo_method: :post, turbo_confirm: 'Stimmen die Bestellmengen alle? Wurde die Bestellung wirklich geliefert?' }, class: 'btn btn-sm btn-success' %>
+      <% end %>
+      <% if @order.storable? %>
+      <%= link_to 'einlagern', store_order_path(@order), data: { turbo_method: :post, turbo_confirm: 'Sind die Liefermengen alle korrekt eingetragen? Die Bestände werden jetzt ins Lager übernommen.' }, class: 'btn btn-sm btn-success' %>
+      <% end %>
+      <% if @order.cancelable? %>
+      <%= link_to 'abbrechen', cancel_order_path(@order), data: { turbo_method: :post, turbo_confirm: 'Bist du sicher die Bestellung abzubrechen?' }, class: 'btn btn-sm btn-warning' %>
+      <% end %>
+    </div>
+  </dd>
+</dl>
+
+<% if @order.planned? %>
+  <h2>berechneter Bedarf</h2>
+  <%= render 'table_plan' %>
+<% else %>
+  <h2>Bestellung</h2>
+  <%= render 'table_order' %>
+<% end %>

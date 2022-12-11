@@ -1,0 +1,12 @@
+<table class="table table-sm">
+  <tr>
+    <th>Gericht</th>
+    <th>Zeit</th>
+  </tr>
+  <% @box.meals.includes(:recipe).each do |meal| %>
+    <tr>
+      <td><%= link_to meal.recipe.name, meal.recipe %></td>
+      <td><%= link_to l(meal.datetime), meal %></td>
+    </tr>
+  <% end %>
+</table>

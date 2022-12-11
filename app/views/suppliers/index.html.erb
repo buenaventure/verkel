@@ -1,0 +1,26 @@
+<h1>Lieferanten</h1>
+
+<%= link_to 'Neuen Lieferanten anlegen', new_supplier_path, class: 'btn btn-sm btn-primary float-right' %>
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>nächster Bestelltermin</th>
+      <th>nächster Bestellbedarf für</th>
+      <th>nächstmögliche Lieferung</th>
+      <th>Artikel</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @suppliers.each do |supplier| %>
+      <tr class="<%= supplier_table_status_class(supplier) %>">
+        <td><%= link_to supplier, supplier %></td>
+        <td><%= I18n.l supplier.next_required_order_date&.in_time_zone, default: nil, format: :really_short %></td>
+        <td><%= I18n.l supplier.next_order_needed_date&.in_time_zone, default: nil, format: :really_short %></td>
+        <td><%= I18n.l supplier.next_possible_delivery, format: :really_short %></td>
+        <td><%= supplier.articles.count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

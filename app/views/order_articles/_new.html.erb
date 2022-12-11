@@ -1,0 +1,19 @@
+<%= turbo_frame_tag :new_order_article do %>
+  <%= simple_form_for([@order, order_article]) do |f| %>
+    <%= f.error_notification %>
+    <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+    <div class="form-inputs">
+      <%= f.association :article,
+                        collection: order_article.order.unordered_articles_of_supplier.includes(:ingredient),
+                        label_method: :to_s,
+                        include_blank: false %>
+      <%= f.input :quantity_ordered if order_article.order.ordered? %>
+      <%= f.input :quantity_delivered if order_article.order.delivered? %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.button :submit %>
+    </div>
+  <% end %>
+<% end %>

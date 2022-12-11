@@ -1,0 +1,26 @@
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Alternative</th>
+      <th>Priorität</th>
+      <th>nicht bei</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% ingredient_alternatives.order(:priority).each do |ingredient_alternative| %>
+      <tr>
+        <td><%= link_to ingredient_alternative.alternative, ingredient_alternative.alternative %></td>
+        <td><%= ingredient_alternative.priority %></td>
+        <td>
+          <% ingredient_alternative.alternative.diets.each do |diet| %>
+            <%= link_to diet, diet %>
+          <% end %>
+        </td>
+        <td><%= link_to 'Bearbeiten', edit_ingredient_alternative_path(ingredient_alternative) %></td>
+        <td><%= link_to 'Löschen', ingredient_alternative, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

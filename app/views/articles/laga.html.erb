@@ -1,0 +1,29 @@
+<%= form_with url: laga_articles_path, method: :get, data: { controller: "search-form", search_form_target: "form", turbo_frame: 'laga_list' } do |f| %>
+  <div class="row">
+    <div class="col">
+      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        <label class="btn btn-secondary active">
+          <input type="radio" checked autocomplete="off" data-action="search-form#search" name="cooling" value="all"> Alle
+        </label>
+        <label class="btn btn-danger">
+          <input type="radio" autocomplete="off" data-action="search-form#search" name="cooling" value="warm"> Warm
+        </label>
+        <label class="btn btn-primary">
+          <input type="radio" autocomplete="off" data-action="search-form#search" name="cooling" value="cold"> Kalt
+        </label>
+      </div>
+    </div>
+    <div class="col">
+      <%= f.text_field :search, placeholder: "Suchen", autocomplete: "off", class: "form-control",
+                       data: { action: "search-form#search" } %>
+    </div>
+  </div>
+<% end %>
+
+<%= turbo_frame_tag 'laga_list' do %>
+  <div class="list-group">
+    <% @articles.each do |article| %>
+      <%= render 'laga_row', article: article, article_stock_action: ArticleStockAction.new(article: article) %>
+    <% end %>
+  </div>
+<% end %>

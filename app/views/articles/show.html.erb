@@ -1,0 +1,57 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Löschen', @article, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
+  <%= link_to 'Bearbeiten', edit_article_path(@article), class: 'btn btn-primary' %>
+  <%= link_to 'Zurück', articles_path, class: 'btn btn-light' %>
+</div>
+
+<h1><%= @article.name %></h1>
+
+<dl>
+  <dt>Zutat</dt>
+  <dd><%= link_to @article.ingredient, @article.ingredient %></dd>
+  <dt>Lieferant</dt>
+  <dd><%= link_to @article.supplier, @article.supplier %></dd>
+  <dt>Name</dt>
+  <dd><%= @article.name %></dd>
+  <dt>Lagerbestand</dt>
+  <dd>
+    <%= number_with_delimiter @article.stock %>
+    <small><%= @article.quantity_unit_stock.humanize %></small>
+  </dd>
+  <dt>Packstraßenbestand</dt>
+  <dd>
+    <%= number_with_delimiter @article.packing_lane_stock %>
+    <small><%= @article.quantity_unit_packing_lane_stock.humanize %></small>
+  </dd>
+  <dt>Überschuss</dt>
+  <dd>
+    <%= number_with_delimiter @article.surplus %>
+    <small><%= @article.quantity_unit_surplus.humanize %></small>
+  </dd>
+  <dt>Preis</dt>
+  <dd><%= @article.price %> €</dd>
+  <dt>Grundpreis</dt>
+  <dd><%= number_with_precision(@article.base_price, precision: 2) %> €/(kg/l/Stk)</dd>
+  <dt>Gebindegröße</dt>
+  <dd><%= @article.quantity_unit.humanize %></dd>
+  <dt>Kühlbedarf</dt>
+  <dd><%= I18n.t @article.needs_cooling? %></dd>
+  <dt>Packtyp</dt>
+  <dd><%= I18n.t("activerecord.enums.article.packing_type.#{@article.packing_type}") %></dd>
+  <dt>Notizen</dt>
+  <dd><%= @article.notes %></dd>
+  <dt>verbleibende mögliche Bestellmenge</dt>
+  <dd>
+    <%= number_with_delimiter @article.current_order_limit %>
+    (<%= number_with_delimiter @article.order_limit %> anfangs;
+    <%= number_with_delimiter @article.quantity_ordered %> bestellt;
+    <%= number_with_delimiter @article.quantity_delivered %> geliefert)
+  </dd>
+</dl>
+
+<%= render 'boxes' %>
+<%= render 'orders' %>
+
+<%= link_to 'Neuen Vorrat anlegen', new_article_hoard_path(@article), class: 'btn btn-sm btn-primary float-right' %>
+<h3>Vorrat</h3>
+<%= render partial:'hoards/table', locals: { hoards: @article.hoards } %>

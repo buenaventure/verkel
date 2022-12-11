@@ -1,0 +1,10 @@
+<table class="table table-sm">
+  <tr>
+    <th>Gruppe</th>
+  </tr>
+  <% @box.groups.order(:name).each do |group| %>
+    <tr>
+      <td><%= link_to group.display_name, [@box, group] %></td>
+    </tr>
+  <% end %>
+</table>

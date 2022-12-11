@@ -1,0 +1,32 @@
+<h1><%= @recipe.name %> <span class="badge bg-secondary"><%= @recipe.servings %> Portionen</span></h1>
+
+<% if @recipe.diet_notes %>
+<p><strong>Ernährungsgewohnheiten:</strong> <%= @recipe.diet_notes %></p>
+<% end %>
+
+<% if @recipe.meals.any? %>
+  Gibt's am:
+  <ul>
+    <% @recipe.meals.order(datetime: :asc).each do |meal| %>
+      <li><%= link_to l(meal.datetime), meal %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<h2>Zutaten:</h2>
+<ul>
+  <% @recipe.recipe_ingredients.includes(:ingredient, :positive_diets, :negative_diets).each do |recipe_ingredient| %>
+    <li>
+      <%= recipe_ingredient.quantity %> <%= recipe_ingredient.unit %> <%= link_to recipe_ingredient.ingredient, recipe_ingredient.ingredient %>
+      <% if recipe_ingredient.diets? %>
+        <%= recipe_ingredient.diets_s %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<h2>Zubereitung</h2>
+<p><%= markdown_to_html(@recipe.content) %></p>
+
+<%= link_to 'Bearbeiten', edit_recipe_path(@recipe) %> |
+<%= link_to 'Zurück', recipes_path %>

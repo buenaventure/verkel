@@ -1,0 +1,48 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Löschen', @participant, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
+  <%= link_to 'Bearbeiten', edit_participant_path(@participant), class: 'btn btn-primary' %>
+  <%= link_to 'Zurück', participants_path, class: 'btn btn-light' %>
+</div>
+
+<h1>Teilnehmer*in #<%= @participant.id %></h1>
+
+<dl>
+  <dt>Kochgruppe</dt>
+  <dd><%= @participant.group %></dd>
+  <dt>Alter</dt>
+  <dd><%= @participant.age %></dd>
+  <dt>Kommentar zur Ernährungsweise</dt>
+  <dd><%= @participant.comment %></dd>
+  <dt>Ernährungsweisen</dt>
+  <dd><%= @participant.diets.join(', ') %></dd>
+  <dt>Lama uuid</dt>
+  <dd><%= @participant.lama_uuid %></dd>
+</dl>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Zeitpunkt</th>
+      <th>Name</th>
+      <th>Rezept</th>
+      <th>Kochgruppe</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% day = nil %>
+    <% @participant.group_meal_participants.includes(:meal, :group).each do |group_meal_participant| %>
+      <% meal = group_meal_participant.meal %>
+      <% if meal.datetime.to_date != day %>
+        <% day = meal.datetime.to_date %>
+        <tr><th colspan="4"><%= l day, format: :weekday %></th></tr>
+      <% end %>
+      <tr>
+        <td><%= l meal.datetime, format: :time_only %></td>
+        <td><%= link_to meal.name, meal %></td>
+        <td><%= link_to meal.recipe, meal.recipe %></td>
+        <td><%= link_to group_meal_participant.group, group_meal_participant.group %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

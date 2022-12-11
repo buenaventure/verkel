@@ -1,0 +1,23 @@
+<h1>Benutzer</h1>
+
+<%= link_to 'Neuen Benutzer anlegen', new_user_path, class: 'btn btn-sm btn-primary float-right' %>
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>E-Mail</th>
+      <th>Rolle</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.email %></td>
+        <td><%= I18n.t "activerecord.enums.user.role.#{user.role}" %></td>
+        <td><%= link_to 'Bearbeiten', edit_user_path(user) %></td>
+        <td><%= link_to 'Löschen', user, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

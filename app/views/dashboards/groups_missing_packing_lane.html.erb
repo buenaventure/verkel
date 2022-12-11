@@ -1,0 +1,19 @@
+<%= turbo_frame_tag 'groups_missing_packing_lane' do %>
+  <% if @groups_missing_packing_lane.any? %>
+  <div class="card border-danger">
+    <%= link_to groups_missing_packing_lane_dashboard_path, class: "card-header" do %>
+      Kochgruppen ohne Packstraße
+    <% end %>
+    <div class="card-body">
+      <p>Es gibt <%= @groups_missing_packing_lane.count %> Kochgruppen, denen keine Packstraße zugeordnet wurde.</p>
+      <ul>
+        <% @groups_missing_packing_lane.take(5).each do |group| %>
+        <li><%= link_to group, group %></li>
+        <% end %>
+        <%= content_tag('li', '…') if @groups_missing_packing_lane.count > 5 %>
+      </ul>
+      <%= link_to 'Kochgruppen', groups_path, class: 'card-link btn btn-primary' %>
+    </div>
+  </div>
+  <% end %>
+<% end %>

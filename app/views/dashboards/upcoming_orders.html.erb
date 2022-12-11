@@ -1,0 +1,21 @@
+<%= turbo_frame_tag 'upcoming_orders', target: '_top' do %>
+  <% if @orders.any? %>
+    <div class="card">
+      <%= link_to upcoming_orders_dashboard_path, class: "card-header" do %>
+        nächste Bestellungen
+      <% end %>
+      <div class="list-group list-group-flush">
+        <% @orders.each do |order| %>
+          <%= link_to order, class: "list-group-item list-group-item-action#{order_list_status_class(order)}  d-flex justify-content-between align-items-center" do %>
+            <%= I18n.l order.coverage_begin, default: nil, format: :really_short %>
+            <%= order.supplier %>
+            <span class="badge badge-primary badge-pill"><%= I18n.t("activerecord.enums.order.state.#{order.state}") %></span>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="card-body">
+        <%= link_to 'Bestellungen', orders_path, class: 'card-link btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

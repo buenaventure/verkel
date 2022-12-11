@@ -1,0 +1,14 @@
+<%= simple_form_for(@order) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.association :supplier, collection: Supplier.order(:name) %>
+    <%= f.input :coverage_begin, as: :datetime %>
+    <%= f.input :coverage_end, as: :datetime %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, class: 'btn btn-primary' %>
+  </div>
+<% end %>

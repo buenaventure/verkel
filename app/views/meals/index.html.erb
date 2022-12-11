@@ -1,0 +1,45 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Kochbuch', kochbuch_recipes_path(format: 'pdf'), class: 'btn btn-secondary' %>
+  <%= link_to 'Neue Mahlzeit', new_meal_path, class: 'btn btn-primary' %>
+</div>
+
+<h1>Menü</h1>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Zeitpunkt</th>
+      <th>Name</th>
+      <th>Rezept</th>
+      <th class="text-right">geschätzter Anteil</th>
+      <th>Wahlessen</th>
+      <th>Bündeln</th>
+      <th>Kiste</th>
+      <th class="text-right">Portionen</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% day = nil %>
+    <% @meals.each do |meal| %>
+      <% if meal.datetime.to_date != day %>
+        <% day = meal.datetime.to_date %>
+        <tr><th colspan="<%= 10 %>"><%= l day, format: :weekday %></th></tr>
+      <% end %>
+      <tr>
+        <td><%= l meal.datetime, format: :time_only %></td>
+        <td><%= meal.name %></td>
+        <td><%= link_to meal.recipe, meal.recipe %></td>
+        <td class="text-right"><%= meal.estimated_share %></td>
+        <td><%= t meal.optional %></td>
+        <td><%= t meal.bundle %></td>
+        <td><%= meal.box ? link_to(l(meal.box.datetime, format: :time_only), meal.box) : '-' %></td>
+        <td class="text-right"><%= @servings[meal.id] %></td>
+        <td><%= link_to 'Anzeigen', meal %></td>
+        <td><%= link_to 'Bearbeiten', edit_meal_path(meal) %></td>
+        <td><%= link_to 'Löschen', meal, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

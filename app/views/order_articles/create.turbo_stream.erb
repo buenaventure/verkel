@@ -1,0 +1,6 @@
+<%= turbo_stream.append "order_articles" do %>
+  <%= render partial: "row", locals: { order_article: @order_article } %>
+<% end %>
+<%= turbo_stream.replace "new_order_article" do %>
+  <%= render partial: "new", locals: { order_article: @order.order_articles.new } %>
+<% end %>

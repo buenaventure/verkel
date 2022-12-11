@@ -1,0 +1,17 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Löschen', @diet, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-sm btn-danger' %>
+  <%= link_to 'Bearbeiten', edit_diet_path(@diet), class: 'btn btn-sm btn-primary' %>
+</div>
+<h1><%= @diet.name %> <small><%= @diet.category %></small></h1>
+
+<dl>
+  <dt>Lama uuid</dt>
+  <dd><%= @diet.lama_uuid %></dd>
+</dl>
+
+<h2>problematische Zutaten</h2>
+<ul>
+  <% @diet.ingredients.order(:name).each do |ingredient| %>
+    <li><%= link_to ingredient, ingredient %></li>
+  <% end %>
+</ul>

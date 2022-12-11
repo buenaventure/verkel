@@ -1,0 +1,29 @@
+<h1>Teilnehmende</h1>
+
+<%= link_to 'Neue Teilnehmer*in anlegen', new_participant_path, class: 'btn btn-primary btn-sm float-right' %>
+
+<table id="participants-table" class="table table-sm">
+  <thead>
+    <tr>
+      <th>Nr.</th>
+      <th>Kochgruppe</th>
+      <th>Alter</th>
+      <th>Kommentar</th>
+      <th>zu berücksichtigende Ernährungsweisen</th>
+      <th>Mahlzeiten</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @participants.each do |participant| %>
+      <tr>
+        <td data-sort="<%= participant.id %>"><%= link_to participant, participant %></td>
+        <td><%= participant.group %></td>
+        <td><%= participant.age %></td>
+        <td><%= participant.comment %></td>
+        <td><%= participant.diets.join(', ') %></td>
+        <td class="text-right"><%= @meal_count[participant.id] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

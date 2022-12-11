@@ -1,0 +1,11 @@
+<td class="text-right">
+  <%= link_to stats.count, "##{link_id}", data: { toggle: 'collapse' }, class: "badge badge-#{problems_count_color(stats.count)}" %>
+  <%= content_tag :div, class: 'collapse text-left', id: link_id do %>
+    <ul>
+      <% stats.take(5).each do |problem| %>
+      <li><%= link_to problem, problem %></li>
+      <% end %>
+      <%= content_tag('li', '…') if stats.count > 5 %>
+    </ul>
+  <% end %>
+</td>

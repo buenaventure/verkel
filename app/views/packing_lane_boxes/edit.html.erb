@@ -1,0 +1,32 @@
+<h1>Bestand bearbeiten</h1>
+
+<%= simple_form_for(@packing_lane_box) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <table class="table table-sm">
+    <thead>
+      <tr>
+        <th>Artikel</th>
+        <th class="text-right">Bestand</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <%= f.simple_fields_for :packing_lane_article_stocks, @packing_lane_box.packing_lane_article_stocks do |stock| %>
+        <tr>
+          <td><%= link_to stock.object.article, stock.object.article %></td>
+          <td class="text-right">
+            <%= stock.input :quantity, label: false, input_html: { class: 'text-right' } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="form-actions">
+    <%= f.button :submit, class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+<%= link_to 'Abbrechen', @packing_lane_box, class: 'btn btn-default' %>

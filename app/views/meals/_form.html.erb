@@ -1,0 +1,9 @@
+<%= simple_form_for(meal) do |f| %>
+  <%= f.input :datetime %>
+  <%= f.input :name %>
+  <%= f.association :recipe, collection: Recipe.order(:name) %>
+  <%= f.input :estimated_share %>
+  <%= f.input :optional %>
+  <%= f.input :bundle %>
+  <%= f.button :submit, class: 'btn btn-success' %>
+<% end %>

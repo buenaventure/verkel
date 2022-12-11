@@ -1,0 +1,23 @@
+@import "bootstrap";
+@import "./actiontext.scss";
+@import "datatables.net-bs4/css/dataTables.bootstrap4.css";
+@import "select2";
+@import "@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css";
+
+// apply styles to HTML elements
+// to make views framework-neutral
+main {
+    @extend .container;
+    margin-top: 30px; // accommodate the navbar
+}
+
+section {
+    @extend .row;
+    margin-top: 20px;
+}
+
+.dataTable {
+    thead {
+        background-color: white;
+    }
+}

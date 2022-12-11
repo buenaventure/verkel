@@ -1,0 +1,20 @@
+<%= turbo_frame_tag 'upcoming_order_requirements', target: '_top' do %>
+  <% if @suppliers.any? %>
+    <div class="card">
+      <%= link_to upcoming_order_requirements_dashboard_path, class: "card-header" do %>
+        nächster Bestellbedarf
+      <% end %>
+      <div class="list-group list-group-flush">
+        <% @suppliers.each do |supplier| %>
+          <%= link_to supplier, class: "list-group-item list-group-item-action#{supplier_list_status_class(supplier)}" do %>
+            <%= I18n.l supplier.next_required_order_date&.in_time_zone, default: nil, format: :really_short %>
+            <%= supplier %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="card-body">
+        <%= link_to 'Lieferanten', suppliers_path, class: 'card-link btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

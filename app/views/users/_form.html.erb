@@ -1,0 +1,15 @@
+
+<%= simple_form_for(@user) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.input :email %>
+    <%= f.input :password %>
+    <%= f.input :role, collection: User.roles.keys.map { |key| [I18n.t("activerecord.enums.user.role.#{key}"), key] }, include_blank: false %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

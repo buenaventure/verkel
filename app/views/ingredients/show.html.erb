@@ -1,0 +1,142 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Löschen', @ingredient, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
+  <%= link_to 'Bearbeiten', edit_ingredient_path(@ingredient), class: 'btn btn-primary' %>
+  <%= link_to 'Zurück', ingredients_path, class: 'btn btn-light' %>
+</div>
+
+<h1><%= @ingredient.name %> <small><%= @ingredient.commodity_group %></small></h1>
+
+<dl>
+   <% if feature(:estimation) %>
+  <dt>geschätzter Bedarf</dt>
+  <dd>
+    <% estimated_need_total(@ingredient).each do |quantity_unit| %>
+      <%= quantity_unit.humanize %>
+    <% end %>
+  </dd>
+  <% end %>
+  <dt>tatsächlicher Bedarf</dt>
+  <dd>
+    <% @ingredient.unit_sums.each do |unit_sum| %>
+      <%= unit_sum.humanize %>
+    <% end %>
+  </dd>
+  <dt>Fehlmenge</dt>
+  <dd>
+    <% @ingredient.missing_ingredient_sums.each do |unit_sum| %>
+      <%= unit_sum.humanize %>
+    <% end %>
+  </dd>
+</dl>
+
+<h2>problematische Ernährungsweisen</h2>
+<ul>
+  <% @ingredient.diets.order(:name).each do |diet| %>
+    <li>
+      <%= link_to diet, diet %>
+    </li>
+  <% end %>
+</ul>
+
+<%= link_to 'Neue Alternative anlegen', new_ingredient_ingredient_alternative_path(@ingredient), class: 'btn btn-primary btn-sm float-right' %>
+<%= render 'ingredient_alternatives/table', ingredient_alternatives: @ingredient.ingredient_alternatives %>
+
+<h2>Gewicht</h2>
+<ul class="list-group">
+  <% @ingredient.ingredient_weights.each do |ingredient_weight| %>
+    <li class="list-group-item">
+      <%= ingredient_weight.quantity_unit_base.humanize %> umrechnen in <%= ingredient_weight.quantity_unit_weight.humanize %>
+    </li>
+  <% end %>
+</ul>
+
+<h2>Lieferanten</h2>
+
+<%= link_to 'Neuen Artikel anlegen', new_article_path(ingredient_id: @ingredient), class: 'btn btn-sm btn-primary float-right' %>
+<%= render 'articles/table', articles: @ingredient.articles, ingredient: true, show_price: true %>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Kiste</th>
+      <th class="text-right">Bedarf</th>
+      <th class="text-right">Im Lager</th>
+      <th class="text-right">bestellt</th>
+      <th class="text-right">Bestellbedarf</th>
+      <th class="text-right">Fehlmenge</th>
+      <th class="text-right">Überpackt</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @ingredient.boxes.each do |box| %>
+      <tr>
+        <td><%= link_to I18n.l(box.datetime), box %></td>
+        <td class="text-right">
+          <%= humanize_units @ingredient.unit_sums_by_box[box.id] %>
+        </td>
+        <td class="text-right">
+          <%= humanize_units @ingredient.order_requirement_of(box).stock %>
+        </td>
+        <td class="text-right">
+          <%= humanize_units @ingredient.order_requirement_of(box).ordered %>
+        </td>
+        <td class="text-right">
+          <%= humanize_units @ingredient.order_requirement_of(box).quantity %>
+        </td>
+        <td class="text-right">
+          <%= humanize_units @ingredient.missing_ingredient_sums_by_box.fetch(box.id, QuantityUnits.new) %>
+        </td>
+        <td class="text-right">
+          <%= (@ingredient.order_requirement_of(box).total.sum + @ingredient.missing_ingredient_sums_by_box.fetch(box.id, QuantityUnits.new) - @ingredient.unit_sums_by_box[box.id]).humanize  %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td></td>
+      <td class="text-right">
+        <% @ingredient.unit_sums.each do |unit_sum| %>
+          <%= unit_sum.humanize %>
+        <% end %>
+      </td>
+      <td class="text-right">
+        <%= humanize_units_sum @ingredient.order_requirements.values.map(&:stock).flatten %>
+      </td>
+      <td class="text-right">
+        <%= humanize_units_sum @ingredient.order_requirements.values.map(&:ordered).flatten %>
+      </td>
+      <td class="text-right">
+        <%= humanize_units_sum @ingredient.order_requirements.values.map(&:quantity).flatten %>
+      </td>
+      <td class="text-right">
+        <% @ingredient.missing_ingredient_sums.each do |unit_sum| %>
+          <%= unit_sum.humanize %>
+        <% end %>
+      </td>
+      <td class="text-right">
+        <%= (QuantityUnits.new(@ingredient.order_requirements.values.map(&:total).flatten) + @ingredient.missing_ingredient_sums - @ingredient.unit_sums).humanize %>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<h2>Rezepte</h2>
+<ul>
+  <% @ingredient.recipes.each do |recipe| %>
+    <li><%= link_to recipe, recipe %></li>
+  <% end %>
+</ul>
+
+<% if feature(:estimation) %>
+<h2>geschätzt in Mahlzeiten</h2>
+<ul>
+  <% estimated_need_per_meal(@ingredient).each do |need| %>
+    <li>
+      <%= l need[:meal].datetime, format: '%d.%m. %H:%M' %> <%= link_to need[:meal].name, need[:meal] %>
+      <%= need[:quantity_unit].humanize %>
+    </li>
+  <% end %>
+</ul>
+<% end %>

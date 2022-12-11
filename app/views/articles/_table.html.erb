@@ -1,0 +1,43 @@
+<table id="articles-table" class="table table-sm">
+  <thead>
+    <tr>
+      <% unless defined?(ingredient) %><th>Warengruppe</th><th>Zutat</th><% end %>
+      <% unless defined?(supplier) %><th>Lieferant</th><% end %>
+      <% if defined?(ingredient) %><th>Prio</th><% end %>
+      <th>Name</th>
+      <th class="text-right">Gebindegröße</th>
+      <th class="text-right">Lagerbestand</th>
+      <th class="text-right">Überschuss</th>
+      <% if defined?(show_price) %>
+      <th class="text-right">Preis</th>
+      <th class="text-right">Grundpreis</th>
+      <% end %>
+      <th class="text-right">mögliche Bestellmenge</th>
+      <% if defined?(@order_counts) %><th>Bestellungen</th><% end %>
+      <th>Notizen</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% articles.each do |article| %>
+      <tr>
+        <% unless defined?(ingredient) %><td><%= article.ingredient.commodity_group %></td><td><%= link_to article.ingredient, article.ingredient %></td><% end %>
+        <% unless defined?(supplier) %><td><%= link_to article.supplier, article.supplier %></td><% end %>
+        <% if defined?(ingredient) %><td><%= article.priority %></td><% end %>
+        <td><%= article.name %></td>
+        <td class="text-right"><%= article.quantity_unit.humanize %></td>
+        <td class="text-right"><%= number_with_delimiter article.stock %></td>
+        <td class="text-right"><%= article.surplus %></td>
+        <% if defined?(show_price) %>
+        <td class="text-right"><%= article.price %> €</td>
+        <td class="text-right"><%= number_with_precision(article.base_price, precision: 2) %> €/(kg/l/Stk)</td>
+        <% end %>
+        <td class="text-right"><%= number_with_delimiter article.order_limit %></td>
+        <% if defined?(@order_counts) %><td><%= @order_counts.fetch(article.id, 0) %></td><% end %>
+        <td><%= article.notes %></td>
+        <td><%= link_to 'Anzeigen', article_path(article) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

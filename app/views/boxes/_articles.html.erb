@@ -1,0 +1,31 @@
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Artikel</th>
+      <th class="text-right">Gesamtbedarf</th>
+      <th class="text-right">Im Lager</th>
+      <th class="text-right">bestellt</th>
+      <th class="text-right">Bestellbedarf</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @box.articles.joins(:ingredient).reorder('ingredients.name': :asc).select('articles.*, ingredients.name AS ingredient_name').each do |article| %>
+      <tr>
+        <td><%= link_to article.full_name, article %></td>
+        <td class="text-right">
+          <%= number_with_delimiter @box.sums_by_article.fetch(article.id, 0) %>
+        </td>
+        <td class="text-right">
+          <%= number_with_delimiter @box.order_requirement_of(article).stock %>
+        </td>
+        <td class="text-right">
+          <%= number_with_delimiter @box.order_requirement_of(article).ordered %>
+        </td>
+        <td class="text-right">
+          <%= number_with_delimiter @box.order_requirement_of(article).quantity %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

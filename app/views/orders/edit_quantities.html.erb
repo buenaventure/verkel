@@ -1,0 +1,45 @@
+<h1>Mengen bearbeiten</h1>
+
+<%= simple_form_for(@order) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <table class="table table-sm">
+    <thead>
+      <tr>
+        <th>Artikel</th>
+        <th class="text-right">Bestellmenge</th>
+        <% if @order.delivered? %>
+        <th class="text-right">Liefermenge</th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <tbody>
+      <%= f.simple_fields_for :order_articles, @order_articles do |order_article| %>
+        <tr>
+          <td><%= link_to order_article.object.article, order_article.object.article %></td>
+          <td class="text-right">
+            <% if @order.ordered? %>
+              <%= order_article.input :quantity_ordered, label: false, input_html: { class: 'text-right' } %>
+            <% else %>
+              <%= number_with_delimiter order_article.object.quantity_ordered %><br/>
+              <small class="text-muted"><%= order_article.object.quantity_unit_ordered.humanize %></small>
+            <% end %>
+          </td>
+          <% if @order.delivered? %>
+          <td class="text-right">
+            <%= order_article.input :quantity_delivered, label: false, input_html: { class: 'text-right' } %>
+          </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="form-actions">
+    <%= f.button :submit, class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+<%= link_to 'Abbrechen', @order, class: 'btn btn-default' %>

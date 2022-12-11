@@ -1,0 +1,16 @@
+<%= simple_form_for(@packing_lane_article_stock, url: [:create_stock, @packing_lane_box]) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.association :article,
+                      collection: @packing_lane_box.unstocked_articles.includes(:ingredient).order('ingredients.name'),
+                      label_method: :to_s,
+                      include_blank: false %>
+    <%= f.input :quantity %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

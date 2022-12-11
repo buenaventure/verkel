@@ -1,0 +1,11 @@
+<tr>
+  <td><%= f.object.article %></td>
+  <td class="text-right">
+    <%= f.input :quantity_ordered, label: false, input_html: { class: 'text-right' } %>
+  </td>
+  <% if f.object.order.delivered? %>
+  <td class="text-right">
+    <%= f.input :quantity_delivered, label: false, input_html: { class: 'text-right' } %>
+  </td>
+  <% end %>
+</tr>

@@ -1,0 +1,79 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Löschen', @box, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
+  <%= link_to 'Bearbeiten', edit_box_path(@box), class: 'btn btn-primary' %>
+  <%= link_to 'Zurück', boxes_path, class: 'btn btn-light' %>
+  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="printMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Drucken
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="printMenu">
+    <%= link_to 'Packlisten pro Gruppe', [:packing_lists_groups, @box, format: :pdf], class: 'dropdown-item' %>
+    <%= link_to 'Packlisten pro Artikel warm', [:packing_lists_articles, @box, format: :pdf, filter: :warm], class: 'dropdown-item' %>
+    <%= link_to 'Packlisten pro Artikel kalt', [:packing_lists_articles, @box, format: :pdf, filter: :cold], class: 'dropdown-item' %>
+    <%= link_to 'Packlisten Fehlmengen', [:packing_lists_missing_ingredients, @box, format: :pdf], class: 'dropdown-item' %>
+    <%= link_to 'Alle Packlisten', [:all_packing_lists, @box, format: :pdf], class: 'dropdown-item' %>
+  </div>
+</div>
+<h1>
+  Kiste am <%= l @box.datetime %>
+</h1>
+
+<dl>
+  <dt>Typ</dt>
+  <dd><%= I18n.t("activerecord.enums.box.box_type.#{@box.box_type}") %></dd>
+  <dt>Status</dt>
+  <dd>
+    <%= I18n.t("activerecord.enums.box.status.#{@box.status}") %>
+    <% if @box.picked? %>
+      <% @box.packing_lane_boxes.each do |packing_lane_box| %>
+        <%= link_to packing_lane_box.packing_lane,
+                    packing_lane_box,
+                    class: "badge badge-#{packing_lane_box_status_color(packing_lane_box)}" %>
+      <% end %>
+    <% end %>
+  </dd>
+</dl>
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#articles" role="tab">Artikel</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#meals" role="tab">Mahlzeiten</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#ingredients" role="tab">Zutaten</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#groups" role="tab">Kochgruppen</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#info" role="tab">Info-Text</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#ingredient_meals" role="tab">Zutaten mit Mahlzeiten</a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="articles" role="tabpanel">
+    <%= render 'articles' %>
+  </div>
+  <div class="tab-pane fade" id="meals" role="tabpanel">
+    <%= render 'meals' %>
+  </div>
+  <div class="tab-pane fade" id="ingredients" role="tabpanel">
+    <%= render 'ingredients' %>
+  </div>
+  <div class="tab-pane fade" id="groups" role="tabpanel">
+    <%= render 'groups' %>
+  </div>
+  <div class="tab-pane fade" id="info" role="tabpanel">
+    <p>
+      <strong>Info-Text für Kochgruppen</strong>
+      <%= @box.groups_info %>
+    </p>
+  </div>
+  <div class="tab-pane fade" id="ingredient_meals" role="tabpanel">
+    <%= turbo_frame_tag 'ingredient_meals', src: ingredient_meals_box_path(@box), target: '_top', loading: :lazy do %>Lade…<% end %>
+  </div>
+</div>

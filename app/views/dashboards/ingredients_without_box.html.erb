@@ -1,0 +1,18 @@
+<%= turbo_frame_tag 'ingredients_without_box' do %>
+  <% if @ingredients_without_box.any? %>
+  <div class="card border-danger">
+    <%= link_to ingredients_without_box_dashboard_path, class: "card-header" do %>
+      Zutaten ohne Kiste
+    <% end %>
+    <div class="card-body">
+      <p>Es gibt keine passende Kiste für Folgendes:</p>
+      <ul>
+        <% @ingredients_without_box.each do |mib| %>
+          <li><%= mib.ingredient %> in <%= mib.meal%></li>
+        <% end %>
+      </ul>
+      <%= link_to 'Kisten', boxes_path, class: 'card-link btn btn-primary' %>
+    </div>
+  </div>
+  <% end %>
+<% end %>

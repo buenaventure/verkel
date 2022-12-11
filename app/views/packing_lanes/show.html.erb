@@ -1,0 +1,15 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Löschen', @packing_lane, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
+  <%= link_to 'Bearbeiten', edit_packing_lane_path(@packing_lane), class: 'btn btn-primary' %>
+  <%= link_to 'Zurück', packing_lanes_path, class: 'btn btn-light' %>
+</div>
+
+<h1>Packstraße <%= @packing_lane.name %></h1>
+
+<h2>Kochgruppen</h2>
+<ul>
+  <% @packing_lane.groups.order(:internal_name, :name).each do |group| %>
+    <li><%= link_to group, group %></li>
+  <% end %>
+</ul>
+

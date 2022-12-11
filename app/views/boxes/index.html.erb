@@ -1,0 +1,22 @@
+<h1>Kisten</h1>
+
+<%= link_to 'Neue Kiste', new_box_path, class: 'btn btn-primary btn-sm float-right' %>
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Zeitpunkt</th>
+      <th>Typ</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @boxes.each do |box| %>
+      <tr>
+        <td><%= link_to l(box.datetime), box %></td>
+        <td><%= I18n.t "activerecord.enums.box.box_type.#{box.box_type}" %></td>
+        <td><%= I18n.t "activerecord.enums.box.status.#{box.status}" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,34 @@
+<h1>Zutaten mit fehlenden Alternativen</h1>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Warengruppe</th>
+      <th>Name</th>
+      <th>Probleme bei</th>
+      <th class="text-right">Kochgruppen</th>
+      <th class="text-right">Teilnehmende</th>
+      <th class="text-right">Mahlzeiten</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @ingredients.each do |ingredient, problems| %>
+      <% ingredient_stats = missing_alternatives_stats(problems) %>
+      <tr>
+        <td rowspan="<%= ingredient_stats.size %>"><%= ingredient.commodity_group %></td>
+        <td rowspan="<%= ingredient_stats.size %>"><%= link_to ingredient.name, ingredient %></td>
+        <% ingredient_stats.each_with_index do |(diets, diet_stats), index| %>
+          <% if index != 0 %>
+      </tr>
+      <tr>
+          <% end %>
+        <td><%= diets %></td>
+        <%= render 'problem_details', stats: diet_stats[:groups], link_id: "collapse_ingredient_#{ingredient.id}_#{diets}" %>
+        <%= render 'problem_details', stats: diet_stats[:participants], link_id: "collapse_ingredient_#{ingredient.id}_#{diets}" %>
+        <%= render 'problem_details', stats: diet_stats[:meals], link_id: "collapse_ingredient_#{ingredient.id}_#{diets}" %>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,8 @@
+<%= simple_form_for(recipe) do |f| %>
+  <%= f.error_notification %>
+  <%= f.input :name %>
+  <%= f.input :servings %>
+  <%= f.input :content %>
+  <%= f.input :lama_uuid %>
+  <%= f.button :submit, class: 'btn btn-success'%>
+<% end %>

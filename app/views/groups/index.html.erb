@@ -1,0 +1,39 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Besonderheitenübersicht', diets_overview_groups_path, class: 'btn btn-secondary' %>
+  <%= link_to 'Mahlzeitenübersicht', meals_overview_groups_path, class: 'btn btn-secondary' %>
+  <%= link_to 'Neue Kochgruppe', new_group_path, class: 'btn btn-primary' %>
+</div>
+
+<h1>Kochgruppen</h1>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>int. Name</th>
+      <th>max. Portionen</th>
+      <th>Packstraße</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @groups.each do |group| %>
+      <tr>
+        <td><%= group.name %></td>
+        <td><%= group.internal_name %></td>
+        <td><%= @servings.fetch(group.id, 0) %></td>
+        <td>
+          <% if group.packing_lane %>
+            <%=link_to group.packing_lane, group.packing_lane %>
+          <% else %>
+            <span class="text-danger">Fehlt</span>
+          <% end %>
+          </td>
+        <td><%= link_to 'Anzeigen', group %></td>
+        <td><%= link_to 'Bearbeiten', edit_group_path(group) %></td>
+        <td><%= link_to 'Löschen', group, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

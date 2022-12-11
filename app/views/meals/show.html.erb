@@ -1,0 +1,60 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Bearbeiten', edit_meal_path(@meal), class: 'btn btn-primary' %>
+  <%= link_to 'Zurück', meals_path, class: 'btn btn-default' %>
+</div>
+
+<dl>
+  <dt>Name</dt><dd><%= @meal.name %></dd>
+  <dt>Zeit</dt><dd><%= l @meal.datetime %></dd>
+  <dt>Rezept</dt><dd><%= link_to @meal.recipe, @meal.recipe %></dd>
+  <dt>Kiste</dt><dd><%= @meal.box ? link_to(l(@meal.box.datetime), @meal.box) : '-' %></dd>
+  <dt>Wahlessen</dt><dd><%= t @meal.optional %></dd>
+  <dt>Bündeln</dt><dd><%= t @meal.bundle %></dd>
+</dl>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Gruppe</th>
+      <th class="text-right">Portionen</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% day = nil %>
+    <% @meal.group_meals.includes(:group).each do |group_meal| %>
+      <tr>
+        <td><%= link_to group_meal.group.name, group_meal.group %></td>
+        <td class="text-right"><%= @servings[group_meal.group_id] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+
+  <tfoot>
+    <tr>
+      <td></td>
+      <td class="text-right"><%= @meal.servings %></td>
+      <td colspan="2"></td>
+    </tr>
+  </tfoot>
+</table>
+
+<% if feature(:estimation) %>
+<h2>Schätzung</h2>
+<dl>
+  <dt>Anteil</dt><dd><%= @meal.estimated_share %></dd>
+  <dt>Portionen</dt><dd><%= @meal.serving_estimation %></dd>
+</dl>
+
+<p>
+  <% if @meal.estimated_ingredients %>
+    <ul>
+      <% @meal.estimated_ingredients.each do |ingredient| %>
+        <li>
+          <%= ingredient[:quantity_unit].humanize %> <%= link_to ingredient[:ingredient], ingredient[:ingredient] %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</p>
+<% end %>

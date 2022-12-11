@@ -1,0 +1,26 @@
+<h1>Ernährungsweisen</h1>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Kategorie</th>
+      <th>Fälle</th>
+      <th>problematische Zutaten</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @diets.each do |diet| %>
+      <tr>
+        <td><%= link_to diet.name, diet %></td>
+        <td><%= diet.category %></td>
+        <td><%= diet.participants.count %></td>
+        <td><%= diet.ingredients.count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Neue Ernährungsweise', new_diet_path, class: 'btn btn-primary' %>

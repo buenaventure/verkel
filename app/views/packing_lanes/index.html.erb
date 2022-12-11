@@ -1,0 +1,27 @@
+<%= link_to "Neue Packstraße", new_packing_lane_path, class: 'btn btn-primary float-right' %>
+
+<h1>Packstraßen</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Packstraße</th>
+      <% Box.picked.each do |box| %>
+      <th>
+        <%= link_to I18n.l(box.datetime), box %><br/>
+        <%= link_to 'alle Listen', [:packing_lists_lanes, box, format: :pdf], class: 'btn btn-sm btn-secondary' %><br/>
+      </th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+  <% @packing_lanes.each do |packing_lane| %>
+    <tr>
+      <td><%= link_to packing_lane %></td>
+      <% Box.picked.each do |box| %>
+      <td><%= link_to 'Artikelliste', PackingLaneBox.new(packing_lane: packing_lane, box: box) %></td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

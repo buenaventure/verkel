@@ -1,0 +1,35 @@
+<h1>Rezepte</h1>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Zeitpunkt</th>
+      <th>Portionen</th>
+      <th>Lama</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @recipes.each do |recipe| %>
+      <tr class="<%= 'table-danger' if recipe.meals && recipe.content.blank? %>">
+        <td><%= recipe.name %></td>
+        <td>
+          <% recipe.meals.each do |meal| %>
+            <%= l meal.datetime %>,
+          <% end %>
+        </td>
+        <td><%= recipe.servings %></td>
+        <td><%= recipe.lama_uuid %></td>
+        <td><%= link_to 'Anzeigen', recipe %></td>
+        <td><%= link_to 'Bearbeiten', edit_recipe_path(recipe) %></td>
+        <td><%= link_to 'Löschen', recipe_path(recipe), data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'Neues Rezept', new_recipe_path %>

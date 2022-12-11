@@ -1,0 +1,21 @@
+<%= turbo_frame_tag 'missing_ingredients' do %>
+  <% if @missing_sums.any? %>
+  <div class="card border-warning" %>
+    <%= link_to missing_ingredients_dashboard_path, class: "card-header" do %>
+      Sondereinkauf
+    <% end %>
+    <div class="card-body">
+      <% @boxes.each do |box| %>
+        <h5 class="card-title"><%= link_to box, box %></h2>
+        <ul>
+        <% @missing_sums[box.id].each do |ingredient_id, missing_units| %>
+          <% missing_units.each do |missing_unit| %>
+            <li><%= missing_unit.humanize %> <%= @ingredients[ingredient_id] %></li>
+          <% end %>
+        <% end %>
+        </ul>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
+<% end %>

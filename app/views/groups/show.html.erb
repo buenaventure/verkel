@@ -1,0 +1,57 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'manuelle Mahlzeit-Teilnahmen verwalten', group_group_meal_participations_path(@group), class: 'btn btn-default' %>
+  <%= link_to 'Bearbeiten', edit_group_path(@group), class: 'btn btn-primary' %>
+  <%= link_to 'Zurück', groups_path, class: 'btn btn-default' %>
+</div>
+
+<h1>
+  Kochgruppe <%= @group.display_name %>
+</h1>
+
+<dl>
+  <dt>Hunger-Faktor</dt>
+  <dd><%= @group.hunger_factor %></dd>
+  <dt>Packstraße</dt>
+  <dd><%= @group.packing_lane %></dd>
+  <dt>Lama uuid</dt>
+  <dd><%= @group.lama_uuid %></dd>
+</dl>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Zeitpunkt</th>
+      <th>Rezept</th>
+      <th class="text-right">Portionen</th>
+      <th>Kiste</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% day = nil %>
+    <% @group_meals.each do |group_meal| %>
+      <% meal = group_meal.meal %>
+      <% if meal.datetime.to_date != day %>
+        <% day = meal.datetime.to_date %>
+        <tr><th colspan="<%= 4 %>"><%= l day, format: :weekday %></th></tr>
+      <% end %>
+      <tr>
+        <td><%= l meal.datetime, format: :time_only %></td>
+        <td><%= link_to meal.recipe, meal.recipe %></td>
+        <td class="text-right"><%= @servings[meal.id] %></td>
+        <td>
+          <% if meal.box %>
+            <%= link_to l(meal.box.datetime, format: :time_only), [meal.box, group_meal.group] %>
+          <% else %>
+            <span class="text-danger">Kiste unklar</span>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<p>
+  <strong>Notizen</strong>
+  <%= @group.notes %>
+</p>

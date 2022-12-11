@@ -1,0 +1,28 @@
+<%= link_to 'Neue Bestellung anlegen', new_order_path(supplier_id: @supplier), class: 'btn btn-primary btn-sm float-right' %>
+<table class="table table-sm" id="orders-table">
+  <thead>
+    <tr>
+      <% unless defined?(@supplier) %><th>Lieferant</th><% end %>
+      <th>Abdeckung von</th>
+      <th>Abdeckung bis</th>
+      <th>Status</th>
+      <th>Summe</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% orders.each do |order| %>
+      <tr class="<%= order_table_status_class(order) %>">
+        <% unless defined?(@supplier) %><td><%= link_to order.supplier, order.supplier %></td><% end %>
+        <td><%= l order.coverage_begin, format: :short %></td>
+        <td><%= l order.coverage_end, format: :short %></td>
+        <td><%= I18n.t("activerecord.enums.order.state.#{order.state}") %></td>
+        <td><%= euro order.price_ordered %></td>
+        <td><%= link_to 'Anzeigen', order %></td>
+        <td><%= link_to 'Drucken', [order, format: :pdf] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

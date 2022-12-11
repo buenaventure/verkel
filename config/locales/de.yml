@@ -1,0 +1,235 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# The following keys must be escaped otherwise they will not be retrieved by
+# the default I18n backend:
+#
+# true, false, on, off, yes, no
+#
+# Instead, surround them with single quotes.
+#
+# en:
+#   'true': 'foo'
+#
+# To learn more, please read the Rails Internationalization guide
+# available at https://guides.rubyonrails.org/i18n.html.
+
+de:
+  true: Ja
+  false: Nein
+  activerecord:
+    models:
+      article: Artikel
+      box:
+        one: Kiste
+        other: Kisten
+      diet:
+        one: Ernährungsweise
+        other: Ernährungsweisen
+      extra_ingredient:
+        one: Extra-Zutat
+        other: Extra-Zutaten
+      group:
+        one: Kochgruppe
+        other: Kochgruppen
+      group_meal: Mahlzeit für die Kochgruppe
+      group_meal_participation:
+        one: manuelle Mahlzeit-Teilnahme
+        other: manuelle Mahlzeit-Teilnahmen
+      group_meal_variant: Änderung der Variante für die Mahlzeit der Gruppe
+      group_variant: Rezept-Variante in Kochgruppe
+      hoard:
+        one: Vorrat
+        other: Vorräte
+      ingredient:
+        one: Zutat
+        other: Zutaten
+      ingredient_alternative: alternative Zutat
+      meal:
+        one: Mahlzeit
+        other: Mahlzeiten
+      order:
+        one: Bestellung
+        other: Bestellungen
+      order_article: Artikel in Bestellung
+      packing_lane:
+        one: Packstraße
+        other: Packstraßen
+      packing_lane_article_stock: Packstraßenbestand
+      packing_lane_box: Packstraße für Kiste
+      participant:
+        one: Teilnehmer*in
+        other: Teilnehmende
+      recipe:
+        one: Rezept
+        other: Rezepte
+      supplier:
+        one: Lieferant
+        other: Lieferanten
+    attributes:
+      article:
+        ingredient: Zutat
+        needs_cooling: Kühlbedarf
+        notes: Notizen
+        order_limit: mögliche Bestellmenge
+        packing_type: Packtyp
+        price: Preis (Brutto)
+        priority: Priorität (niedriger wird bevorzugt)
+        quantity: Gebindegröße
+        stock: Lagerbestand
+        supplier: Lieferant
+        unit: Einheit der Gebindegröße
+      box:
+        box_type: Kistentyp
+        datetime: Zeitpunkt
+        groups_info: Info-Text für Kochgruppen
+      diet:
+        category: Kategorie
+        name: Name
+      extra_ingredient:
+        ingredient: Zutat
+        quantity: Anzahl
+        unit: Einheit
+        purpose: Verwendungszweck
+      group:
+        hunger_factor: Hunger-Faktor
+        internal_name: interner Name
+        name: Name
+        notes: Notizen
+        packing_lane: Packstraße
+      group_meal:
+        share: Anteil der Gesamtgruppe
+      group_meal_participation:
+        meal: Mahlzeit
+        participant: Teilnehmer*in
+      hoard:
+        quantity: Anzahl
+        until: vorhalten bis
+      ingredient:
+        box_type: Kistentyp
+        commodity_group: Warengruppe
+        diets: inkompatible Ernährungsweisen
+        uses_hunger_factor: Hunger-Faktor berücksichtigen
+      ingredient_alternative:
+        alternative: alternative Zutat
+        priority: Priorität (niedriger wird bevorzugt)
+      meal:
+        recipe: Rezept
+        datetime: Zeitpunkt
+        estimated_share: geschätzter Anteil
+        optional: Wahlessen
+        bundle: Zutaten in einer Kiste bündeln
+      order:
+        supplier: Lieferant
+        coverage: Abdeckungszeitraum
+        coverage_begin: Abdeckung von (Lieferzeitpunkt)
+        coverage_end: Abdeckung bis
+      order_article:
+        article: Artikel
+        quantity_ordered: Bestellmenge
+        quantity_delivered: Liefermenge
+      packing_lane:
+        name: Name
+      packing_lane_article_stock:
+        article: Artikel
+        box: Kiste
+        quantity: Bestand
+      participant:
+        age: Alter
+        comment: Kommentar zur Ernährungsweise
+        diets: zu berücksichtigende Ernährungsweisen
+        group: Haupt-Kochgruppe
+      supplier:
+        address: Adresse
+        delivery_time: maximale Lieferfrist (Stunden von Bestellung bis Bedarf in Kiste)
+        name: Name
+        notes: Notizen
+        ingredients: problematische Zutaten
+      user:
+        role: Rolle
+    enums:
+      article:
+        packing_type:
+          piece: Stückgut
+          bulk: Schüttgut
+      box:
+        box_type:
+          default: Standard
+          base_box: Grundkiste
+          fresh_box: Frischekiste
+        status:
+          stocked: Lager
+          picked: Vorkommissionierung
+          packed: Packstraße
+      ingredient:
+        box_type:
+          default: Standard
+          base_box: Grundkiste
+          fresh_box: Frischekiste
+      order:
+        state:
+          planned: geplant
+          ordered: bestellt
+          delivered: geliefert
+          stored: eingelagert
+          canceled: abgebrochen
+      user:
+        role:
+          admin: Administrator
+          office: Büro
+          laga: Laga
+          read_only: nur lesen
+  activemodel:
+    models:
+      article_stock_action: Lagerbestandsänderung für einen Artikel
+    attributes:
+      article_stock_action:
+        action: Mengenänderung
+  simple_form:
+    hints:
+      group_meal:
+        absolute_servings: 'Überschreibt alle anderen Werte wenn nicht 0'
+      group_meal_variant:
+        absolute_servings: 'Überschreibt alle anderen Werte wenn nicht 0'
+  date:
+    formats:
+      weekday: "%A, %d.%m."
+    order:
+      - day
+      - month
+      - year
+  time:
+    formats:
+      time_only: "%H:%M"
+      really_short: "%d.%m. %H:%M"
+      sortable: "%y-%m-%d_%H-%M"
+  number:
+    format:
+      delimiter: ' '
+  verb:
+    edit: bearbeiten
+    new: erstellen
+    edit_quantities: Mengen bearbeiten
+    with_missing_alternatives: mit fehlenden Alternativen
+    laga: LAGA
+    meals_overview: Mahlzeitenübersicht
+    diets_overview: Ernährungsbesonderheitenübersicht
+    ingredient_meals: Zutaten mit Mahlzeiten
+  warm: warm
+  cold: kalt
+  all: alle

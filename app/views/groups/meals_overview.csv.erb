@@ -1,0 +1,4 @@
+Kochgruppe,<% @meals.each do |meal| %>"<%= meal.to_s.gsub('"', '""').html_safe %>",<% end %>
+<% @groups.each do |group| %>
+"<%= group.display_name.gsub('"', '""').html_safe %>",<% @meals.each do |meal| %><%= @servings.fetch([group.id, meal.id], nil) %>,<% end %>
+<% end %>
