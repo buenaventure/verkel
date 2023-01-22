@@ -1,0 +1,9 @@
+.env
+.git/*
+.gitattributes
+log
+node_modules
+public/packs
+public/packs-test
+storage
+tmp

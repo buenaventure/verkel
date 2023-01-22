@@ -7,7 +7,6 @@
     "@rails/actioncable": "^7.0.1",
     "@rails/actiontext": "^7.0.1",
     "@rails/activestorage": "^7.0.1",
-    "@rails/webpacker": "5.4.3",
     "@ttskch/select2-bootstrap4-theme": "^1.5.2",
     "bootstrap": "^4.6.0",
     "datatables.net-bs4": "^1.11.5",
@@ -15,13 +14,16 @@
     "datatables.net-fixedheader-bs4": "^3.2.2",
     "jquery": "^3.6.0",
     "popper.js": "^1.16.1",
+    "sass": "^1.57.1",
     "select2": "^4.1.0-rc.0",
     "trix": "^1.2.0",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   },
   "version": "0.1.0",
-  "devDependencies": {
-    "webpack-dev-server": "^3"
+  "devDependencies": {},
+  "scripts": {
+    "build": "webpack --config ./webpack.config.js",
+    "build:css": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules"
   }
 }
