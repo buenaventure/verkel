@@ -26,4 +26,4 @@ test:
 
 production:
   <<: *default
-  database: verkel_production
+  database: <%= ENV.fetch('DATABASE_NAME', 'verkel_production' ) %>
