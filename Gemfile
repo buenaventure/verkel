@@ -7,7 +7,7 @@ ruby '3.1.3'
 gem 'bootsnap', '>= 1.4.4', require: false
 gem 'cancancan'
 gem 'combine_pdf'
-# gem 'cssbundling-rails'
+gem 'cssbundling-rails'
 gem 'devise'
 gem 'devise-i18n'
 gem 'hotwire-rails', '~> 0.1'

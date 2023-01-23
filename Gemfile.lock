@@ -93,6 +93,8 @@ GEM
       ruby-rc4 (>= 0.1.5)
     concurrent-ruby (1.1.10)
     crass (1.0.6)
+    cssbundling-rails (1.1.2)
+      railties (>= 6.0.0)
     date (3.3.3)
     devise (4.8.1)
       bcrypt (~> 3.0)
@@ -351,6 +353,7 @@ DEPENDENCIES
   cancancan
   capybara (>= 3.26)
   combine_pdf
+  cssbundling-rails
   devise
   devise-i18n
   dotenv-rails
