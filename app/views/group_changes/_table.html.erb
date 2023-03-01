@@ -1,0 +1,22 @@
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Von</th>
+      <th>Bis</th>
+      <th>Kochgruppe</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% group_changes.order(:timeframe).each do |group_change| %>
+      <tr>
+        <td><%= l(group_change.timeframe_begin, format: :short) %></td>
+        <td><%= l(group_change.timeframe_end, format: :short) %></td>
+        <td><%= group_change.group %></td>
+        <td><%= link_to 'Bearbeiten', edit_group_change_path(group_change) %></td>
+        <td><%= link_to 'Löschen', group_change, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

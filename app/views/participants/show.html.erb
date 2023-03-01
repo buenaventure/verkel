@@ -7,7 +7,7 @@
 <h1>Teilnehmer*in #<%= @participant.id %></h1>
 
 <dl>
-  <dt>Kochgruppe</dt>
+  <dt>Standard-Kochgruppe</dt>
   <dd><%= @participant.group %></dd>
   <dt>Kennung</dt>
   <dd><%= @participant.external_id %></dd>
@@ -20,6 +20,12 @@
   <dt>Lama uuid</dt>
   <dd><%= @participant.lama_uuid %></dd>
 </dl>
+
+<%= link_to 'Neue Gruppenänderung anlegen', new_participant_group_change_path(@participant), class: 'btn btn-sm btn-primary float-right' %>
+<h3>Gruppenänderungen</h3>
+<%= render partial:'group_changes/table', locals: { group_changes: @participant.group_changes } %>
+
+<h3>Mahlzeiten</h3>
 
 <table class="table table-sm">
   <thead>

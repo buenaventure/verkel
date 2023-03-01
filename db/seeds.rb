@@ -33,5 +33,5 @@ Article.create!(ingredient: pesto, supplier:, quantity: 200, unit: 'g', packing_
 Box.create!(datetime: Time.zone.now.middle_of_day - 3.hours + 1.month)
 Order.create!(supplier:, coverage: (Time.zone.now.beginning_of_day + 3.weeks..Time.zone.now.end_of_day + 1.month))
 
-GroupBoxIngredientUnitCache.refresh
-ArticlePackingPlanner.new.run
+GroupBoxIngredientUnitCache.do_calculate
+ArticlePackingPlanner.do_calculate

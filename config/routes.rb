@@ -9,7 +9,9 @@ Rails.application.routes.draw do
       end
     end
   end
-  resources :participants
+  resources :participants do
+    resources :group_changes, shallow: true, except: %i[index show]
+  end
   resources :diets
   resources :orders do
     member do

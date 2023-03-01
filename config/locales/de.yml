@@ -47,6 +47,9 @@ de:
       group:
         one: Kochgruppe
         other: Kochgruppen
+      group_change:
+        one: Kochgruppenänderung
+        other: Kochgruppenänderungen
       group_meal: Mahlzeit für die Kochgruppe
       group_meal_participation:
         one: manuelle Mahlzeit-Teilnahme
@@ -119,6 +122,10 @@ de:
         name: Name
         notes: Notizen
         packing_lane: Packstraße
+      group_change:
+        timeframe_begin: Von
+        timeframe_end: Bis
+        group: Kochgruppe
       group_meal:
         share: Anteil der Gesamtgruppe
       group_meal_participation:

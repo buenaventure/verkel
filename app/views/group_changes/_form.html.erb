@@ -1,0 +1,14 @@
+<%= simple_form_for([@participant, @group_change]) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.input :timeframe_begin, as: :datetime %>
+    <%= f.input :timeframe_end, as: :datetime %>
+    <%= f.association :group %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, class: 'btn btn-primary' %>
+  </div>
+<% end %>

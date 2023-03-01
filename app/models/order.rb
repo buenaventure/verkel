@@ -16,29 +16,8 @@ class Order < ApplicationRecord
   scope :delivered_or_stored, -> { delivered.or(stored) }
   default_scope { order(:coverage) }
 
-  def coverage_begin
-    coverage&.begin&.in_time_zone
-  end
-
-  def coverage_begin=(datetime_hash)
-    self.coverage = Range.new(
-      Time.zone.local(*datetime_hash.sort.map(&:last)),
-      coverage&.end,
-      false
-    )
-  end
-
-  def coverage_end
-    coverage&.end&.in_time_zone
-  end
-
-  def coverage_end=(datetime_hash)
-    self.coverage = Range.new(
-      coverage&.begin,
-      Time.zone.local(*datetime_hash.sort.map(&:last)),
-      false
-    )
-  end
+  include DateTimeRange
+  date_time_range :coverage
 
   def to_s
     "Bestellung bei #{supplier} für Zeitraum #{I18n.l coverage.begin.in_time_zone} bis #{I18n.l coverage.end.in_time_zone}"

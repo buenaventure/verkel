@@ -9,6 +9,20 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS btree_gist WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION btree_gist; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiST';
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -861,6 +875,39 @@ CREATE VIEW public.group_boxes AS
 
 
 --
+-- Name: group_changes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.group_changes (
+    id bigint NOT NULL,
+    participant_id bigint NOT NULL,
+    group_id bigint NOT NULL,
+    timeframe tsrange NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: group_changes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.group_changes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: group_changes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.group_changes_id_seq OWNED BY public.group_changes.id;
+
+
+--
 -- Name: group_meal_participations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1447,6 +1494,13 @@ ALTER TABLE ONLY public.group_box_articles ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
+-- Name: group_changes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.group_changes ALTER COLUMN id SET DEFAULT nextval('public.group_changes_id_seq'::regclass);
+
+
+--
 -- Name: group_meal_participations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1681,6 +1735,22 @@ ALTER TABLE ONLY public.extra_ingredients
 
 ALTER TABLE ONLY public.group_box_articles
     ADD CONSTRAINT group_box_articles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: group_changes group_changes_participant_id_timeframe_excl; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.group_changes
+    ADD CONSTRAINT group_changes_participant_id_timeframe_excl EXCLUDE USING gist (participant_id WITH =, timeframe WITH &&);
+
+
+--
+-- Name: group_changes group_changes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.group_changes
+    ADD CONSTRAINT group_changes_pkey PRIMARY KEY (id);
 
 
 --
@@ -2038,6 +2108,20 @@ CREATE UNIQUE INDEX index_group_box_articles_on_group_box_and_article ON public.
 --
 
 CREATE INDEX index_group_box_articles_on_group_id ON public.group_box_articles USING btree (group_id);
+
+
+--
+-- Name: index_group_changes_on_group_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_group_changes_on_group_id ON public.group_changes USING btree (group_id);
+
+
+--
+-- Name: index_group_changes_on_participant_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_group_changes_on_participant_id ON public.group_changes USING btree (participant_id);
 
 
 --
@@ -2558,6 +2642,14 @@ ALTER TABLE ONLY public.meal_selections
 
 
 --
+-- Name: group_changes fk_rails_84842f6b5b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.group_changes
+    ADD CONSTRAINT fk_rails_84842f6b5b FOREIGN KEY (participant_id) REFERENCES public.participants(id);
+
+
+--
 -- Name: packing_lane_article_stocks fk_rails_84ce9b21f5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2603,6 +2695,14 @@ ALTER TABLE ONLY public.ingredient_alternatives
 
 ALTER TABLE ONLY public.active_storage_variant_records
     ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
+
+
+--
+-- Name: group_changes fk_rails_a92dff67da; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.group_changes
+    ADD CONSTRAINT fk_rails_a92dff67da FOREIGN KEY (group_id) REFERENCES public.groups(id);
 
 
 --
@@ -2701,6 +2801,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20221211121557'),
+('20221212175242'),
 ('20230305153735'),
 ('20230305202100'),
 ('20230305220300'),
