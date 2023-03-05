@@ -12,7 +12,7 @@
     <% @article.order_articles.includes(:order).order('orders.coverage').each do |order_article| %>
       <tr>
         <td><%= link_to I18n.l(order_article.order.coverage_begin), order_article.order %></td>
-        <td><%= I18n.t("activerecord.enums.order.state.#{order_article.order.state}")  %></td>
+        <td><%= I18n.t("activerecord.enums.order.state.#{order_article.order.state}") %></td>
         <td class="text-right">
           <%= number_with_delimiter order_article.quantity_ordered %>
         </td>

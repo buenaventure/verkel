@@ -176,6 +176,11 @@ de:
           stocked: Lager
           picked: Vorkommissionierung
           packed: Packstraße
+      group_meal:
+        origin:
+          individual_participant: einzelne Teilnehmende
+          chosen: gewählt
+          mandatory: obligatorisch
       ingredient:
         box_type:
           default: Standard

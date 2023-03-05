@@ -5,7 +5,7 @@ class GroupsController < ApplicationController
   def index
     @groups = Group.order(name: :asc).includes(:packing_lane).all
     @servings = \
-      GroupMealParticipation
+      GroupMealParticipant
       .group(:group_id, :meal_id).count
       .group_by { |k, _v| k[0] }
       .transform_values { |vs| vs.map { |v| v[1] }.max }

@@ -24,6 +24,7 @@
       <th>Rezept</th>
       <th class="text-right">Portionen</th>
       <th>Kiste</th>
+      <th>Ursprung</th>
     </tr>
   </thead>
 
@@ -33,7 +34,7 @@
       <% meal = group_meal.meal %>
       <% if meal.datetime.to_date != day %>
         <% day = meal.datetime.to_date %>
-        <tr><th colspan="<%= 4 %>"><%= l day, format: :weekday %></th></tr>
+        <tr><th colspan="<%= 5 %>"><%= l day, format: :weekday %></th></tr>
       <% end %>
       <tr>
         <td><%= l meal.datetime, format: :time_only %></td>
@@ -46,6 +47,7 @@
             <span class="text-danger">Kiste unklar</span>
           <% end %>
         </td>
+        <td><%= I18n.t("activerecord.enums.group_meal.origin.#{group_meal.origin}") %></td>
       </tr>
     <% end %>
   </tbody>

@@ -24,6 +24,8 @@ p2 = Participant.create!(age: 14, group:)
 GroupMealParticipation.create!(group:, meal:, participant: p1)
 GroupMealParticipation.create!(group:, meal:, participant: p2)
 
+Group.create!(name: 'Test-Kochgruppe 2', internal_name: 'Hase', packing_lane:)
+
 supplier = Supplier.create!(name: 'Supermarkt')
 Article.create!(ingredient: spaghetti, supplier:, quantity: 500, unit: 'g', packing_type: :piece)
 Article.create!(ingredient: pesto, supplier:, quantity: 200, unit: 'g', packing_type: :piece)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_11_121557) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_05_202100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -419,7 +419,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_11_121557) do
       SELECT group_meal_participations.group_id,
       group_meal_participations.meal_id,
       group_meal_participations.participant_id
-     FROM group_meal_participations;
+     FROM group_meal_participations
+  UNION
+   SELECT group_meals.group_id,
+      group_meals.meal_id,
+      participants.id AS participant_id
+     FROM (group_meals
+       JOIN participants USING (group_id))
+    WHERE (group_meals.origin = ANY (ARRAY[1, 2]));
   SQL
   create_view "group_meal_participant_recipe_ingredient_subst_calculations", sql_definition: <<-SQL
       SELECT group_meal_participants.group_id,
@@ -577,8 +584,23 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_11_121557) do
        CROSS JOIN boxes);
   SQL
   create_view "group_meals", sql_definition: <<-SQL
-      SELECT DISTINCT group_meal_participants.group_id,
-      group_meal_participants.meal_id
-     FROM group_meal_participants;
+      WITH group_meal_origin AS (
+           SELECT DISTINCT group_meal_participations.group_id,
+              group_meal_participations.meal_id,
+              0 AS origin
+             FROM group_meal_participations
+          UNION ALL
+           SELECT groups.id AS group_id,
+              meals.id AS meal_id,
+              2 AS origin
+             FROM (meals
+               CROSS JOIN groups)
+            WHERE (meals.optional = false)
+          )
+   SELECT group_meal_origin.group_id,
+      group_meal_origin.meal_id,
+      max(group_meal_origin.origin) AS origin
+     FROM group_meal_origin
+    GROUP BY group_meal_origin.group_id, group_meal_origin.meal_id;
   SQL
 end
