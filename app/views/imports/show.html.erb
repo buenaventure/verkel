@@ -1,9 +1,0 @@
-<h1>Import</h1>
-
-<%= turbo_frame_tag 'import' do %>
-<%= button_to "Daten aus Lama importieren", lama_import_path, method: :post, class: 'btn btn-danger btn-lg' %>
-
-<pre>
-<%= @output || '' %>
-</pre>
-<% end %>

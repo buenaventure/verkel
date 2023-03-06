@@ -78,7 +78,7 @@ class ArticlesController < ApplicationController
   def article_params
     params.require(:article).permit(
       :ingredient_id, :supplier_id, :price, :quantity, :unit, :notes, :name,
-      :stock, :order_limit, :priority, :needs_cooling, :packing_type
+      :stock, :order_limit, :priority, :needs_cooling, :packing_type, :nr
     )
   end
 

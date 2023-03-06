@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_05_202100) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_05_220300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -80,7 +80,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_05_202100) do
     t.decimal "order_limit", precision: 8
     t.integer "packing_type", default: 0, null: false
     t.boolean "needs_cooling", default: false, null: false
+    t.integer "nr"
     t.index ["ingredient_id"], name: "index_articles_on_ingredient_id"
+    t.index ["nr"], name: "index_articles_on_nr", unique: true
     t.index ["supplier_id"], name: "index_articles_on_supplier_id"
   end
 

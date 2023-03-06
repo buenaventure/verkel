@@ -2,6 +2,8 @@ QuantityUnit = Struct.new(:quantity, :unit) do
   include ActionView::Helpers::NumberHelper
 
   def humanize
+    return nil if quantity.nil?
+
     if quantity.abs >= 1000
       case unit
       when 'g' then QuantityUnit.new(quantity / 1000, 'kg').display

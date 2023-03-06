@@ -1,0 +1,47 @@
+<p>
+  <%= @report.message %>
+</p>
+
+<dl>
+  <dt>Status</dt>
+  <dd><%= @report.status %></dd>
+  <dt>fehlende Spalten</dt>
+  <dd><%= @report.missing_columns %></dd>
+  <dt>unbekannte Spalten</dt>
+  <dd><%= @report.extra_columns %></dd>
+</dl>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Zeilennummer</th>
+      <th>Zeile</th>
+      <th>Status</th>
+      <th>Fehler</th>
+      <th></th>
+    </tr>
+  </thead>
+  <% @report.all_rows.sort_by(&:line_number).each do |row| %>
+  <tr class="<%= 'table-danger' if import_row_status(row).starts_with? 'failed' %>">
+    <td>
+      <%= row.line_number %>
+    </td>
+    <td>
+      <%= row.row_array %>
+    </td>
+    <td>
+      <%= import_row_status row %>
+    </td>
+    <td>
+      <ul>
+        <% row.model.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+        <% end %>
+      </ul>
+    </td>
+    <td>
+      <%= link_to row.model %>
+    </td>
+  </tr>
+  <% end %>
+</table>

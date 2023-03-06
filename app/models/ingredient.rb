@@ -13,10 +13,14 @@ class Ingredient < ApplicationRecord
   has_many :boxes, -> { distinct }, through: :group_box_ingredient_unit_caches
   has_many :missing_ingredients
 
-  scope :in_meal_or_extra, -> {
+  scope :in_meal_or_extra, lambda {
     left_outer_joins(:extra_ingredients, recipes: :meals) \
       .where('("extra_ingredients"."id" IS NOT NULL OR "meals"."id" IS NOT NULL)').distinct
   }
+
+  validates :name, presence: true
+  validates :box_type, presence: true
+  validates :uses_hunger_factor, inclusion: { in: [true, false] }
 
   def in_meals
     Meal \
@@ -77,7 +81,7 @@ class Ingredient < ApplicationRecord
       .merge(Article.unscope(:order).where(ingredient_id: id)) \
       .group_by(&:box_id).map do |box_id, order_requirements|
         [box_id, OrderRequirement.new(
-          box_id: box_id,
+          box_id:,
           quantity: QuantityUnit.sum(order_requirements.map(&:quantity_unit)),
           stock: QuantityUnit.sum(order_requirements.map(&:stock_quantity_unit)),
           ordered: QuantityUnit.sum(order_requirements.map(&:ordered_quantity_unit))

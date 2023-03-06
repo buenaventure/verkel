@@ -8,6 +8,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 gem 'cancancan'
 gem 'combine_pdf'
 gem 'cssbundling-rails'
+gem 'csv-importer'
 gem 'devise'
 gem 'devise-i18n'
 gem 'hotwire-rails', '~> 0.1'

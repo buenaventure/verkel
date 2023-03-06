@@ -72,8 +72,10 @@ Rails.application.routes.draw do
     post 'demand'
     post 'packing'
   end
-  resource :import, only: :show do
-    post 'lama'
+  namespace :import do
+    root 'imports#show'
+    resource :articles, only: :create
+    resource :ingredients, only: :create
   end
   resources :users, except: :show
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html

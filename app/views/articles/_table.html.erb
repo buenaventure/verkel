@@ -4,6 +4,7 @@
       <% unless defined?(ingredient) %><th>Warengruppe</th><th>Zutat</th><% end %>
       <% unless defined?(supplier) %><th>Lieferant</th><% end %>
       <% if defined?(ingredient) %><th>Prio</th><% end %>
+      <th>Nr.</th>
       <th>Name</th>
       <th class="text-right">Gebindegröße</th>
       <th class="text-right">Lagerbestand</th>
@@ -25,6 +26,7 @@
         <% unless defined?(ingredient) %><td><%= article.ingredient.commodity_group %></td><td><%= link_to article.ingredient, article.ingredient %></td><% end %>
         <% unless defined?(supplier) %><td><%= link_to article.supplier, article.supplier %></td><% end %>
         <% if defined?(ingredient) %><td><%= article.priority %></td><% end %>
+        <td><%= article.nr %></td>
         <td><%= article.name %></td>
         <td class="text-right"><%= article.quantity_unit.humanize %></td>
         <td class="text-right"><%= number_with_delimiter article.stock %></td>

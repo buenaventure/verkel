@@ -5,6 +5,7 @@
   <div class="form-inputs">
     <%= f.association :ingredient, collection: Ingredient.order(:name) %>
     <%= f.association :supplier, collection: Supplier.order(:name) %>
+    <%= f.input :nr %>
     <%= f.input :name %>
     <%= f.input :price %>
     <%= f.input :quantity %>

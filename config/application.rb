@@ -31,6 +31,5 @@ module Speiseplaner
       input: 'GFM',
       hard_wrap: false
     }
-    config.lama_api = {}
   end
 end

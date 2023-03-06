@@ -86,6 +86,7 @@ de:
         ingredient: Zutat
         needs_cooling: Kühlbedarf
         notes: Notizen
+        nr: Artikelnummer
         order_limit: mögliche Bestellmenge
         packing_type: Packtyp
         price: Preis (Brutto)

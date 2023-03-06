@@ -15,6 +15,9 @@ class Article < ApplicationRecord
 
   validates :stock, numericality: { greater_than_or_equal_to: 0 }
   validates :quantity, numericality: { greater_than: 0 }
+  validates :needs_cooling, inclusion: { in: [true, false] }
+  validates :packing_type, presence: true
+  validates :nr, uniqueness: true, if: -> { nr.present? }
 
   validates :quantity, numericality: { equal_to: 1, message: 'muss bei Schüttgut auf 1 gesetzt sein' }, if: :bulk?
   validates :unit, inclusion: { in: %w[g], message: 'erlaubt nur g bei Schüttgut' }, if: :bulk?
@@ -24,8 +27,9 @@ class Article < ApplicationRecord
   scope :lexical, -> { joins(:ingredient).reorder('ingredients.commodity_group', 'ingredients.name', 'priority') }
 
   def to_s
+    nr_str = nr.nil? ? '' : "##{nr} "
     name_str = name.blank? ? '' : "\"#{name}\" "
-    "#{name_str}#{quantity_unit.humanize} #{ingredient}"
+    "#{nr_str}#{name_str}#{quantity_unit.humanize} #{ingredient}"
   end
 
   def full_name
