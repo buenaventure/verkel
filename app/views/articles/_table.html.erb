@@ -32,7 +32,7 @@
         <td class="text-right"><%= number_with_delimiter article.stock %></td>
         <td class="text-right"><%= article.surplus %></td>
         <% if defined?(show_price) %>
-        <td class="text-right"><%= article.price %> €</td>
+        <td class="text-right"><%= number_with_delimiter article.price %> €</td>
         <td class="text-right"><%= number_with_precision(article.base_price, precision: 2) %> €/(kg/l/Stk)</td>
         <% end %>
         <td class="text-right"><%= number_with_delimiter article.order_limit %></td>

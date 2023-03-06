@@ -9,7 +9,7 @@ class ArticlesImporter
   column :quantity, as: /gebindegröße/i, required: true
   column :unit, as: /einheit/i, required: true
   column :name, as: /name/i
-  column :price, as: /preis/i
+  column :price, as: /preis/i, to: ->(value) { value.gsub(',', '.') }
   column :priority, as: /priorität/i
   column :packing_type, as: /packart/i, required: true, to: ->(value) { PACKING_TYPE[value&.strip] }
   column :needs_cooling, as: /kühlbedarf/i, required: true, to: Bool

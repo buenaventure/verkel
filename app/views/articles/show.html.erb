@@ -29,7 +29,7 @@
     <small><%= @article.quantity_unit_surplus.humanize %></small>
   </dd>
   <dt>Preis</dt>
-  <dd><%= @article.price %> €</dd>
+  <dd><%= number_with_delimiter @article.price %> €</dd>
   <dt>Grundpreis</dt>
   <dd><%= number_with_precision(@article.base_price, precision: 2) %> €/(kg/l/Stk)</dd>
   <dt>Gebindegröße</dt>

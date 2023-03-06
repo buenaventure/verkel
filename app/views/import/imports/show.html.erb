@@ -14,7 +14,7 @@ Obst,Äpfel,[j,n],[Grundkiste,Frischekiste,Standard]
   <%= f.file_field :file, accept: 'text/csv' %>
   <pre>
 Nr,Zutat,Artikelname,Lieferant,Mengeneinheit,Gebindegröße,Preis,Priorität,Packart,Kühlbedarf,maximale Bestellmenge,Notizfeld
-1,Brötchen,Kaisersemmel,Bäcker,Stück,1,0.8,0,[schütt,stück],[j,n],42,lecker
+1,Brötchen,Kaisersemmel,Bäcker,Stück,1,"0,8",0,[schütt,stück],[j,n],42,lecker
   </pre>
   <%= f.submit 'Artikel importieren', class: 'btn btn-danger' %>
 <% end %>
