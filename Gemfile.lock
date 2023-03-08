@@ -241,6 +241,7 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
+    rchardet (1.8.0)
     regexp_parser (2.6.2)
     responders (3.0.1)
       actionpack (>= 5.0)
@@ -393,6 +394,7 @@ DEPENDENCIES
   rack-mini-profiler (~> 2.0)
   rails (~> 7.0.0)
   rails-i18n (~> 7.0.0)
+  rchardet
   roo (~> 2.8.0)
   rspec-rails (~> 5.0.0)
   rubocop

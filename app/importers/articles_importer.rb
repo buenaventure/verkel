@@ -11,7 +11,7 @@ class ArticlesImporter
   column :name, as: /name/i
   column :price, as: /preis/i, to: ->(value) { value.gsub(',', '.') }
   column :priority, as: /priorität/i
-  column :packing_type, as: /packart/i, required: true, to: ->(value) { PACKING_TYPE[value&.strip] }
+  column :packing_type, as: /packart/i, required: true, to: ->(value) { PACKING_TYPE[value&.strip&.downcase] }
   column :needs_cooling, as: /kühlbedarf/i, required: true, to: Bool
   column :order_limit, as: /maximale bestellmenge/i
   column :notes, as: /notiz/i
