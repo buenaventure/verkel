@@ -6,8 +6,9 @@ class Participant < ApplicationRecord
   has_many :group_meal_participants, -> { joins(:meal).order('meals.datetime': :asc) }
 
   validates :age, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
+  validates :external_id, uniqueness: true, if: -> { external_id.present? }
 
   def to_s
-    "##{id}"
+    "##{id}" + (external_id.present? ? " (#{external_id})" : '')
   end
 end

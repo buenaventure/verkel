@@ -154,6 +154,7 @@ de:
         age: Alter
         comment: Kommentar zur Ernährungsweise
         diets: zu berücksichtigende Ernährungsweisen
+        external_id: Kennung
         group: Haupt-Kochgruppe
       supplier:
         address: Adresse

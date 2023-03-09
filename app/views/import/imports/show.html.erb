@@ -2,6 +2,10 @@
 
 <%= form_for :ingredients, url: [:import, :ingredients], data: { turbo: false } do |f| %>
   <%= f.file_field :file, accept: 'text/csv' %>
+  <p>
+    "Zutat" ist der Name und wird zur Identifikation der Zutat genutzt.
+    Bestehende Zutaten werden nicht gelöscht, aber überschrieben, wenn der Name gleich ist.
+  </p>
   <pre>
 Produktgruppe,Zutat,HUF,Kistentyp
 Obst,Äpfel,[j,n],[Grundkiste,Frischekiste,Standard]
@@ -12,9 +16,30 @@ Obst,Äpfel,[j,n],[Grundkiste,Frischekiste,Standard]
 <hr/>
 <%= form_for :articles, url: [:import, :articles], data: { turbo: false } do |f| %>
   <%= f.file_field :file, accept: 'text/csv' %>
+  <p>
+    "Nr" dient zur Identifikation des Artikels.
+    Bestehende Artikel werden nicht gelöscht, aber überschrieben, wenn die Nummer gleich ist.
+    "Zutat" muss dem Namen einer bestehenden Zutat entsprechen.
+    "Lieferant" ist dessen Name und wird erstellt, falls er noch nicht existiert.
+  </p>
   <pre>
 Nr,Zutat,Artikelname,Lieferant,Mengeneinheit,Gebindegröße,Preis,Priorität,Packart,Kühlbedarf,maximale Bestellmenge,Notizfeld
 1,Brötchen,Kaisersemmel,Bäcker,Stück,1,"0,8",0,[schütt,stück],[j,n],42,lecker
   </pre>
   <%= f.submit 'Artikel importieren', class: 'btn btn-danger' %>
+<% end %>
+
+<hr/>
+<%= form_for :participants, url: [:import, :participants], data: { turbo: false } do |f| %>
+  <%= f.file_field :file, accept: 'text/csv' %>
+  <p>
+    "Kennung" dient zur Identifikation der Person und kann ein beliebiger Text oder eine Ziffer sein.
+    Bestehende Daten werden nicht gelöscht, aber überschrieben, wenn die Kennung gleich ist.
+    "Kochgruppe" ist deren Name und wird erstellt, falls sie noch nicht existiert.
+  </p>
+  <pre>
+Kennung,Kochgruppe,Alter,Ernährungsweisen,Kommentar
+42,Test-Kochgruppe,23,"vegetarisch,glutenfrei","Wenig Essen, ich bin zu Fett!"
+  </pre>
+  <%= f.submit 'Teilnehmende importieren', class: 'btn btn-danger' %>
 <% end %>

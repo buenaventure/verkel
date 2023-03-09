@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_05_220300) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_08_232353) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -310,6 +310,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_05_220300) do
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.uuid "lama_uuid"
     t.string "comment"
+    t.string "external_id"
+    t.index ["external_id"], name: "index_participants_on_external_id", unique: true
     t.index ["group_id"], name: "index_participants_on_group_id"
     t.index ["lama_uuid"], name: "index_participants_on_lama_uuid", unique: true
   end

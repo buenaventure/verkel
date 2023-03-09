@@ -40,7 +40,9 @@ class ParticipantsController < ApplicationController
   def destroy
     respond_to do |format|
       if @participant.destroy
-        format.html { redirect_to participants_url, notice: 'Teilnehmer*in wurde erfolgreich gelöscht.', status: :see_other }
+        format.html do
+          redirect_to participants_url, notice: 'Teilnehmer*in wurde erfolgreich gelöscht.', status: :see_other
+        end
       else
         format.html do
           redirect_to @participant, status: :see_other, alert: @participant.errors.full_messages
@@ -56,6 +58,6 @@ class ParticipantsController < ApplicationController
   end
 
   def participant_params
-    params.require(:participant).permit(:group_id, :age, :comment, diet_ids: [])
+    params.require(:participant).permit(:group_id, :age, :comment, :external_id, diet_ids: [])
   end
 end
