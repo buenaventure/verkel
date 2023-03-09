@@ -9,7 +9,7 @@ class Group < ApplicationRecord
   has_rich_text :notes
 
   validates :name, uniqueness: true, presence: true
-  validates :internal_name, uniqueness: true, unless: :blank?
+  validates :internal_name, uniqueness: true, unless: ->(group) { group.internal_name.blank? }
 
   before_save do
     self.internal_name = nil if internal_name.blank?
