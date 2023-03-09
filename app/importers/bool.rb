@@ -1,4 +1,4 @@
-module Bool
+class Bool
   BOOL = {
     'j' => true,
     'ja' => true,
@@ -8,7 +8,7 @@ module Bool
     '0' => false
   }.freeze
 
-  def call(value)
+  def self.call(value)
     BOOL[value&.strip]
   end
 end
