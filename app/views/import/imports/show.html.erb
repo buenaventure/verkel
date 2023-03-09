@@ -43,3 +43,18 @@ Kennung,Kochgruppe,Alter,Ernährungsweisen,Kommentar
   </pre>
   <%= f.submit 'Teilnehmende importieren', class: 'btn btn-danger' %>
 <% end %>
+
+<hr/>
+<%= form_for :groups, url: [:import, :groups], data: { turbo: false } do |f| %>
+  <%= f.file_field :file, accept: 'text/csv' %>
+  <p>
+    Die Kochgruppe wird anhand des Namens identifiziert, nicht des internen Namens.
+    Bestehende Daten werden nicht gelöscht, aber überschrieben, wenn der Name gleich ist.
+    "Packstraße" referenziert die Packstraße über deren Namen und erstellt sie, falls sie noch nicht existiert.
+  </p>
+  <pre>
+Name,interner Name,Packstraße
+Test-Kochgruppe,Hase,Tiere des Waldes
+  </pre>
+  <%= f.submit 'Kochgruppen importieren', class: 'btn btn-danger' %>
+<% end %>

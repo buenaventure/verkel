@@ -77,6 +77,7 @@ Rails.application.routes.draw do
     resource :articles, only: :create
     resource :ingredients, only: :create
     resource :participants, only: :create
+    resource :groups, only: :create
   end
   resources :users, except: :show
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
