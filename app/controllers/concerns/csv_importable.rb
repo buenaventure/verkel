@@ -3,6 +3,7 @@ module CsvImportable
 
   included do
     def create
+      @breadcrumbs = []
       importer = importer_class.new(file: csv_file)
       importer.run!
       @report = importer.report

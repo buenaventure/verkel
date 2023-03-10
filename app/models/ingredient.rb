@@ -22,6 +22,8 @@ class Ingredient < ApplicationRecord
   validates :box_type, presence: true
   validates :uses_hunger_factor, inclusion: { in: [true, false] }
 
+  after_save :persist_diet_names
+
   def in_meals
     Meal \
       .joins(recipe: :recipe_ingredients) \
@@ -91,5 +93,19 @@ class Ingredient < ApplicationRecord
 
   def order_requirement_of(box)
     order_requirements.fetch(box.id, NoOrderRequirement.new(value: QuantityUnits.new))
+  end
+
+  attr_writer :diet_names
+
+  def diet_names
+    @diet_names ||= diets.pluck(:name)
+  end
+
+  private
+
+  def persist_diet_names
+    return if @diet_names.nil?
+
+    self.diet_ids = Diet.where(name: diet_names).pluck(:id)
   end
 end

@@ -58,3 +58,15 @@ Test-Kochgruppe,Hase,Tiere des Waldes
   </pre>
   <%= f.submit 'Kochgruppen importieren', class: 'btn btn-danger' %>
 <% end %>
+
+<hr/>
+<%= form_for :diets_ingredients, url: [:import, :diets_ingredients], data: { turbo: false } do |f| %>
+  <%= f.file_field :file, accept: 'text/csv' %>
+  <p>
+  </p>
+  <pre>
+Zutat,Ernährungsweise1,Ernährungsweise2,...
+Milch,,x,...
+  </pre>
+  <%= f.submit 'Allergene importieren', class: 'btn btn-danger' %>
+<% end %>
