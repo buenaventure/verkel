@@ -1,0 +1,8 @@
+<% models_sym ||= model_name.plural.to_sym %>
+<%= form_for models_sym, url: [:import, models_sym], data: { turbo: false } do |f| %>
+  <%= f.file_field :file, accept: 'text/csv' %>
+  <%= f.label :encoding, 'Encoding' %>
+  <%= f.select :encoding, ['UTF-8', 'ISO-8859-1'] %>
+  <%= yield %>
+  <%= f.submit "#{human_name_plural ||= model_name.human(count: 2)} importieren", class: 'btn btn-danger' %>
+<% end %>

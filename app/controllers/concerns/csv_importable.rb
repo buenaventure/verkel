@@ -18,10 +18,12 @@ module CsvImportable
   end
 
   def csv_file
-    f = params.require(controller_name.to_sym)[:file].tempfile
-    char_det = CharDet.detect(f.read)
-    f.rewind
-    f.set_encoding(char_det['encoding'])
-    f
+    file_params[:file].tempfile.tap do |f|
+      f.set_encoding(file_params.fetch(:encoding, 'UTF-8'))
+    end
+  end
+
+  def file_params
+    params.require(controller_name.to_sym)
   end
 end

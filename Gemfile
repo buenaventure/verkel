@@ -26,7 +26,6 @@ gem 'prawn-table'
 gem 'puma', '~> 5.0'
 gem 'rails', '~> 7.0.0'
 gem 'rails-i18n', '~> 7.0.0'
-gem 'rchardet'
 gem 'roo', '~> 2.8.0', require: false
 gem 'safe_yaml'
 gem 'scenic'
