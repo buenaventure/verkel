@@ -419,6 +419,26 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_232353) do
      FROM (meals
        JOIN recipes ON ((recipes.id = meals.recipe_id)));
   SQL
+  create_view "group_meals", sql_definition: <<-SQL
+      WITH group_meal_origin AS (
+           SELECT DISTINCT group_meal_participations.group_id,
+              group_meal_participations.meal_id,
+              0 AS origin
+             FROM group_meal_participations
+          UNION ALL
+           SELECT groups.id AS group_id,
+              meals.id AS meal_id,
+              2 AS origin
+             FROM (meals
+               CROSS JOIN groups)
+            WHERE (meals.optional = false)
+          )
+   SELECT group_meal_origin.group_id,
+      group_meal_origin.meal_id,
+      max(group_meal_origin.origin) AS origin
+     FROM group_meal_origin
+    GROUP BY group_meal_origin.group_id, group_meal_origin.meal_id;
+  SQL
   create_view "group_meal_participants", sql_definition: <<-SQL
       SELECT group_meal_participations.group_id,
       group_meal_participations.meal_id,
@@ -586,25 +606,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_232353) do
       boxes.id AS box_id
      FROM (groups
        CROSS JOIN boxes);
-  SQL
-  create_view "group_meals", sql_definition: <<-SQL
-      WITH group_meal_origin AS (
-           SELECT DISTINCT group_meal_participations.group_id,
-              group_meal_participations.meal_id,
-              0 AS origin
-             FROM group_meal_participations
-          UNION ALL
-           SELECT groups.id AS group_id,
-              meals.id AS meal_id,
-              2 AS origin
-             FROM (meals
-               CROSS JOIN groups)
-            WHERE (meals.optional = false)
-          )
-   SELECT group_meal_origin.group_id,
-      group_meal_origin.meal_id,
-      max(group_meal_origin.origin) AS origin
-     FROM group_meal_origin
-    GROUP BY group_meal_origin.group_id, group_meal_origin.meal_id;
   SQL
 end
