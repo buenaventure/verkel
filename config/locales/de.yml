@@ -63,6 +63,9 @@ de:
       meal:
         one: Mahlzeit
         other: Mahlzeiten
+      meal_selection:
+        one: Mahlzeit-Auswahl
+        other: Mahlzeiten-Auswahlen
       order:
         one: Bestellung
         other: Bestellungen
@@ -135,6 +138,8 @@ de:
         estimated_share: geschätzter Anteil
         optional: Wahlessen
         bundle: Zutaten in einer Kiste bündeln
+      meal_selection:
+        meal: Mahlzeit
       order:
         supplier: Lieferant
         coverage: Abdeckungszeitraum

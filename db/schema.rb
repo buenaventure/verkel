@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_08_232353) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_25_103344) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -226,6 +226,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_232353) do
     t.index ["name"], name: "index_ingredients_on_name", unique: true
   end
 
+  create_table "meal_selections", primary_key: ["group_id", "meal_id"], force: :cascade do |t|
+    t.bigint "group_id", null: false
+    t.bigint "meal_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id"], name: "index_meal_selections_on_group_id"
+    t.index ["meal_id"], name: "index_meal_selections_on_meal_id"
+  end
+
   create_table "meals", force: :cascade do |t|
     t.datetime "datetime"
     t.bigint "recipe_id", null: false
@@ -394,6 +403,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_232353) do
   add_foreign_key "ingredient_alternatives", "ingredients"
   add_foreign_key "ingredient_alternatives", "ingredients", column: "alternative_id"
   add_foreign_key "ingredient_weights", "ingredients"
+  add_foreign_key "meal_selections", "groups"
+  add_foreign_key "meal_selections", "meals"
   add_foreign_key "meals", "recipes"
   add_foreign_key "missing_ingredients", "boxes", on_delete: :cascade
   add_foreign_key "missing_ingredients", "groups", on_delete: :cascade
@@ -593,6 +604,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_232353) do
               group_meal_participations.meal_id,
               0 AS origin
              FROM group_meal_participations
+          UNION ALL
+           SELECT meal_selections.group_id,
+              meal_selections.meal_id,
+              1 AS origin
+             FROM meal_selections
           UNION ALL
            SELECT groups.id AS group_id,
               meals.id AS meal_id,

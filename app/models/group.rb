@@ -6,6 +6,7 @@ class Group < ApplicationRecord
   has_many :group_meal_participations, dependent: :destroy
   has_many :group_meal_participants
   has_many :participants, dependent: :restrict_with_error
+  has_many :meal_selections, dependent: :destroy
   has_rich_text :notes
 
   validates :name, uniqueness: true, presence: true

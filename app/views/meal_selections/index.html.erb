@@ -1,0 +1,28 @@
+<h1>Mahlzeiten-Auswahl in Gruppe <%= @group.display_name %></h1>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>optionale Mahlzeit</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @meal_selections.each do |meal_selection| %>
+      <tr>
+        <td><%= link_to meal_selection.meal %></td>
+        <td>
+        <% if meal_selection.new_record? %>
+           <%= form_for [@group, meal_selection] do |f| %>
+              <%= f.hidden_field :meal_id %>
+              <%= f.submit 'Wählen', class: 'btn btn-success' %>
+           <% end %>
+        <% else %>
+          <%= link_to 'Abwählen', meal_selection, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
+        <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

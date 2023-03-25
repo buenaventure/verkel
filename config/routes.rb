@@ -39,6 +39,7 @@ Rails.application.routes.draw do
     resources :group_meal_participations, shallow: true, except: :show, path: 'meal_participations'
     get 'meals_overview', on: :collection
     get 'diets_overview', on: :collection
+    resources :meal_selections, only: %i[index create destroy], shallow: true
   end
   devise_for :users
   resources :suppliers

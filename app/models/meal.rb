@@ -7,8 +7,12 @@ class Meal < ApplicationRecord
   has_one :box, through: :box_meal
   has_many :group_meal_participations, dependent: :destroy
   has_many :group_meal_participants
+  has_many :meal_selections
 
   scope :optional, -> { where(optional: true) }
+  scope :unselected_by, ->(group) { where.not(id: group.meal_selections.pluck(:meal_id)) }
+
+  after_save :delete_non_optional_meal_selections
 
   def serving_estimation
     @serving_estimation ||= Rails.application.config.estimated_participants * estimated_share
@@ -21,8 +25,8 @@ class Meal < ApplicationRecord
       needed_servings = self.needed_servings(recipe_ingredient.positive_diet_ids)
       factor = needed_servings / recipe.servings
       {
-        needed_servings: needed_servings,
-        factor: factor,
+        needed_servings:,
+        factor:,
         quantity_unit: QuantityUnit.new(recipe_ingredient.quantity * factor, recipe_ingredient.unit),
         ingredient: recipe_ingredient.ingredient
       }
@@ -43,5 +47,11 @@ class Meal < ApplicationRecord
 
   def servings
     group_meal_participants.count
+  end
+
+  def delete_non_optional_meal_selections
+    return if optional?
+
+    meal_selections.delete_all
   end
 end

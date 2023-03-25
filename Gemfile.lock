@@ -97,6 +97,8 @@ GEM
     combine_pdf (1.0.22)
       matrix
       ruby-rc4 (>= 0.1.5)
+    composite_primary_keys (14.0.6)
+      activerecord (~> 7.0.2)
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     cssbundling-rails (1.1.2)
@@ -369,6 +371,7 @@ DEPENDENCIES
   cancancan
   capybara (>= 3.26)
   combine_pdf
+  composite_primary_keys (~> 14.0.6)
   cssbundling-rails
   csv-importer
   devise

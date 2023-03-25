@@ -7,6 +7,7 @@ ruby '3.1.3'
 gem 'bootsnap', '>= 1.4.4', require: false
 gem 'cancancan'
 gem 'combine_pdf'
+gem 'composite_primary_keys', '~> 14.0.6'
 gem 'cssbundling-rails'
 gem 'csv-importer'
 gem 'devise'
