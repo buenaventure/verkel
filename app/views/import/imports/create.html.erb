@@ -40,7 +40,10 @@
       </ul>
     </td>
     <td>
+      <% begin %>
       <%= link_to row.model %>
+      <% rescue NoMethodError %>
+      <% end %>
     </td>
   </tr>
   <% end %>

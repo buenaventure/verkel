@@ -14,7 +14,9 @@ class ExtraIngredientsController < ApplicationController
 
     respond_to do |format|
       if @extra_ingredient.save
-        format.html { redirect_to [@group_box.box, @group_box.group], notice: 'Extra-Zutat wurde erfolgreich erstellt.' }
+        format.html do
+          redirect_to [@group_box.box, @group_box.group], notice: 'Extra-Zutat wurde erfolgreich erstellt.'
+        end
       else
         format.html { render :new, status: :unprocessable_entity }
       end
@@ -24,7 +26,10 @@ class ExtraIngredientsController < ApplicationController
   def update
     respond_to do |format|
       if @extra_ingredient.update(extra_ingredient_params)
-        format.html { redirect_to [@extra_ingredient.box, @extra_ingredient.group], notice: 'Extra-Zutat wurde erfolgreich aktualisiert.' }
+        format.html do
+          redirect_to [@extra_ingredient.box, @extra_ingredient.group],
+                      notice: 'Extra-Zutat wurde erfolgreich aktualisiert.'
+        end
       else
         format.html { render :edit, status: :unprocessable_entity }
       end
@@ -34,10 +39,14 @@ class ExtraIngredientsController < ApplicationController
   def destroy
     respond_to do |format|
       if @extra_ingredient.destroy
-        format.html { redirect_to [@extra_ingredient.box, @extra_ingredient.group], notice: 'Extra-Zutat wurde erfolgreich gelöscht.', status: :see_other }
+        format.html do
+          redirect_to [@extra_ingredient.box, @extra_ingredient.group], notice: 'Extra-Zutat wurde erfolgreich gelöscht.',
+                                                                        status: :see_other
+        end
       else
         format.html do
-          redirect_to [@extra_ingredient.box, @extra_ingredient.group], status: :see_other, alert: @extra_ingredient.errors.full_messages
+          redirect_to [@extra_ingredient.box, @extra_ingredient.group], status: :see_other,
+                                                                        alert: @extra_ingredient.errors.full_messages
         end
       end
     end

@@ -6,7 +6,7 @@ class ExtraIngredient < ApplicationRecord
   belongs_to :ingredient
 
   def group_box
-    GroupBox.find_by(group: group, box: box)
+    GroupBox.find_by(group:, box:)
   end
 
   def self.breadcrumb_index_on_parent

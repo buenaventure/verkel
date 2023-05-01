@@ -3,44 +3,68 @@
   <%= link_to l(@group_box.datetime), @group_box.box %>
 </h1>
 
-<h2>Bedarf</h2>
-<table class="table table-sm">
-  <tr>
-    <th>Kategorie</th>
-    <th>Zutat</th>
-    <th class="text-right">Bedarf</th>
-    <th></th>
-  </tr>
-  <% @group_box.ingredients.each do |ingredient| %>
-    <tr>
-      <td><%= ingredient.commodity_group %></td>
-      <td><%= link_to ingredient.name, ingredient %></td>
-      <td class="text-right">
-      <% @group_box.unit_sums_by_ingredient.fetch(ingredient.id, []).each do |unit_sum| %>
-        <%= unit_sum.humanize %>
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#ingredients" role="tab">Bedarf</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#extra_ingredients" role="tab">Extra-Zutaten</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#articles" role="tab">Packliste</a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="ingredients" role="tabpanel">
+    <table class="table table-sm">
+      <tr>
+        <th>Kategorie</th>
+        <th>Zutat</th>
+        <th class="text-right">Bedarf</th>
+        <th></th>
+      </tr>
+      <% @group_box.ingredients.each do |ingredient| %>
+        <tr>
+          <td><%= ingredient.commodity_group %></td>
+          <td><%= link_to ingredient.name, ingredient %></td>
+          <td class="text-right">
+          <% @group_box.unit_sums_by_ingredient.fetch(ingredient.id, []).each do |unit_sum| %>
+            <%= unit_sum.humanize %>
+          <% end %>
+          </td>
+          <td><%= link_to 'Berechnungsdetails', box_group_ingredient_path(@group_box.box, @group_box.group, ingredient), class: 'btn btn-sm btn-default' %></td>
+        </tr>
       <% end %>
-      </td>
-      <td><%= link_to 'Berechnungsdetails', box_group_ingredient_path(@group_box.box, @group_box.group, ingredient), class: 'btn btn-sm btn-default' %></td>
-    </tr>
-  <% end %>
-</table>
+    </table>
+  </div>
+  <div class="tab-pane fade" id="extra_ingredients" role="tabpanel">
+    <%= render 'extra_ingredients/table' %>
 
-<h2>Extra-Zutaten</h2>
-<%= render 'extra_ingredients/table' %>
+    <%= link_to 'Extra Zutat hinzufügen', new_box_group_extra_ingredient_path(@group_box.box, @group_box.group), class: 'btn btn-primary' %>
 
-<%= link_to 'Extra Zutat hinzufügen', new_box_group_extra_ingredient_path(@group_box.box, @group_box.group), class: 'btn btn-primary' %>
-
-<h2>Packliste</h2>
-<table class="table table-sm">
-  <tr>
-    <th>Artikel</th>
-    <th class="text-right">Packmenge</th>
-    <th></th>
-  </tr>
-  <% @group_box.group_box_articles.each do |group_box_article| %>
-    <tr>
-      <td><%= link_to group_box_article.article.packing_name, group_box_article.article %></td>
-      <td class="text-right"><%= group_box_article.humanize_quantity %></td>
-    </tr>
-  <% end %>
-</table>
+    <hr/>
+    <%= render 'import/imports/upload_form',
+               model_name: ExtraIngredient.model_name,
+               extra_params: { box_id: @group_box.box_id, group_id: @group_box.group_id } do %>
+      <pre>
+Zutat,Einheit,Menge,Verwendungszweck
+Kaffee,g,500,"Notration"
+      </pre>
+    <% end %>
+  </div>
+  <div class="tab-pane fade" id="articles" role="tabpanel">
+    <table class="table table-sm">
+      <tr>
+        <th>Artikel</th>
+        <th class="text-right">Packmenge</th>
+        <th></th>
+      </tr>
+      <% @group_box.group_box_articles.each do |group_box_article| %>
+        <tr>
+          <td><%= link_to group_box_article.article.packing_name, group_box_article.article %></td>
+          <td class="text-right"><%= group_box_article.humanize_quantity %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>

@@ -3,11 +3,19 @@ module CsvImportable
 
   included do
     def create
-      @breadcrumbs = []
-      importer = importer_class.new(file: csv_file)
-      importer.run!
-      @report = importer.report
-      render 'import/imports/create'
+      if file_params[:file]
+        @breadcrumbs = []
+        model_default_params = import_params
+        importer = importer_class.new(file: csv_file) do
+          model_defaults model_default_params
+        end
+        importer.run!
+        @report = importer.report
+        render 'import/imports/create'
+      else
+        redirect_back fallback_location: root_path, status: :see_other,
+                      alert: 'Datei wird benötigt'
+      end
     end
   end
 
@@ -25,5 +33,9 @@ module CsvImportable
 
   def file_params
     params.require(controller_name.to_sym)
+  end
+
+  def import_params
+    {}
   end
 end
