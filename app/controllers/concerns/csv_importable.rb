@@ -7,7 +7,7 @@ module CsvImportable
         @breadcrumbs = []
         model_default_params = import_params
         importer = importer_class.new(file: csv_file) do
-          model_defaults model_default_params
+          model config.model.where(model_default_params)
         end
         importer.run!
         @report = importer.report
