@@ -13,7 +13,7 @@
   <dd><%= link_to @article.supplier, @article.supplier %></dd>
   <dt>Name</dt>
   <dd><%= @article.name %></dd>
-  <dt>Lagerbestand</dt>
+  <dt><%= link_to 'Lagerbestand', [@article, :stock_changes]%></dt>
   <dd>
     <%= number_with_delimiter @article.stock %>
     <small><%= @article.quantity_unit_stock.humanize %></small>

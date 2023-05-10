@@ -1,6 +1,7 @@
 class PackingLaneBox
   extend ActiveModel::Naming
   include ActiveModel::Conversion
+  include GlobalID::Identification
   include Breadcrumb
 
   def initialize(packing_lane:, box:)
@@ -20,6 +21,8 @@ class PackingLaneBox
   def to_model
     self
   end
+
+  alias id to_param
 
   def self.find(key)
     packing_lane_id, box_id = key.split('-')
@@ -108,15 +111,15 @@ class PackingLaneBox
     end
   end
 
-  def move_diff_from_stock
+  def move_diff_from_stock(user)
     ActiveRecord::Base.transaction do
-      packing_lane_articles.each(&:move_diff_from_stock)
+      packing_lane_articles.each { _1.move_diff_from_stock user }
     end
   end
 
-  def move_to_stock
+  def move_to_stock(user)
     ActiveRecord::Base.transaction do
-      packing_lane_articles.each(&:move_to_stock)
+      packing_lane_articles.each { _1.move_to_stock user }
     end
   end
 

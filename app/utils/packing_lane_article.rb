@@ -27,12 +27,11 @@ PackingLaneArticle = Struct.new(:article, :quantity_required, :stock, :packing_l
     quantity_required != 0 || quantity_available != 0
   end
 
-  def move_diff_from_stock
+  def move_diff_from_stock(user)
     quantity = [quantity_difference, article.stock].min
     return if quantity <= 0
 
-    article.stock -= quantity
-    article.save!
+    change_article_stock(-quantity, user)
     if stock.nil?
       create_stock(quantity)
     else
@@ -41,11 +40,10 @@ PackingLaneArticle = Struct.new(:article, :quantity_required, :stock, :packing_l
     end
   end
 
-  def move_to_stock
+  def move_to_stock(user)
     return if stock.nil?
 
-    article.stock += stock.quantity
-    article.save!
+    change_article_stock(stock.quantity, user)
     stock.destroy!
   end
 
@@ -59,12 +57,22 @@ PackingLaneArticle = Struct.new(:article, :quantity_required, :stock, :packing_l
 
   private
 
+  def change_article_stock(quantity, user)
+    article.lock!
+    article.stock += quantity
+    article.save!
+    StockChange.create!(
+      article:, user:, quantity:, result: article.stock,
+      reference: PackingLaneBox.new(packing_lane:, box:).to_global_id
+    )
+  end
+
   def create_stock(quantity)
     PackingLaneArticleStock.create(
-      packing_lane: packing_lane,
-      article: article,
-      quantity: quantity,
-      box: box
+      packing_lane:,
+      article:,
+      quantity:,
+      box:
     )
   end
 end

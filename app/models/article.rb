@@ -12,6 +12,7 @@ class Article < ApplicationRecord
   has_many :packing_lane_article_stocks, dependent: :delete_all
   has_many :active_packing_lane_article_stocks, -> { where(box: Box.picked) }, class_name: 'PackingLaneArticleStock'
   has_many :hoards
+  has_many :stock_changes, -> { order(created_at: :desc) }
 
   validates :stock, numericality: { greater_than_or_equal_to: 0 }
   validates :quantity, numericality: { greater_than: 0 }

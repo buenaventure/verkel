@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_25_103344) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_10_193610) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -358,6 +358,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_25_103344) do
     t.index ["name"], name: "index_recipes_on_name", unique: true
   end
 
+  create_table "stock_changes", force: :cascade do |t|
+    t.bigint "article_id", null: false
+    t.bigint "user_id", null: false
+    t.decimal "quantity", precision: 8, null: false
+    t.decimal "result", precision: 8, null: false
+    t.string "reference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["article_id"], name: "index_stock_changes_on_article_id"
+    t.index ["user_id"], name: "index_stock_changes_on_user_id"
+  end
+
   create_table "suppliers", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -418,6 +430,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_25_103344) do
   add_foreign_key "participants", "groups"
   add_foreign_key "recipe_ingredients", "ingredients"
   add_foreign_key "recipe_ingredients", "recipes"
+  add_foreign_key "stock_changes", "articles"
+  add_foreign_key "stock_changes", "users"
 
   create_view "box_meals", sql_definition: <<-SQL
       SELECT meals.id AS meal_id,

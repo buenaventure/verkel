@@ -92,7 +92,7 @@ class OrdersController < ApplicationController
 
   def store
     respond_to do |format|
-      if @order.store
+      if @order.store(current_user)
         format.html { redirect_to @order, notice: 'Bestellung wurde erfolgreich als eingelagert eingetragen.' }
       else
         format.html { redirect_to @order, alert: 'Bestellung konnte nicht als eingelagert eingetragen werden.' }

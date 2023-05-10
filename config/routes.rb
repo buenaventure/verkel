@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   resources :suppliers
   resources :articles do
     resources :hoards, shallow: true, except: %i[index show]
+    resources :stock_changes, only: %i[index]
     get :laga, on: :collection
     post :update_stock, on: :member
     get :inventory_list, on: :collection

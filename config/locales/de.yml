@@ -81,6 +81,9 @@ de:
       recipe:
         one: Rezept
         other: Rezepte
+      stock_change:
+        one: Lagerbestands-Änderung
+        other: Lagerbestands-Historie
       supplier:
         one: Lieferant
         other: Lieferanten

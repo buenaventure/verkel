@@ -2,7 +2,7 @@ class ArticleStockAction
   extend ActiveModel::Naming
   include ActiveModel::Model
 
-  attr_accessor :action, :article
+  attr_accessor :action, :article, :user
   attr_reader :status, :result
 
   ACTION_REGEX = /\A(\+|-|=)([0-9]*)(?:(?:,([0-9]+))?(k))?\z/
@@ -21,8 +21,11 @@ class ArticleStockAction
   def call
     return unless valid?
 
-    execute_action
-    save_article
+    Article.transaction do
+      article.lock!
+      execute_action
+      save_article
+    end
   end
 
   private
@@ -55,7 +58,9 @@ class ArticleStockAction
   end
 
   def save_article
+    change = article.stock_changed? ? article.stock - article.stock_was : 0
     if article.save
+      StockChange.create!(article:, user:, quantity: change, result: article.stock)
       @status = :success
       @result = action
       self.action = ''

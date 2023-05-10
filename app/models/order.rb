@@ -104,18 +104,21 @@ class Order < ApplicationRecord
     delivered?
   end
 
-  def store
+  def store(user)
     transaction do
       return false unless storable?
 
       stored!
-      Order.connection.exec_update(<<~SQL, nil, [id])
-        update articles
-        set stock = stock+order_articles.quantity_delivered
-        from order_articles
-        where articles.id=order_articles.article_id
-        and order_articles.order_id=$1;
-      SQL
+      order_articles.each do |order_article|
+        article = order_article.article
+        article.lock!
+        article.stock += order_article.quantity_delivered
+        article.save!
+        StockChange.create!(
+          article:, user:, quantity: order_article.quantity_delivered,
+          result: article.stock, reference: to_global_id
+        )
+      end
     end
   end
 

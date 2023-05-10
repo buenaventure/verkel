@@ -35,7 +35,7 @@ class PackingLaneBoxesController < ApplicationController
 
   def move_diff_from_stock
     respond_to do |format|
-      @packing_lane_box.move_diff_from_stock
+      @packing_lane_box.move_diff_from_stock current_user
       format.html do
         redirect_to @packing_lane_box,
                     notice: 'Fehlbestand wurde aus dem Lager in die Packstraße gebucht.',
@@ -46,7 +46,7 @@ class PackingLaneBoxesController < ApplicationController
 
   def move_to_stock
     respond_to do |format|
-      @packing_lane_box.move_to_stock
+      @packing_lane_box.move_to_stock current_user
       format.html { redirect_to @packing_lane_box, notice: 'Bestand wurde zurück ins Lager gebucht.', status: :see_other }
     end
   end

@@ -60,6 +60,7 @@ class ArticlesController < ApplicationController
   def update_stock
     @article_stock_action = ArticleStockAction.new(
       article: @article,
+      user: current_user,
       **params.require(:article_stock_action).permit(:action)
     )
     @article_stock_action.call if @article_stock_action.valid?
