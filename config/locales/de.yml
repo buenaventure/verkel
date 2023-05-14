@@ -248,3 +248,6 @@ de:
   warm: warm
   cold: kalt
   all: alle
+  calculatable:
+    GroupBoxIngredientUnitCache: Bedarf
+    ArticlePackingPlanner: Packplanung

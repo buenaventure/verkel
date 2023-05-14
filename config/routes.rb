@@ -70,10 +70,7 @@ Rails.application.routes.draw do
   resources :recipes do
     get 'kochbuch', on: :collection
   end
-  resource :calculation, only: :none do
-    post 'demand'
-    post 'packing'
-  end
+  resources :calculations, only: :update
   namespace :import do
     root 'imports#show'
     resource :articles, only: :create

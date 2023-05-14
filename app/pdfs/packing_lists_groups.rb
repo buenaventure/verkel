@@ -40,7 +40,9 @@ class PackingListsGroups < Prawn::Document
   private
 
   def body
-    @box.groups.includes(:packing_lane).reorder('packing_lanes.name', :internal_name, :name).each_with_index do |group, index|
+    @box.groups.includes(:packing_lane)
+        .reorder('packing_lanes.name', :internal_name, :name)
+        .each_with_index do |group, index|
       start_new_page if index != 0
       first_page = page_number
       groups_info unless @box.groups_info.blank?

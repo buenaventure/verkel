@@ -1,14 +1,22 @@
 class GroupBoxIngredientUnitCache < ApplicationRecord
+  include Calculatable
+
   belongs_to :group
   belongs_to :box
   belongs_to :ingredient
 
-  def quantity_unit
-    QuantityUnit.new(quantity, unit)
+  DEPENDENCIES = [
+    Box, Diet, ExtraIngredient, Group, GroupMealParticipation, HungerFactor, Ingredient, IngredientAlternative,
+    IngredientWeight, Meal, MealSelection, Participant, Recipe, RecipeIngredient
+  ].freeze
+
+  def self.do_calculate
+    result = Scenic.database.refresh_materialized_view(table_name, concurrently: false, cascade: false)
+    result.error_message.blank?
   end
 
-  def self.refresh
-    Scenic.database.refresh_materialized_view(table_name, concurrently: false, cascade: false)
+  def quantity_unit
+    QuantityUnit.new(quantity, unit)
   end
 
   def ingredient_unit

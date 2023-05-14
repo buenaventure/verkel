@@ -6,7 +6,7 @@ class Ability
   def initialize(user)
     can :read, :all
     cannot :read, User
-    can :manage, :calculation
+    can :manage, Calculation
     can :manage, :dashboard
     can %i[
       packing_lists_articles packing_lists_groups packing_lists_missing_ingredients

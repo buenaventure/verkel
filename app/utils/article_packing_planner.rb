@@ -1,4 +1,12 @@
 class ArticlePackingPlanner
+  include Calculatable
+
+  DEPENDENCIES = [Article, Hoard, Order, OrderArticle, PackingLane, PackingLaneArticleStock, Supplier].freeze
+
+  def self.do_calculate
+    new.run
+  end
+
   def initialize
     @missing_ingredients = []
     @group_box_articles = []
