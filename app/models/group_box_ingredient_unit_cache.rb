@@ -5,7 +5,7 @@ class GroupBoxIngredientUnitCache < ApplicationRecord
   belongs_to :box
   belongs_to :ingredient
 
-  DEPENDENCIES = [
+  MODEL_DEPENDENCIES = [
     Box, Diet, ExtraIngredient, Group, GroupMealParticipation, HungerFactor, Ingredient, IngredientAlternative,
     IngredientWeight, Meal, MealSelection, Participant, Recipe, RecipeIngredient
   ].freeze

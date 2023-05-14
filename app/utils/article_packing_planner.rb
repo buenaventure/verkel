@@ -1,7 +1,8 @@
 class ArticlePackingPlanner
   include Calculatable
 
-  DEPENDENCIES = [Article, Hoard, Order, OrderArticle, PackingLane, PackingLaneArticleStock, Supplier].freeze
+  MODEL_DEPENDENCIES = [Article, Box, Hoard, Order, OrderArticle, PackingLane, PackingLaneArticleStock, Supplier].freeze
+  CALCULATION_DEPENDENCIES = [GroupBoxIngredientUnitCache].freeze
 
   def self.do_calculate
     new.run
