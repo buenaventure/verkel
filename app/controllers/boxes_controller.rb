@@ -70,26 +70,34 @@ class BoxesController < ApplicationController
   end
 
   def packing_lists_groups
-    render_pdf PackingListsGroups.new(@box)
+    render_packing_pdf PackingListsGroups.new(@box)
   end
 
   def packing_lists_articles
-    render_pdf PackingListsArticles.new(@box, filter: filter_param)
+    render_packing_pdf PackingListsArticles.new(@box, filter: filter_param)
   end
 
   def packing_lists_missing_ingredients
-    render_pdf PackingListsMissingIngredients.new(@box)
+    render_packing_pdf PackingListsMissingIngredients.new(@box)
   end
 
   def packing_lists_lanes
-    render_pdf PackingListsLanes.new(@box)
+    render_packing_pdf PackingListsLanes.new(@box)
   end
 
   def all_packing_lists
-    render_pdf AllBoxLists.new(@box)
+    render_packing_pdf AllBoxLists.new(@box)
   end
 
   private
+
+  def render_packing_pdf(pdf)
+    if ArticlePackingPlanner.fresh?
+      render_pdf pdf
+    else
+      redirect_back fallback_location: root_path, alert: 'Packplanung muss neu berechnet werden'
+    end
+  end
 
   def filter_param
     case params['filter']
