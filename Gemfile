@@ -46,9 +46,8 @@ group :development, :test do
 end
 
 group :development do
+  gem 'debug', '>= 1.0.0'
   gem 'listen', '~> 3.3'
-  gem 'pry'
-  gem 'pry-byebug'
   gem 'rack-mini-profiler', '~> 2.0'
   gem 'rubocop'
   gem 'solargraph'
