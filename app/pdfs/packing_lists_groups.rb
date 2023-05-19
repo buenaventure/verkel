@@ -59,7 +59,7 @@ class PackingListsGroups < Prawn::Document
             text "Kiste #{I18n.l @box.datetime, format: :short}", size: 10
             float { text "Seite #{page + 1} / #{total_pages}", size: 10, valign: :bottom, align: :right }
             if group.packing_lane
-              text "Packstraße #{group.packing_lane.name}", size: 10, valign: :bottom
+              text "Packstraße <b>#{group.packing_lane.name}</b>", size: 10, valign: :bottom, inline_format: true
             else
               text 'Packstraße fehlt', size: 10, style: :bold, color: 'FF0000', valign: :bottom
             end

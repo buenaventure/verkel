@@ -47,7 +47,7 @@ class PackingListsMissingIngredients < Prawn::Document
             [MARGIN, MARGIN + FOOTER_SIZE],
             width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
           ) do
-            float { text "Packstraße #{packing_lane} Fehlmengen", size: 10, align: :right }
+            float { text "Packstraße <b>#{packing_lane}</b> Fehlmengen", size: 10, align: :right, inline_format: true }
             text "Kiste #{I18n.l @box.datetime, format: :short}", size: 10
             text "Seite #{page + 1} / #{total_pages}", size: 10, valign: :bottom, align: :right
           end

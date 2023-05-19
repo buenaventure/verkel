@@ -58,7 +58,10 @@ class PackingListLane < Prawn::Document
           [MARGIN, MARGIN + FOOTER_SIZE],
           width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
         ) do
-          float { text "Packstraße #{packing_lane.name} #{I18n.t @filter}", size: 10, align: :right }
+          float do
+            text "Packstraße <b>#{packing_lane.name}</b> #{I18n.t @filter}",
+                 size: 10, align: :right, inline_format: true
+          end
           text "Kiste #{I18n.l box.datetime, format: :short}", size: 10
           float { text "Stand #{I18n.l Time.zone.now}", size: 10, valign: :bottom }
           text "Seite #{page + 1} / #{total_pages}", size: 10, valign: :bottom, align: :right
