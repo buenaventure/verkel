@@ -84,7 +84,13 @@ class PackingListsArticles < Prawn::Document
       font_size(20) { text article.packing_name, style: :bold }
     end
     table(
-      [%w[Gruppe Menge gepackt]] + table_data(group_articles),
+      [%w[Gruppe Menge gepackt]] + table_data(group_articles) +
+      [['Summe',
+        case article.packing_type
+        when 'bulk' then QuantityUnit.sum(group_articles.map(&:quantity_unit)).humanize
+        when 'piece' then number_with_delimiter group_articles.map(&:quantity).sum
+        else raise ArgumentError
+        end, nil]],
       header: true, position: :center, width: bounds.width
     ) do
       cells.borders = [:top]
@@ -93,6 +99,7 @@ class PackingListsArticles < Prawn::Document
       row(0).borders = [:bottom]
 
       columns(1..3).align = :right
+      row(-1).font_style = :bold
     end
   end
 
