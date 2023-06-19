@@ -23,6 +23,7 @@ module Verkel
     config.i18n.available_locales = [:de]
     config.i18n.default_locale = :de
     # config.eager_load_paths << Rails.root.join("extras")
+    config.active_record.schema_format = :sql
 
     config.estimation = false
     config.estimated_participants = 4000
