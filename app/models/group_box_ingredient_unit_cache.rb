@@ -7,7 +7,7 @@ class GroupBoxIngredientUnitCache < ApplicationRecord
 
   MODEL_DEPENDENCIES = [
     Box, Diet, ExtraIngredient, Group, GroupMealParticipation, HungerFactor, Ingredient, IngredientAlternative,
-    IngredientWeight, Meal, MealSelection, Participant, Recipe, RecipeIngredient
+    IngredientWeight, Meal, MealSelection, Participant, Recipe, RecipeIngredient, GroupChange
   ].freeze
 
   def self.do_calculate
