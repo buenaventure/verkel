@@ -489,6 +489,20 @@ ALTER SEQUENCE public.group_box_articles_id_seq OWNED BY public.group_box_articl
 
 
 --
+-- Name: group_changes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.group_changes (
+    id bigint NOT NULL,
+    participant_id bigint NOT NULL,
+    group_id bigint,
+    timeframe tsrange NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: group_meal_participations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -582,17 +596,33 @@ CREATE TABLE public.participants (
 --
 
 CREATE VIEW public.group_meal_participants AS
+ WITH mandatory_or_chosen_group_meals AS (
+         SELECT group_meals.group_id,
+            group_meals.meal_id,
+            meals.datetime
+           FROM (public.group_meals
+             JOIN public.meals ON ((group_meals.meal_id = meals.id)))
+          WHERE (group_meals.origin = ANY (ARRAY[1, 2]))
+        )
  SELECT group_meal_participations.group_id,
     group_meal_participations.meal_id,
     group_meal_participations.participant_id
    FROM public.group_meal_participations
 UNION
- SELECT group_meals.group_id,
-    group_meals.meal_id,
+ SELECT mandatory_or_chosen_group_meals.group_id,
+    mandatory_or_chosen_group_meals.meal_id,
     participants.id AS participant_id
-   FROM (public.group_meals
+   FROM (mandatory_or_chosen_group_meals
      JOIN public.participants USING (group_id))
-  WHERE (group_meals.origin = ANY (ARRAY[1, 2]));
+  WHERE (NOT (EXISTS ( SELECT
+           FROM public.group_changes
+          WHERE ((group_changes.participant_id = participants.id) AND (group_changes.timeframe @> mandatory_or_chosen_group_meals.datetime)))))
+UNION
+ SELECT mandatory_or_chosen_group_meals.group_id,
+    mandatory_or_chosen_group_meals.meal_id,
+    group_changes.participant_id
+   FROM (mandatory_or_chosen_group_meals
+     JOIN public.group_changes ON (((group_changes.timeframe @> mandatory_or_chosen_group_meals.datetime) AND (group_changes.group_id = mandatory_or_chosen_group_meals.group_id))));
 
 
 --
@@ -872,20 +902,6 @@ CREATE VIEW public.group_boxes AS
     boxes.id AS box_id
    FROM (public.groups
      CROSS JOIN public.boxes);
-
-
---
--- Name: group_changes; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.group_changes (
-    id bigint NOT NULL,
-    participant_id bigint NOT NULL,
-    group_id bigint NOT NULL,
-    timeframe tsrange NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
-);
 
 
 --
@@ -2809,6 +2825,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230317161948'),
 ('20230325103344'),
 ('20230510193610'),
-('20230514175450');
+('20230514175450'),
+('20230619193439'),
+('20230619203540');
 
 

@@ -9,7 +9,15 @@ class Participant < ApplicationRecord
   validates :age, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :external_id, uniqueness: true, if: -> { external_id.present? }
 
+  before_save :clean
+
   def to_s
     "##{id}" + (external_id.present? ? " (#{external_id})" : '')
+  end
+
+  private
+
+  def clean
+    self.external_id = nil if external_id.blank?
   end
 end

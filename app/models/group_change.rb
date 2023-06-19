@@ -1,6 +1,6 @@
 class GroupChange < ApplicationRecord
   belongs_to :participant
-  belongs_to :group
+  belongs_to :group, optional: true
 
   include DateTimeRange
   date_time_range :timeframe
