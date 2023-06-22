@@ -6,7 +6,8 @@ class GroupChange < ApplicationRecord
   date_time_range :timeframe
 
   validates :timeframe_end,
-            numericality: { greater_than: :timeframe_begin, message: 'muss nach dem Beginn liegen' }
+            numericality: { greater_than: :timeframe_begin, message: 'muss nach dem Beginn liegen' },
+            if: -> { timeframe_begin.present? && timeframe_end.present? }
 
   def to_s
     "Kochgruppenänderung zu #{group}"

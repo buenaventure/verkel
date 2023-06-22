@@ -11,8 +11,8 @@
   <tbody>
     <% group_changes.order(:timeframe).each do |group_change| %>
       <tr>
-        <td><%= l(group_change.timeframe_begin, format: :short) %></td>
-        <td><%= l(group_change.timeframe_end, format: :short) %></td>
+        <td><%= l(group_change.timeframe_begin, format: :short, default: 'unbeschränkt') %></td>
+        <td><%= l(group_change.timeframe_end, format: :short, default: 'unbeschränkt') %></td>
         <td><%= group_change.group %></td>
         <td><%= link_to 'Bearbeiten', edit_group_change_path(group_change) %></td>
         <td><%= link_to 'Löschen', group_change, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
