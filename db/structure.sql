@@ -529,7 +529,8 @@ CREATE TABLE public.groups (
     lama_uuid uuid,
     hunger_factor numeric(4,3) DEFAULT 1.0 NOT NULL,
     packing_lane_id bigint,
-    internal_name character varying
+    internal_name character varying,
+    skip_mandatory_meals boolean DEFAULT false NOT NULL
 );
 
 
@@ -566,7 +567,7 @@ CREATE VIEW public.group_meals AS
             2 AS origin
            FROM (public.meals
              CROSS JOIN public.groups)
-          WHERE (meals.optional = false)
+          WHERE ((meals.optional = false) AND (groups.skip_mandatory_meals = false))
         )
  SELECT group_meal_origin.group_id,
     group_meal_origin.meal_id,
@@ -2827,6 +2828,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230510193610'),
 ('20230514175450'),
 ('20230619193439'),
-('20230619203540');
+('20230619203540'),
+('20230626183741'),
+('20230626183846');
 
 

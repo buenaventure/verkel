@@ -122,6 +122,7 @@ de:
         name: Name
         notes: Notizen
         packing_lane: Packstraße
+        skip_mandatory_meals: obligatorische Mahlzeiten auslassen
       group_change:
         timeframe_begin: Von
         timeframe_end: Bis
