@@ -3,7 +3,7 @@ class ArticlesImporter
 
   model Article
 
-  column :nr, required: true
+  column :nr, as: /nr/i, required: true
   column :ingredient, as: /zutat/i, required: true, to: ->(value) { Ingredient.find_by(name: value&.strip) }
   column :supplier, as: /lieferant/i, required: true, to: ->(value) { Supplier.find_or_create_by(name: value&.strip) }
   column :quantity, as: /gebindegröße/i, required: true
