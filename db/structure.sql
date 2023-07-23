@@ -723,7 +723,7 @@ CREATE VIEW public.group_meal_participant_recipe_ingredient_subst_calculations A
                   WHERE ((ingredient_alternatives.ingredient_id = recipe_ingredients.ingredient_id) AND (NOT alternative_table.alternative_diets_match))
                   ORDER BY ingredient_alternatives.priority
                  LIMIT 1) AS alternative_ingredient_id) intermediate_calculations)
-     CROSS JOIN LATERAL ( SELECT ((NOT intermediate_calculations.negative_diets_match) AND ((NOT intermediate_calculations.positive_diets_exist) OR intermediate_calculations.positive_diets_exist)) AS include_ingredient_for_participant,
+     CROSS JOIN LATERAL ( SELECT ((NOT intermediate_calculations.negative_diets_match) AND ((NOT intermediate_calculations.positive_diets_exist) OR intermediate_calculations.positive_diets_match)) AS include_ingredient_for_participant,
                 CASE intermediate_calculations.diets_match
                     WHEN true THEN intermediate_calculations.alternative_ingredient_id
                     WHEN false THEN recipe_ingredients.ingredient_id
@@ -2830,6 +2830,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230619193439'),
 ('20230619203540'),
 ('20230626183741'),
-('20230626183846');
+('20230626183846'),
+('20230723191003');
 
 
