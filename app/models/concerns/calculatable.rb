@@ -21,7 +21,7 @@ module Calculatable
       return true if state.nil?
 
       calculation_dependencies_fresh_and_unchanged &&
-        calculation.updated_at > state['updated_at'] &&
+        (state['updated_at'].nil? || calculation.updated_at > state['updated_at']) &&
         calculation.count == state['count']
     end
 
