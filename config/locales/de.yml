@@ -173,6 +173,10 @@ de:
         diets: zu berücksichtigende Ernährungsweisen
         external_id: Kennung
         group: Haupt-Kochgruppe
+      recipe:
+        content: Rezept
+        name: Name
+        servings: Portionen
       supplier:
         address: Adresse
         delivery_time: maximale Lieferfrist (Stunden von Bestellung bis Bedarf in Kiste)
