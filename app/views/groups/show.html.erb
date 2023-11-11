@@ -14,8 +14,10 @@
   <dd><%= @group.hunger_factor %></dd>
   <dt>Packstraße</dt>
   <dd><%= @group.packing_lane %></dd>
+  <% if feature(:lama) %>
   <dt>Lama uuid</dt>
   <dd><%= @group.lama_uuid %></dd>
+  <% end %>
 </dl>
 
 <table class="table table-sm">

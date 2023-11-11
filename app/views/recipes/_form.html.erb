@@ -3,6 +3,8 @@
   <%= f.input :name %>
   <%= f.input :servings %>
   <%= f.input :content %>
+  <% if feature(:lama) %>
   <%= f.input :lama_uuid %>
+  <% end %>
   <%= f.button :submit, class: 'btn btn-success'%>
 <% end %>

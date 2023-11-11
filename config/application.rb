@@ -28,6 +28,8 @@ module Verkel
     config.estimation = false
     config.estimated_participants = 4000
 
+    config.lama_sync = false
+
     config.kramdown_options = {
       input: 'GFM',
       hard_wrap: false

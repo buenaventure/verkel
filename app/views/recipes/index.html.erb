@@ -6,7 +6,7 @@
       <th>Name</th>
       <th>Zeitpunkt</th>
       <th>Portionen</th>
-      <th>Lama</th>
+      <% if feature(:lama) %><th>Lama</th><% end %>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -21,7 +21,7 @@
           <% end %>
         </td>
         <td><%= recipe.servings %></td>
-        <td><%= recipe.lama_uuid %></td>
+        <% if feature(:lama) %><td><%= recipe.lama_uuid %></td><% end %>
         <td><%= link_to 'Anzeigen', recipe %></td>
         <td><%= link_to 'Bearbeiten', edit_recipe_path(recipe) %></td>
         <td><%= link_to 'Löschen', recipe_path(recipe), data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>

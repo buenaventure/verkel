@@ -15,6 +15,8 @@ module ApplicationHelper
     case name
     when :estimation
       Rails.application.config.estimation
+    when :lama
+      Rails.application.config.lama_sync
     end
   end
 

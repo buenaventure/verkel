@@ -4,10 +4,12 @@
 </div>
 <h1><%= @diet.name %> <small><%= @diet.category %></small></h1>
 
+<% if feature(:lama) %>
 <dl>
   <dt>Lama uuid</dt>
   <dd><%= @diet.lama_uuid %></dd>
 </dl>
+<% end %>
 
 <h2>problematische Zutaten</h2>
 <ul>

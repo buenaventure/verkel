@@ -17,8 +17,10 @@
   <dd><%= @participant.comment %></dd>
   <dt>Ernährungsweisen</dt>
   <dd><%= @participant.diets.join(', ') %></dd>
+  <% if feature(:lama) %>
   <dt>Lama uuid</dt>
   <dd><%= @participant.lama_uuid %></dd>
+  <% end %>
 </dl>
 
 <%= link_to 'Neue Gruppenänderung anlegen', new_participant_group_change_path(@participant), class: 'btn btn-sm btn-primary float-right' %>
