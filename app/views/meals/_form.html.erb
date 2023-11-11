@@ -2,7 +2,7 @@
   <%= f.input :datetime %>
   <%= f.input :name %>
   <%= f.association :recipe, collection: Recipe.order(:name) %>
-  <%= f.input :estimated_share %>
+  <% if feature(:estimation) %><%= f.input :estimated_share %><% end %>
   <%= f.input :optional %>
   <%= f.input :bundle %>
   <%= f.button :submit, class: 'btn btn-success' %>

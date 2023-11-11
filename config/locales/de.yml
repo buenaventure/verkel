@@ -110,6 +110,7 @@ de:
         groups_info: Info-Text für Kochgruppen
       diet:
         category: Kategorie
+        ingredients: betroffene Zutaten
         name: Name
       extra_ingredient:
         ingredient: Zutat

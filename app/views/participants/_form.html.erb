@@ -7,7 +7,7 @@
     <%= f.input :external_id %>
     <%= f.input :age %>
     <%= f.input :comment %>
-    <%= f.association :diets %>
+    <%= f.association :diets, input_html: { class: 'select2' } %>
   </div>
 
   <div class="form-actions">
