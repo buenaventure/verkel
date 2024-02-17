@@ -32,7 +32,7 @@ RUN rm -rf tmp/* && mkdir tmp/pids
 RUN rm -rf vendor/bundle/ruby/3.1.0/cache
 
 
-FROM ruby:3.2.2-alpine
+FROM ruby:3.3.0-alpine
 
 # system dependencies without stuff needed to build native extensions
 RUN apk --update --no-cache add \
