@@ -1,13 +1,12 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.2.2'
+ruby '3.3.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'bootsnap', '>= 1.4.4', require: false
 gem 'cancancan'
 gem 'combine_pdf'
-gem 'composite_primary_keys', '~> 14.0.6'
 gem 'cssbundling-rails'
 gem 'csv-importer'
 gem 'devise'
@@ -24,10 +23,10 @@ gem 'nokogiri'
 gem 'pg'
 gem 'prawn'
 gem 'prawn-table'
-gem 'puma', '~> 5.0'
-gem 'rails', '~> 7.0.0'
+gem 'puma', '~> 6.0'
+gem 'rails', '~> 7.1.0'
 gem 'rails-i18n', '~> 7.0.0'
-gem 'roo', '~> 2.8.0', require: false
+gem 'roo', '~> 2.10.1', require: false
 gem 'safe_yaml'
 gem 'scenic'
 gem 'simple_form'
@@ -42,13 +41,13 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'dotenv-rails'
-  gem 'rspec-rails', '~> 5.0.0'
+  gem 'rspec-rails', '~> 6.1.0'
 end
 
 group :development do
   gem 'debug', '>= 1.0.0'
   gem 'listen', '~> 3.3'
-  gem 'rack-mini-profiler', '~> 2.0'
+  gem 'rack-mini-profiler', '~> 3.3'
   gem 'rubocop'
   gem 'solargraph'
   gem 'spring'

@@ -53,7 +53,7 @@ class MealSelectionsController < ApplicationController
   end
 
   def set_meal_selection
-    @meal_selection = MealSelection.find(params[:id])
+    @meal_selection = MealSelection.find(params.extract_value(:id))
   end
 
   def meal_selection_params
