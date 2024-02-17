@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM ruby:3.2.2-alpine as builder
+FROM ruby:3.3.0-alpine as builder
 
 # full system dependencies
 RUN apk --update --no-cache add \
