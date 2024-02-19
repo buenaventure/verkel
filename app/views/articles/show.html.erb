@@ -4,15 +4,11 @@
   <%= link_to 'Zurück', articles_path, class: 'btn btn-light' %>
 </div>
 
-<h1><%= @article.name %></h1>
+<h1><%= @article %></h1>
+
+<p><%= link_to @article.ingredient %> von <%= link_to @article.supplier %></p>
 
 <dl>
-  <dt>Zutat</dt>
-  <dd><%= link_to @article.ingredient, @article.ingredient %></dd>
-  <dt>Lieferant</dt>
-  <dd><%= link_to @article.supplier, @article.supplier %></dd>
-  <dt>Name</dt>
-  <dd><%= @article.name %></dd>
   <dt><%= link_to 'Lagerbestand', [@article, :stock_changes]%></dt>
   <dd>
     <%= number_with_delimiter @article.stock %>
@@ -32,12 +28,13 @@
   <dd><%= number_with_delimiter @article.price %> €</dd>
   <dt>Grundpreis</dt>
   <dd><%= number_with_precision(@article.base_price, precision: 2) %> €/(kg/l/Stk)</dd>
-  <dt>Gebindegröße</dt>
-  <dd><%= @article.quantity_unit.humanize %></dd>
+  <dt><%= Article.human_attribute_name("quantity") %> & <%= Article.human_attribute_name("packing_type") %></dt>
+  <dd>
+    <%= @article.quantity_unit.humanize %>
+    <%= I18n.t("activerecord.enums.article.packing_type.#{@article.packing_type}") %>
+  </dd>
   <dt>Kühlbedarf</dt>
   <dd><%= I18n.t @article.needs_cooling? %></dd>
-  <dt>Packtyp</dt>
-  <dd><%= I18n.t("activerecord.enums.article.packing_type.#{@article.packing_type}") %></dd>
   <dt>Notizen</dt>
   <dd><%= @article.notes %></dd>
   <dt>verbleibende mögliche Bestellmenge</dt>
