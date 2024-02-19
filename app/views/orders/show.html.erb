@@ -10,6 +10,10 @@
   <dt>Abdeckungszeitraum</dt>
   <dd>Von <%= I18n.l @order.coverage_begin %> (Liefertermin) bis <%= I18n.l @order.coverage_end %></dd>
   <dt>Bestellsumme</dt><dd><%= euro @order.price_ordered %></dd>
+  <dt><%= Supplier.human_attribute_name('email') %></dt>
+  <dd><%= link_to_if @order.supplier.email.present?, @order.supplier.email, "mailto:#{@order.supplier.email}" %></dd>
+  <dt><%= Supplier.human_attribute_name('phone') %></dt>
+  <dd><%= link_to_if @order.supplier.phone.present?, @order.supplier.phone, "tel:#{@order.supplier.phone}" %></dd>
   <dt>Status</dt>
   <dd>
     <%= I18n.t("activerecord.enums.order.state.#{@order.state}") %>

@@ -180,8 +180,10 @@ de:
       supplier:
         address: Adresse
         delivery_time: maximale Lieferfrist (Stunden von Bestellung bis Bedarf in Kiste)
+        email: E-Mail
         name: Name
         notes: Notizen
+        phone: Telefon
         ingredients: problematische Zutaten
       user:
         role: Rolle

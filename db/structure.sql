@@ -1369,7 +1369,9 @@ CREATE TABLE public.suppliers (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     delivery_time integer DEFAULT 72 NOT NULL,
-    address text
+    address text,
+    email character varying,
+    phone character varying
 );
 
 
@@ -2817,20 +2819,20 @@ ALTER TABLE ONLY public.missing_ingredients
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
-('20221211121557'),
-('20221212175242'),
-('20230305153735'),
-('20230305202100'),
-('20230305220300'),
-('20230308232353'),
-('20230317161948'),
-('20230325103344'),
-('20230510193610'),
-('20230514175450'),
-('20230619193439'),
-('20230619203540'),
-('20230626183741'),
+('20240219215046'),
+('20230723191003'),
 ('20230626183846'),
-('20230723191003');
-
+('20230626183741'),
+('20230619203540'),
+('20230619193439'),
+('20230514175450'),
+('20230510193610'),
+('20230325103344'),
+('20230317161948'),
+('20230308232353'),
+('20230305220300'),
+('20230305202100'),
+('20230305153735'),
+('20221212175242'),
+('20221211121557');
 

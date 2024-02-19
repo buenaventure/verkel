@@ -9,10 +9,15 @@
 </h1>
 
 <dl>
-  <dt>maximale Lieferfrist</dt>
+  <dt><%= Supplier.human_attribute_name('delivery_time') %></dt>
   <dd><%= @supplier.delivery_time %> h</dd>
-  <dt>Adresse</dt>
+  <dt><%= Supplier.human_attribute_name('address') %></dt>
   <dd><%= simple_format @supplier.address %></dd>
+  <dt><%= Supplier.human_attribute_name('email') %></dt>
+  <dd><%= link_to_if @supplier.email.present?, @supplier.email, "mailto:#{@supplier.email}" %></dd>
+  <dt><%= Supplier.human_attribute_name('phone') %></dt>
+  <dd><%= link_to_if @supplier.phone.present?, @supplier.phone, "tel:#{@supplier.phone}" %></dd>
+  
 </dl>
 
 <p>

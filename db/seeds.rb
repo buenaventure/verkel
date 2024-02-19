@@ -26,7 +26,7 @@ GroupMealParticipation.create!(group:, meal:, participant: p2)
 
 Group.create!(name: 'Test-Kochgruppe 2', internal_name: 'Hase', packing_lane:)
 
-supplier = Supplier.create!(name: 'Supermarkt')
+supplier = Supplier.create!(name: 'Supermarkt', email: 'super.markt@example.com', phone: '0123456789')
 Article.create!(ingredient: spaghetti, supplier:, quantity: 500, unit: 'g', packing_type: :piece)
 Article.create!(ingredient: pesto, supplier:, quantity: 200, unit: 'g', packing_type: :piece)
 

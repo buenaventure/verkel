@@ -7,6 +7,8 @@
     <%= f.input :name %>
     <%= f.input :delivery_time %>
     <%= f.input :address %>
+    <%= f.input :email %>
+    <%= f.input :phone %>
   </div>
 
   <div class="field">
@@ -15,6 +17,6 @@
   </div>
 
   <div class="form-actions">
-    <%= f.button :submit %>
+    <%= f.button :submit, class: 'btn btn-success' %>
   </div>
 <% end %>
