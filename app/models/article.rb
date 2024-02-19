@@ -75,7 +75,7 @@ class Article < ApplicationRecord
   end
 
   def current_order_limit
-    return nil if order_limit.nil?  # unlimited
+    return nil if order_limit.nil? # unlimited
 
     [0, order_limit - quantity_ordered - quantity_delivered].max
   end
