@@ -7,7 +7,6 @@
       <th>Kategorie</th>
       <th>Fälle</th>
       <th>problematische Zutaten</th>
-      <th colspan="3"></th>
     </tr>
   </thead>
 
@@ -16,8 +15,8 @@
       <tr>
         <td><%= link_to diet.name, diet %></td>
         <td><%= diet.category %></td>
-        <td><%= diet.participants.count %></td>
-        <td><%= diet.ingredients.count %></td>
+        <td class="text-right"><%= diet.participants.count %></td>
+        <td class="text-right"><%= diet.ingredients.count %></td>
       </tr>
     <% end %>
   </tbody>
