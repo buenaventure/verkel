@@ -32,6 +32,8 @@ module DateTimeRange
   private
 
   def convert_time_range_value(value)
+    return if value.respond_to?(:infinite?) && value.infinite?
+
     value&.in_time_zone
   end
 
