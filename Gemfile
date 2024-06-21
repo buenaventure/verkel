@@ -33,6 +33,9 @@ gem 'simple_form'
 gem 'sprockets-rails'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
+# Needed until Ruby 3.3.4 is released https://github.com/ruby/ruby/pull/11006
+gem 'net-pop', github: 'ruby/net-pop'
+
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password

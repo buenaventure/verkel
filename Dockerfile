@@ -5,6 +5,7 @@ FROM ruby:3.3.3-alpine as builder
 RUN apk --update --no-cache add \
     build-base \
     gcc \
+    git \
     make \
     postgresql-client \
     postgresql-dev \
