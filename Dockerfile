@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM ruby:3.3.0-alpine as builder
+FROM ruby:3.3.3-alpine as builder
 
 # full system dependencies
 RUN apk --update --no-cache add \
@@ -32,7 +32,7 @@ RUN rm -rf tmp/* && mkdir tmp/pids
 RUN rm -rf vendor/bundle/ruby/3.1.0/cache
 
 
-FROM ruby:3.3.0-alpine
+FROM ruby:3.3.3-alpine
 
 # system dependencies without stuff needed to build native extensions
 RUN apk --update --no-cache add \
