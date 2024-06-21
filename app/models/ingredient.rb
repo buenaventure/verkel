@@ -8,6 +8,8 @@ class Ingredient < ApplicationRecord
   has_many :suppliers, -> { distinc }, through: :articles
   has_many :extra_ingredients
   has_many :ingredient_alternatives, dependent: :destroy
+  has_many :ingredient_substitutions, class_name: 'IngredientAlternative', foreign_key: :alternative_id,
+                                      dependent: :restrict_with_error
   has_and_belongs_to_many :diets
   has_many :group_box_ingredient_unit_caches
   has_many :boxes, -> { distinct }, through: :group_box_ingredient_unit_caches

@@ -140,6 +140,7 @@ de:
         box_type: Kistentyp
         commodity_group: Warengruppe
         diets: inkompatible Ernährungsweisen
+        ingredient_substitutions: ersetzte Zutaten
         uses_hunger_factor: Hunger-Faktor berücksichtigen
       ingredient_alternative:
         alternative: alternative Zutat
