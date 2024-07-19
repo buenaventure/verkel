@@ -645,8 +645,8 @@ CREATE TABLE public.ingredient_alternatives (
 --
 
 CREATE TABLE public.negative_diet_ingredients (
-    diet_id bigint,
-    recipe_ingredient_id bigint
+    diet_id bigint NOT NULL,
+    recipe_ingredient_id bigint NOT NULL
 );
 
 
@@ -655,8 +655,8 @@ CREATE TABLE public.negative_diet_ingredients (
 --
 
 CREATE TABLE public.positive_diet_ingredients (
-    diet_id bigint,
-    recipe_ingredient_id bigint
+    diet_id bigint NOT NULL,
+    recipe_ingredient_id bigint NOT NULL
 );
 
 
@@ -1853,6 +1853,14 @@ ALTER TABLE ONLY public.missing_ingredients
 
 
 --
+-- Name: negative_diet_ingredients negative_diet_ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.negative_diet_ingredients
+    ADD CONSTRAINT negative_diet_ingredients_pkey PRIMARY KEY (diet_id, recipe_ingredient_id);
+
+
+--
 -- Name: order_articles order_articles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1890,6 +1898,14 @@ ALTER TABLE ONLY public.packing_lanes
 
 ALTER TABLE ONLY public.participants
     ADD CONSTRAINT participants_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: positive_diet_ingredients positive_diet_ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.positive_diet_ingredients
+    ADD CONSTRAINT positive_diet_ingredients_pkey PRIMARY KEY (diet_id, recipe_ingredient_id);
 
 
 --
@@ -2319,13 +2335,6 @@ CREATE INDEX index_missing_ingredients_on_ingredient_id ON public.missing_ingred
 
 
 --
--- Name: index_negative_diet_ingredients_diet_recipe_ingredient; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_negative_diet_ingredients_diet_recipe_ingredient ON public.negative_diet_ingredients USING btree (diet_id, recipe_ingredient_id);
-
-
---
 -- Name: index_negative_diet_ingredients_on_diet_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2414,13 +2423,6 @@ CREATE INDEX index_participants_on_group_id ON public.participants USING btree (
 --
 
 CREATE UNIQUE INDEX index_participants_on_lama_uuid ON public.participants USING btree (lama_uuid);
-
-
---
--- Name: index_positive_diet_ingredients_diet_recipe_ingredient; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_positive_diet_ingredients_diet_recipe_ingredient ON public.positive_diet_ingredients USING btree (diet_id, recipe_ingredient_id);
 
 
 --
@@ -2629,6 +2631,14 @@ ALTER TABLE ONLY public.group_meal_participations
 
 
 --
+-- Name: negative_diet_ingredients fk_rails_5f0e7e985f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.negative_diet_ingredients
+    ADD CONSTRAINT fk_rails_5f0e7e985f FOREIGN KEY (recipe_ingredient_id) REFERENCES public.recipe_ingredients(id);
+
+
+--
 -- Name: group_box_articles fk_rails_64228b658f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2642,6 +2652,14 @@ ALTER TABLE ONLY public.group_box_articles
 
 ALTER TABLE ONLY public.group_box_articles
     ADD CONSTRAINT fk_rails_643c2a5233 FOREIGN KEY (group_id) REFERENCES public.groups(id) ON DELETE CASCADE;
+
+
+--
+-- Name: negative_diet_ingredients fk_rails_6f8185489c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.negative_diet_ingredients
+    ADD CONSTRAINT fk_rails_6f8185489c FOREIGN KEY (diet_id) REFERENCES public.diets(id);
 
 
 --
@@ -2722,6 +2740,22 @@ ALTER TABLE ONLY public.active_storage_variant_records
 
 ALTER TABLE ONLY public.group_changes
     ADD CONSTRAINT fk_rails_a92dff67da FOREIGN KEY (group_id) REFERENCES public.groups(id);
+
+
+--
+-- Name: positive_diet_ingredients fk_rails_ac1f115651; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.positive_diet_ingredients
+    ADD CONSTRAINT fk_rails_ac1f115651 FOREIGN KEY (recipe_ingredient_id) REFERENCES public.recipe_ingredients(id);
+
+
+--
+-- Name: positive_diet_ingredients fk_rails_b263c351a4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.positive_diet_ingredients
+    ADD CONSTRAINT fk_rails_b263c351a4 FOREIGN KEY (diet_id) REFERENCES public.diets(id);
 
 
 --
@@ -2819,6 +2853,7 @@ ALTER TABLE ONLY public.missing_ingredients
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240719063509'),
 ('20240219215046'),
 ('20230723191003'),
 ('20230626183846'),
