@@ -1,3 +1,9 @@
+<div class="btn-group float-right" role="group">
+  <%= link_to 'Löschen', @recipe, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
+  <%= link_to 'Bearbeiten', edit_recipe_path(@recipe), class: 'btn btn-primary' %>
+  <%= link_to 'Zurück', recipes_path, class: 'btn btn-light' %>
+</div>
+
 <h1><%= @recipe.name %> <span class="badge bg-secondary"><%= @recipe.servings %> Portionen</span></h1>
 
 <% if @recipe.diet_notes %>

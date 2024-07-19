@@ -7,6 +7,8 @@
       <th>Kategorie</th>
       <th>Fälle</th>
       <th>problematische Zutaten</th>
+      <th>Rezepte mit "+"</th>
+      <th>Rezepte mit "-"</th>
     </tr>
   </thead>
 
@@ -17,6 +19,8 @@
         <td><%= diet.category %></td>
         <td class="text-right"><%= diet.participants.count %></td>
         <td class="text-right"><%= diet.ingredients.count %></td>
+        <td class="text-right"><%= diet.positive_recipes.count %></td>
+        <td class="text-right"><%= diet.negative_recipes.count %></td>
       </tr>
     <% end %>
   </tbody>

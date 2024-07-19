@@ -112,6 +112,8 @@ de:
         category: Kategorie
         ingredients: betroffene Zutaten
         name: Name
+        positive_diet_ingredients: +Zutaten im Rezept
+        negative_diet_ingredients: -Zutaten im Rezept
       extra_ingredient:
         ingredient: Zutat
         quantity: Anzahl
