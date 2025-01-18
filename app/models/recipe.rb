@@ -34,7 +34,8 @@ class Recipe < ApplicationRecord
       if (existing_ri = recipe_ingredients.find_by(index: recipe_ingredient.index))
         existing_ids.delete(existing_ri.id)
         existing_ri.update!(
-          recipe_ingredient.attributes.except('id', 'recipe_id', 'created_at', 'updated_at', 'positive_diets', 'negative_diets')
+          recipe_ingredient.attributes.except('id', 'recipe_id', 'created_at', 'updated_at', 'positive_diets',
+                                              'negative_diets')
         )
         existing_ri.positive_diets = recipe_ingredient.positive_diets
         existing_ri.negative_diets = recipe_ingredient.negative_diets

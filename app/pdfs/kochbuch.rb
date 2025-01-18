@@ -17,10 +17,10 @@ class Kochbuch < Prawn::Document
     body
 
     number_pages '<page>',
-      {
-        at: [bounds.right - 150, 0],
-        align: :right,
-      }
+                 {
+                   at: [bounds.right - 150, 0],
+                   align: :right
+                 }
   end
 
   private

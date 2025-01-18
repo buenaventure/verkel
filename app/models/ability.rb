@@ -12,7 +12,7 @@ class Ability
       packing_lists_articles packing_lists_groups packing_lists_missing_ingredients
       ingredient_meals
       packing_lists_lanes all_packing_lists
-      ], Box
+    ], Box
     can :packing_list, PackingLaneBox
     can :inventory_list, Article
     if user.laga?

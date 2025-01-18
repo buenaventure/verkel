@@ -24,7 +24,9 @@ class PackingLaneBoxesController < ApplicationController
   def update
     respond_to do |format|
       if @packing_lane_box.update(packing_lane_box_params)
-        format.html { redirect_to packing_lane_box_url(@packing_lane_box), notice: 'Packstraße wurde erfolgreich bearbeitet.' }
+        format.html do
+          redirect_to packing_lane_box_url(@packing_lane_box), notice: 'Packstraße wurde erfolgreich bearbeitet.'
+        end
       else
         format.html do
           render :edit, status: :unprocessable_entity
@@ -47,7 +49,9 @@ class PackingLaneBoxesController < ApplicationController
   def move_to_stock
     respond_to do |format|
       @packing_lane_box.move_to_stock current_user
-      format.html { redirect_to @packing_lane_box, notice: 'Bestand wurde zurück ins Lager gebucht.', status: :see_other }
+      format.html do
+        redirect_to @packing_lane_box, notice: 'Bestand wurde zurück ins Lager gebucht.', status: :see_other
+      end
     end
   end
 

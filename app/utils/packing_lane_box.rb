@@ -65,7 +65,8 @@ class PackingLaneBox
         raise RecordNotFound.new(
           "Couldn't find PackingLaneArticleStock with ID=#{attributes['id']} for"\
           "PackingLane with ID=#{packing_lane.id} and Box with ID=#{box.id}",
-          PackingLaneArticleStock, 'id', attributes['id'])
+          PackingLaneArticleStock, 'id', attributes['id']
+        )
       end
     end
   end

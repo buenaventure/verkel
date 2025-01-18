@@ -1,7 +1,7 @@
 module IngredientsHelper
   def estimated_need_per_meal(ingredient)
     ingredient \
-    .in_meals.map do |meal_ingredient|
+      .in_meals.map do |meal_ingredient|
       if meal_ingredient.recipe_servings
         factor = meal_ingredient.needed_servings(
           meal_ingredient.positive_diet_ids || []

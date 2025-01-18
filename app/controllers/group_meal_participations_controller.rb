@@ -5,7 +5,8 @@ class GroupMealParticipationsController < ApplicationController
 
   def index
     @group_meal_participations = @group.group_meal_participations.joins(meal: :recipe).order(
-      'meals.datetime', 'meals.name', 'recipes.name', :participant_id).includes(:participant, meal: :recipe)
+      'meals.datetime', 'meals.name', 'recipes.name', :participant_id
+    ).includes(:participant, meal: :recipe)
   end
 
   def new
@@ -46,10 +47,14 @@ class GroupMealParticipationsController < ApplicationController
     @group = @group_meal_participation.group
     respond_to do |format|
       if @group_meal_participation.destroy
-        format.html { redirect_to [@group, :group_meal_participations], notice: 'Mahlzeiten-Teilnahme wurde erfolgreich gelöscht.', status: :see_other }
+        format.html do
+          redirect_to [@group, :group_meal_participations], notice: 'Mahlzeiten-Teilnahme wurde erfolgreich gelöscht.',
+                                                            status: :see_other
+        end
       else
         format.html do
-          redirect_to [@group, :group_meal_participations], status: :see_other, alert: @group_meal_participation.errors.full_messages
+          redirect_to [@group, :group_meal_participations], status: :see_other,
+                                                            alert: @group_meal_participation.errors.full_messages
         end
       end
     end

@@ -13,7 +13,7 @@ module RecipeMixin
       'CabinSketch' =>
         {
           normal: Rails.root.join('app/assets/fonts/CabinSketch-Regular.ttf'),
-          bold: Rails.root.join('app/assets/fonts/CabinSketch-Bold.ttf'),
+          bold: Rails.root.join('app/assets/fonts/CabinSketch-Bold.ttf')
         }
     )
     font 'Vollkorn'
@@ -25,7 +25,8 @@ module RecipeMixin
       content = content[i..]
       j = content.index('>')
       src = content[0..j].match(/src="(.*?)"/)[1]
-      image Rails.root.join(Rails.application.config.recipes_path + src), fit: [0.8 * bounds.width, 0.8 * bounds.width], align: :center
+      image Rails.root.join(Rails.application.config.recipes_path + src),
+            fit: [0.8 * bounds.width, 0.8 * bounds.width], align: :center
       content = content[(j + 1)..]
     end
     text content, inline_format: true

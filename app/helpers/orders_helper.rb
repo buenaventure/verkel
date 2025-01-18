@@ -26,6 +26,7 @@ module OrdersHelper
       return 'warning' if order.latest_order_date <= DateTime.current + 24.hours
     end
     return 'danger' if order.coverage_begin <= DateTime.current
-    return 'warning' if order.coverage_begin <= DateTime.current + 24.hours
+
+    'warning' if order.coverage_begin <= DateTime.current + 24.hours
   end
 end

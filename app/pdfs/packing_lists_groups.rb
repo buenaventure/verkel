@@ -54,7 +54,7 @@ class PackingListsGroups < Prawn::Document
           bounding_box(
             [MARGIN, MARGIN + FOOTER_SIZE],
             width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
-            ) do
+          ) do
             float { text group.display_name, size: 10, align: :right }
             text "Kiste #{I18n.l @box.datetime, format: :short}", size: 10
             float { text "Seite #{page + 1} / #{total_pages}", size: 10, valign: :bottom, align: :right }

@@ -71,7 +71,7 @@ class ArticleAvailabilityPlanner
   def reserve_orderable(quantity)
     return 0 unless @orderable
 
-    if @available_to_order.nil?  # unlimited
+    if @available_to_order.nil? # unlimited
       possible_quantity = quantity
     else
       possible_quantity = [quantity, @available_to_order].min

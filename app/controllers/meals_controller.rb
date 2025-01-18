@@ -42,16 +42,16 @@ class MealsController < ApplicationController
   end
 
   def destroy
-  respond_to do |format|
-    if @meal.destroy
-      format.html { redirect_to meals_url, notice: 'Mahlzeit wurde erfolgreich gelöscht.', status: :see_other }
-    else
-      format.html do
-        redirect_to @meal, status: :see_other, alert: @meal.errors.full_messages
+    respond_to do |format|
+      if @meal.destroy
+        format.html { redirect_to meals_url, notice: 'Mahlzeit wurde erfolgreich gelöscht.', status: :see_other }
+      else
+        format.html do
+          redirect_to @meal, status: :see_other, alert: @meal.errors.full_messages
+        end
       end
     end
   end
-end
 
   private
 

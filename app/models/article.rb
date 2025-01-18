@@ -55,7 +55,7 @@ class Article < ApplicationRecord
   def base_price
     return nil unless price && quantity && unit
 
-    (price / quantity.to_d * (unit == 'g' || unit == 'ml' ? 1000 : 1)).round(2)
+    (price / quantity.to_d * (%w[g ml].include?(unit) ? 1000 : 1)).round(2)
   end
 
   def ingredient_unit

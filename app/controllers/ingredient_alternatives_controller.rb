@@ -24,7 +24,9 @@ class IngredientAlternativesController < ApplicationController
   def update
     respond_to do |format|
       if @ingredient_alternative.update(ingredient_alternative_params)
-        format.html { redirect_to @ingredient_alternative.ingredient, notice: 'Alternative Zutat wurde erfolgreich aktualisiert.' }
+        format.html do
+          redirect_to @ingredient_alternative.ingredient, notice: 'Alternative Zutat wurde erfolgreich aktualisiert.'
+        end
       else
         format.html { render :edit, status: :unprocessable_entity }
       end
@@ -34,10 +36,14 @@ class IngredientAlternativesController < ApplicationController
   def destroy
     respond_to do |format|
       if @ingredient_alternative.destroy
-        format.html { redirect_to @ingredient_alternative.ingredient, notice: 'Alternative Zutat wurde erfolgreich gelöscht.', status: :see_other }
+        format.html do
+          redirect_to @ingredient_alternative.ingredient, notice: 'Alternative Zutat wurde erfolgreich gelöscht.',
+                                                          status: :see_other
+        end
       else
         format.html do
-          redirect_to @ingredient_alternative.ingredient, status: :see_other, alert: @ingredient_alternative.errors.full_messages
+          redirect_to @ingredient_alternative.ingredient, status: :see_other,
+                                                          alert: @ingredient_alternative.errors.full_messages
         end
       end
     end

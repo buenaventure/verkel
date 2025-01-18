@@ -28,7 +28,8 @@ module Breadcrumb
   end
 
   def breadcrumb(action = nil)
-    crumb = breadcrumb_parent.breadcrumb + [[to_s, self.class.breadcrumb_index_on_parent ? breadcrumb_parent.route_array : route_array]]
+    crumb = breadcrumb_parent.breadcrumb + [[to_s,
+                                             self.class.breadcrumb_index_on_parent ? breadcrumb_parent.route_array : route_array]]
     crumb += [[I18n.t("verb.#{action}"), [action, *route_array]]] if action
     crumb
   end

@@ -46,7 +46,7 @@ class ArticlePackingPlanner
   end
 
   def process_ingredient_unit_in_box(box, entries, articles)
-    return if box.packed?  # skip boxes which are done
+    return if box.packed? # skip boxes which are done
 
     articles.each { |a| a.start_processing box }
     entries.each do |entry|
@@ -86,13 +86,16 @@ class ArticlePackingPlanner
   def update_plan
     GroupBoxArticle.where.not(box: Box.packed).delete_all # keep old plan for packed boxes
     @group_box_articles.any? && GroupBoxArticle.insert_all(
-      @group_box_articles, unique_by: %i[group_id box_id article_id])
+      @group_box_articles, unique_by: %i[group_id box_id article_id]
+    )
     ArticleBoxOrderRequirement.delete_all
     @article_box_order_requirements.any? && ArticleBoxOrderRequirement.insert_all(
-      @article_box_order_requirements, unique_by: %i[article_id box_id])
+      @article_box_order_requirements, unique_by: %i[article_id box_id]
+    )
     MissingIngredient.delete_all
     @missing_ingredients.any? && MissingIngredient.insert_all(
-      @missing_ingredients, unique_by: %i[group_id box_id ingredient_id unit])
+      @missing_ingredients, unique_by: %i[group_id box_id ingredient_id unit]
+    )
   end
 
   def add_order_requirements(box, articles)

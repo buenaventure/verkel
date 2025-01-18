@@ -89,6 +89,7 @@ class GroupsController < ApplicationController
   end
 
   def group_params
-    params.require(:group).permit(:name, :internal_name, :hunger_factor, :notes, :packing_lane_id, :skip_mandatory_meals)
+    params.require(:group).permit(:name, :internal_name, :hunger_factor, :notes, :packing_lane_id,
+                                  :skip_mandatory_meals)
   end
 end

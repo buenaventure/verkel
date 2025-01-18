@@ -48,7 +48,7 @@ class PackingListsArticles < Prawn::Document
           bounding_box(
             [MARGIN, MARGIN + FOOTER_SIZE],
             width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
-            ) do
+          ) do
             text "Kiste #{I18n.l @box.datetime, format: :short}", size: 10
             float do
               text "Packstraße <b>#{packing_lane}</b> #{I18n.t @filter}", size: 10, valign: :bottom, inline_format: true

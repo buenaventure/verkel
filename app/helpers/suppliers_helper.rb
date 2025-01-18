@@ -20,6 +20,7 @@ module SuppliersHelper
   def supplier_status_color(supplier)
     return nil unless supplier.next_required_order_date
     return 'danger' if supplier.next_required_order_date <= DateTime.current
-    return 'warning' if supplier.next_required_order_date <= DateTime.current + 24.hours
+
+    'warning' if supplier.next_required_order_date <= DateTime.current + 24.hours
   end
 end
