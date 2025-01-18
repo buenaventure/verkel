@@ -10,6 +10,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+--
 -- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -569,11 +576,11 @@ CREATE VIEW public.group_meals AS
              CROSS JOIN public.groups)
           WHERE ((meals.optional = false) AND (groups.skip_mandatory_meals = false))
         )
- SELECT group_meal_origin.group_id,
-    group_meal_origin.meal_id,
-    max(group_meal_origin.origin) AS origin
+ SELECT group_id,
+    meal_id,
+    max(origin) AS origin
    FROM group_meal_origin
-  GROUP BY group_meal_origin.group_id, group_meal_origin.meal_id;
+  GROUP BY group_id, meal_id;
 
 
 --
@@ -871,13 +878,13 @@ CREATE VIEW public.group_box_ingredient_units AS
             extra_ingredients.quantity
            FROM public.extra_ingredients
         )
- SELECT weighted_ingredient_sums_with_extra_ingredients.group_id,
-    weighted_ingredient_sums_with_extra_ingredients.box_id,
-    weighted_ingredient_sums_with_extra_ingredients.ingredient_id,
-    weighted_ingredient_sums_with_extra_ingredients.unit,
-    (sum(weighted_ingredient_sums_with_extra_ingredients.quantity))::numeric(8,2) AS quantity
+ SELECT group_id,
+    box_id,
+    ingredient_id,
+    unit,
+    (sum(quantity))::numeric(8,2) AS quantity
    FROM weighted_ingredient_sums_with_extra_ingredients
-  GROUP BY weighted_ingredient_sums_with_extra_ingredients.group_id, weighted_ingredient_sums_with_extra_ingredients.box_id, weighted_ingredient_sums_with_extra_ingredients.ingredient_id, weighted_ingredient_sums_with_extra_ingredients.unit;
+  GROUP BY group_id, box_id, ingredient_id, unit;
 
 
 --
@@ -885,11 +892,11 @@ CREATE VIEW public.group_box_ingredient_units AS
 --
 
 CREATE MATERIALIZED VIEW public.group_box_ingredient_unit_caches AS
- SELECT group_box_ingredient_units.group_id,
-    group_box_ingredient_units.box_id,
-    group_box_ingredient_units.ingredient_id,
-    group_box_ingredient_units.unit,
-    group_box_ingredient_units.quantity
+ SELECT group_id,
+    box_id,
+    ingredient_id,
+    unit,
+    quantity
    FROM public.group_box_ingredient_units
   WITH NO DATA;
 
