@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.3.3'
+ruby '3.4.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'bootsnap', '>= 1.4.4', require: false
@@ -24,7 +24,7 @@ gem 'pg'
 gem 'prawn'
 gem 'prawn-table'
 gem 'puma', '~> 6.0'
-gem 'rails', '~> 7.1.0'
+gem 'rails', '~> 7.2.0'
 gem 'rails-i18n', '~> 7.0.0'
 gem 'roo', '~> 2.10.1', require: false
 gem 'safe_yaml'
@@ -32,9 +32,6 @@ gem 'scenic'
 gem 'simple_form'
 gem 'sprockets-rails'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
-
-# Needed until Ruby 3.3.4 is released https://github.com/ruby/ruby/pull/11006
-gem 'net-pop', github: 'ruby/net-pop'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'

@@ -1,6 +1,6 @@
 class Box < ApplicationRecord
-  enum box_type: { default: 0, base_box: 1, fresh_box: 2 }
-  enum status: { stocked: 0, picked: 1, packed: 2 }
+  enum :box_type, { default: 0, base_box: 1, fresh_box: 2 }
+  enum :status, { stocked: 0, picked: 1, packed: 2 }
 
   has_many :box_meals
   has_many :meals, through: :box_meals

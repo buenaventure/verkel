@@ -1,5 +1,5 @@
 class Ingredient < ApplicationRecord
-  enum box_type: { default: 0, base_box: 1, fresh_box: 2 }
+  enum :box_type, { default: 0, base_box: 1, fresh_box: 2 }
 
   has_many :recipe_ingredients, dependent: :destroy
   has_many :recipes, through: :recipe_ingredients

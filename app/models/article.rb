@@ -1,7 +1,7 @@
 class Article < ApplicationRecord
   include NormalizedQuantityUnit
 
-  enum packing_type: { bulk: 0, piece: 1 }
+  enum :packing_type, { bulk: 0, piece: 1 }
 
   belongs_to :supplier
   belongs_to :ingredient

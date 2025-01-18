@@ -16,5 +16,5 @@
 # end
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
-  inflect.singular /^(.*)caches$/i, '\1cache'
+  inflect.singular(/^(.*)caches$/i, '\1cache')
 end

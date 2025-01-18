@@ -25,7 +25,7 @@ COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiS
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: action_text_rich_texts; Type: TABLE; Schema: public; Owner: -
@@ -2853,6 +2853,9 @@ ALTER TABLE ONLY public.missing_ingredients
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250118112615'),
+('20250118112614'),
+('20250118112613'),
 ('20240719063509'),
 ('20240219215046'),
 ('20230723191003'),

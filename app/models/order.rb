@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  enum state: { planned: 0, ordered: 1, delivered: 2, stored: 3, canceled: -1 }
+  enum :state, { planned: 0, ordered: 1, delivered: 2, stored: 3, canceled: -1 }
   belongs_to :supplier
   has_many :order_articles, dependent: :destroy
   has_many :articles, through: :order_articles
