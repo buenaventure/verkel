@@ -5,13 +5,13 @@
 
 <ul class="nav nav-tabs" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" data-toggle="tab" href="#ingredients" role="tab">Bedarf</a>
+    <a class="nav-link active" data-bs-toggle="tab" href="#ingredients" role="tab">Bedarf</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#extra_ingredients" role="tab">Extra-Zutaten</a>
+    <a class="nav-link" data-bs-toggle="tab" href="#extra_ingredients" role="tab">Extra-Zutaten</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#articles" role="tab">Packliste</a>
+    <a class="nav-link" data-bs-toggle="tab" href="#articles" role="tab">Packliste</a>
   </li>
 </ul>
 <div class="tab-content">
@@ -20,14 +20,14 @@
       <tr>
         <th>Kategorie</th>
         <th>Zutat</th>
-        <th class="text-right">Bedarf</th>
+        <th class="text-end">Bedarf</th>
         <th></th>
       </tr>
       <% @group_box.ingredients.each do |ingredient| %>
         <tr>
           <td><%= ingredient.commodity_group %></td>
           <td><%= link_to ingredient.name, ingredient %></td>
-          <td class="text-right">
+          <td class="text-end">
           <% @group_box.unit_sums_by_ingredient.fetch(ingredient.id, []).each do |unit_sum| %>
             <%= unit_sum.humanize %>
           <% end %>
@@ -56,13 +56,13 @@ Kaffee,g,500,"Notration"
     <table class="table table-sm">
       <tr>
         <th>Artikel</th>
-        <th class="text-right">Packmenge</th>
+        <th class="text-end">Packmenge</th>
         <th></th>
       </tr>
       <% @group_box.group_box_articles.each do |group_box_article| %>
         <tr>
           <td><%= link_to group_box_article.article.packing_name, group_box_article.article %></td>
-          <td class="text-right"><%= group_box_article.humanize_quantity %></td>
+          <td class="text-end"><%= group_box_article.humanize_quantity %></td>
         </tr>
       <% end %>
     </table>

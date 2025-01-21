@@ -13,10 +13,10 @@
     <% @stock_changes.each do |stock_change| %>
       <tr>
         <td><%= I18n.l stock_change.created_at %></td>
-        <td class="text-right"><%= number_with_delimiter stock_change.quantity %></td>
-        <td class="text-right"><%= stock_change.quantity_unit.humanize %></td>
-        <td class="text-right"><%= number_with_delimiter stock_change.result %></td>
-        <td class="text-right"><%= stock_change.quantity_unit_result.humanize %></td>
+        <td class="text-end"><%= number_with_delimiter stock_change.quantity %></td>
+        <td class="text-end"><%= stock_change.quantity_unit.humanize %></td>
+        <td class="text-end"><%= number_with_delimiter stock_change.result %></td>
+        <td class="text-end"><%= stock_change.quantity_unit_result.humanize %></td>
         <td><%= stock_change.reference_object.present? ? link_to(stock_change.reference_object) : '' %></td>
         <td><%= link_to stock_change.user %></td>
       </tr>

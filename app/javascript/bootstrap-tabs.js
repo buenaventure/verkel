@@ -1,5 +1,4 @@
 document.addEventListener("turbo:load", function () {
-  console.log('test')
   const hash = window.location.hash;
   hash && $('ul.nav a[href="' + hash + '"]').tab('show');
 

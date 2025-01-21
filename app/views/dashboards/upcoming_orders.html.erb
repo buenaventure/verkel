@@ -9,7 +9,7 @@
           <%= link_to order, class: "list-group-item list-group-item-action#{order_list_status_class(order)}  d-flex justify-content-between align-items-center" do %>
             <%= I18n.l order.coverage_begin, default: nil, format: :really_short %>
             <%= order.supplier %>
-            <span class="badge badge-primary badge-pill"><%= I18n.t("activerecord.enums.order.state.#{order.state}") %></span>
+            <span class="badge bg-primary rounded-pill"><%= I18n.t("activerecord.enums.order.state.#{order.state}") %></span>
           <% end %>
         <% end %>
       </div>

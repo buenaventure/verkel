@@ -3,8 +3,8 @@
     <tr>
       <th>Bestellung</th>
       <th>status</th>
-      <th class="text-right">bestellt</th>
-      <th class="text-right">geliefert</th>
+      <th class="text-end">bestellt</th>
+      <th class="text-end">geliefert</th>
     </tr>
   </thead>
 
@@ -13,10 +13,10 @@
       <tr>
         <td><%= link_to I18n.l(order_article.order.coverage_begin), order_article.order %></td>
         <td><%= I18n.t("activerecord.enums.order.state.#{order_article.order.state}") %></td>
-        <td class="text-right">
+        <td class="text-end">
           <%= number_with_delimiter order_article.quantity_ordered %>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= number_with_delimiter order_article.quantity_delivered %>
         </td>
       </tr>

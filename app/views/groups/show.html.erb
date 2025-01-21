@@ -1,4 +1,4 @@
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Mahlzeiten-Auswahl verwalten', group_meal_selections_path(@group), class: 'btn btn-default' %>
   <%= link_to 'manuelle Mahlzeit-Teilnahmen verwalten', group_group_meal_participations_path(@group), class: 'btn btn-default' %>
   <%= link_to 'Bearbeiten', edit_group_path(@group), class: 'btn btn-primary' %>
@@ -25,7 +25,7 @@
     <tr>
       <th>Zeitpunkt</th>
       <th>Rezept</th>
-      <th class="text-right">Portionen</th>
+      <th class="text-end">Portionen</th>
       <th>Kiste</th>
       <th>Ursprung</th>
     </tr>
@@ -42,7 +42,7 @@
       <tr>
         <td><%= l meal.datetime, format: :time_only %></td>
         <td><%= link_to meal.recipe, meal.recipe %></td>
-        <td class="text-right"><%= @servings[meal.id] %></td>
+        <td class="text-end"><%= @servings[meal.id] %></td>
         <td>
           <% if meal.box %>
             <%= link_to l(meal.box.datetime, format: :time_only), [meal.box, group_meal.group] %>

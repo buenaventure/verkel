@@ -1,6 +1,6 @@
 <h1>Teilnehmende</h1>
 
-<%= link_to 'Neue Teilnehmer*in anlegen', new_participant_path, class: 'btn btn-primary btn-sm float-right' %>
+<%= link_to 'Neue Teilnehmer*in anlegen', new_participant_path, class: 'btn btn-primary btn-sm float-end' %>
 
 <table id="participants-table" class="table table-sm">
   <thead>
@@ -22,7 +22,7 @@
         <td><%= participant.age %></td>
         <td><%= participant.comment %></td>
         <td><%= participant.diets.join(', ') %></td>
-        <td class="text-right"><%= @meal_count[participant.id] %></td>
+        <td class="text-end"><%= @meal_count[participant.id] %></td>
       </tr>
     <% end %>
   </tbody>

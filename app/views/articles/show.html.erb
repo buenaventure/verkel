@@ -1,4 +1,4 @@
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Löschen', @article, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
   <%= link_to 'Bearbeiten', edit_article_path(@article), class: 'btn btn-primary' %>
   <%= link_to 'Zurück', articles_path, class: 'btn btn-light' %>
@@ -49,6 +49,6 @@
 <%= render 'boxes' %>
 <%= render 'orders' %>
 
-<%= link_to 'Neuen Vorrat anlegen', new_article_hoard_path(@article), class: 'btn btn-sm btn-primary float-right' %>
+<%= link_to 'Neuen Vorrat anlegen', new_article_hoard_path(@article), class: 'btn btn-sm btn-primary float-end' %>
 <h3>Vorrat</h3>
 <%= render partial:'hoards/table', locals: { hoards: @article.hoards } %>

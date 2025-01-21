@@ -1,4 +1,4 @@
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Neue Zutat anlegen', new_ingredient_path, class: 'btn btn-primary btn-sm' %>
   <%= link_to 'fehlende Alternativen', with_missing_alternatives_ingredients_path, class: 'btn btn-sm btn-warning' %>
 </div>
@@ -11,11 +11,11 @@
       <th>Warengruppe</th>
       <th>Name</th>
       <% if feature(:estimation) %>
-      <th class="text-right">geschätzter Bedarf</th>
+      <th class="text-end">geschätzter Bedarf</th>
       <% end %>
-      <th class="text-right">tatsächlicher Bedarf</th>
-      <th class="text-right">Artikel</th>
-      <th class="text-right">Fehlmenge</th>
+      <th class="text-end">tatsächlicher Bedarf</th>
+      <th class="text-end">Artikel</th>
+      <th class="text-end">Fehlmenge</th>
       <th>Kiste</th>
       <th>HUF</th>
     </tr>
@@ -28,17 +28,17 @@
         <td><%= ingredient.commodity_group %></td>
         <td><%= link_to ingredient.name, ingredient %></td>
         <% if feature(:estimation) %>
-        <td class="text-right">
+        <td class="text-end">
           <% estimation.each do |need| %>
             <%= humanize_unit(need[:quantity], need[:unit]) %>
           <% end %>
         </td>
         <% end %>
-        <td class="text-right">
+        <td class="text-end">
           <%= @unit_sums.fetch(ingredient.id, []).map(&:humanize).join(', ') %>
         </td>
-        <td class="text-right"><%= ingredient.articles.count %></td>
-        <td class="text-right"><%= @missing_sums.fetch(ingredient.id, []).map(&:humanize).join(', ') %></td>
+        <td class="text-end"><%= ingredient.articles.count %></td>
+        <td class="text-end"><%= @missing_sums.fetch(ingredient.id, []).map(&:humanize).join(', ') %></td>
         <td><%= I18n.t "activerecord.enums.ingredient.box_type.#{ingredient.box_type}" %></td>
         <td><%= ingredient.uses_hunger_factor? ? 'j' : 'n' %></td>
       </tr>

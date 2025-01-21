@@ -5,7 +5,7 @@
       <small><%= article.ingredient.commodity_group %></small>
     </div>
     <div class="row">
-      <div class="col text-right">
+      <div class="col text-end">
         <% if article_stock_action.status.present? %>
           <span class="text-<%= article_stock_action.status == :success ? 'success' : 'danger' %>">
             <%= article_stock_action.result %>
@@ -19,7 +19,7 @@
         <% end %>
       </div>
       <%= simple_form_for article_stock_action, url: update_stock_article_path(article), class: 'col' do |f|%>
-        <%= f.input :action, class: 'form-control text-right', label: false, placeholder: (article.packing_type == 'bulk' ? 'g' : '') %>
+        <%= f.input :action, class: 'form-control text-end', label: false, placeholder: (article.packing_type == 'bulk' ? 'g' : '') %>
       <% end %>
     </div>
   </div>

@@ -6,13 +6,13 @@
       <% unless defined?(supplier) %><th>Lieferant</th><% end %>
       <% if defined?(ingredient) %><th>Prio</th><% end %>
       <th>Nr.</th>
-      <th class="text-right">Lager</th>
-      <th class="text-right">Überschuss</th>
+      <th class="text-end">Lager</th>
+      <th class="text-end">Überschuss</th>
       <% if defined?(show_price) %>
-      <th class="text-right">Preis</th>
-      <th class="text-right">Grundpreis</th>
+      <th class="text-end">Preis</th>
+      <th class="text-end">Grundpreis</th>
       <% end %>
-      <th class="text-right">max. Bestellmenge</th>
+      <th class="text-end">max. Bestellmenge</th>
       <% if defined?(@order_counts) %><th>Bestellungen</th><% end %>
       <th>Notizen</th>
     </tr>
@@ -31,13 +31,13 @@
         <% end %>
         <% if defined?(ingredient) %><td><%= article.priority %></td><% end %>
         <td><%= article.nr %></td>
-        <td class="text-right"><%= number_with_delimiter article.stock %></td>
-        <td class="text-right"><%= article.surplus %></td>
+        <td class="text-end"><%= number_with_delimiter article.stock %></td>
+        <td class="text-end"><%= article.surplus %></td>
         <% if defined?(show_price) %>
-        <td class="text-right"><%= number_with_delimiter article.price %> €</td>
-        <td class="text-right"><%= number_with_precision(article.base_price, precision: 2) %> €/(kg/l/Stk)</td>
+        <td class="text-end"><%= number_with_delimiter article.price %> €</td>
+        <td class="text-end"><%= number_with_precision(article.base_price, precision: 2) %> €/(kg/l/Stk)</td>
         <% end %>
-        <td class="text-right"><%= number_with_delimiter article.order_limit %></td>
+        <td class="text-end"><%= number_with_delimiter article.order_limit %></td>
         <% if defined?(@order_counts) %><td><%= @order_counts.fetch(article.id, 0) %></td><% end %>
         <td><%= article.notes %></td>
       </tr>

@@ -1,8 +1,8 @@
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Löschen', @box, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
   <%= link_to 'Bearbeiten', edit_box_path(@box), class: 'btn btn-primary' %>
   <%= link_to 'Zurück', boxes_path, class: 'btn btn-light' %>
-  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="printMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="printMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Drucken
   </a>
 
@@ -28,7 +28,7 @@
       <% @box.packing_lane_boxes.each do |packing_lane_box| %>
         <%= link_to packing_lane_box.packing_lane,
                     packing_lane_box,
-                    class: "badge badge-#{packing_lane_box_status_color(packing_lane_box)}" %>
+                    class: "badge bg-#{packing_lane_box_status_color(packing_lane_box)}" %>
       <% end %>
     <% end %>
   </dd>
@@ -36,22 +36,22 @@
 
 <ul class="nav nav-tabs" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" data-toggle="tab" href="#articles" role="tab">Artikel</a>
+    <a class="nav-link active" data-bs-toggle="tab" href="#articles" role="tab">Artikel</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#meals" role="tab">Mahlzeiten</a>
+    <a class="nav-link" data-bs-toggle="tab" href="#meals" role="tab">Mahlzeiten</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#ingredients" role="tab">Zutaten</a>
+    <a class="nav-link" data-bs-toggle="tab" href="#ingredients" role="tab">Zutaten</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#groups" role="tab">Kochgruppen</a>
+    <a class="nav-link" data-bs-toggle="tab" href="#groups" role="tab">Kochgruppen</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#info" role="tab">Info-Text</a>
+    <a class="nav-link" data-bs-toggle="tab" href="#info" role="tab">Info-Text</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" data-toggle="tab" href="#ingredient_meals" role="tab">Zutaten mit Mahlzeiten</a>
+    <a class="nav-link" data-bs-toggle="tab" href="#ingredient_meals" role="tab">Zutaten mit Mahlzeiten</a>
   </li>
 </ul>
 <div class="tab-content">

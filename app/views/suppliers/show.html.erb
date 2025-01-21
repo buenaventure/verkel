@@ -1,4 +1,4 @@
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Löschen', @supplier, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
   <%= link_to 'Bearbeiten', edit_supplier_path(@supplier), class: 'btn btn-primary' %>
   <%= link_to 'Zurück', suppliers_path, class: 'btn btn-light' %>
@@ -25,7 +25,7 @@
   <%= @supplier.notes %>
 </p>
 
-<%= link_to 'Neuen Artikel anlegen', new_article_path(supplier_id: @supplier), class: 'btn btn-sm btn-primary float-right' %>
+<%= link_to 'Neuen Artikel anlegen', new_article_path(supplier_id: @supplier), class: 'btn btn-sm btn-primary float-end' %>
 <%= render 'articles/table', articles: @supplier.articles, supplier: true %>
 
 <%= render 'orders/table', orders: @supplier.orders %>

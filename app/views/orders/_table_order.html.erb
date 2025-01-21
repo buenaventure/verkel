@@ -1,5 +1,5 @@
 <% if @order.ordered? || @order.delivered? %>
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Drucken', [@order, format: :pdf], class: 'btn btn-sm btn-secondary' %>
   <%= link_to 'Mengen bearbeiten', edit_quantities_order_path(@order), class: 'btn btn-sm btn-primary' %>
 </div>
@@ -8,9 +8,9 @@
   <thead>
     <tr>
       <th>Artikel</th>
-      <th class="text-right">Bestellmenge</th>
+      <th class="text-end">Bestellmenge</th>
       <% if @order.delivered? || @order.stored? %>
-      <th class="text-right">Liefermenge</th>
+      <th class="text-end">Liefermenge</th>
       <% end %>
       <th></th>
     </tr>

@@ -1,4 +1,4 @@
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Packliste warm', [:packing_list, @packing_lane_box, format: :pdf, filter: :warm], class: 'btn btn-secondary' %>
   <%= link_to 'Packliste kalt', [:packing_list, @packing_lane_box, format: :pdf, filter: :cold], class: 'btn btn-secondary' %>
   <%= link_to 'Zurück', @packing_lane, class: 'btn btn-light' %>
@@ -8,7 +8,7 @@
 
 <h2>Artikel</h2>
 
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Packstraße->Lager', move_to_stock_packing_lane_box_path(@packing_lane_box), data: { turbo_method: :post, turbo_confirm: 'Bestand von hier ins Lager zurückbuchen?' }, class: 'btn btn-sm btn-warning' %>
   <%= link_to 'Lager->Packstraße', move_diff_from_stock_packing_lane_box_path(@packing_lane_box), data: { turbo_method: :post, turbo_confirm: 'Fehlbestand aus dem Lager nach hier buchen?' }, class: 'btn btn-sm btn-secondary' %>
   <%= link_to 'bearbeiten', edit_packing_lane_box_path(@packing_lane_box), class: 'btn btn-sm btn-primary' %>
@@ -18,9 +18,9 @@
   <thead>
     <tr>
       <th>Artikel</th>
-      <th class="text-right">Sollbestand</th>
-      <th class="text-right">Bestand</th>
-      <th class="text-right">Fehlbestand</th>
+      <th class="text-end">Sollbestand</th>
+      <th class="text-end">Bestand</th>
+      <th class="text-end">Fehlbestand</th>
     </tr>
   </thead>
 
@@ -28,15 +28,15 @@
     <% @packing_lane_box.packing_lane_articles.each do |packing_lane_article| %>
       <tr>
         <td><%= link_to packing_lane_article.article.packing_name, packing_lane_article.article %></td>
-        <td class="text-right">
+        <td class="text-end">
           <%= packing_lane_article.quantity_required %><br/>
           <small class="text-muted"><%= packing_lane_article.quantity_unit_required.humanize %></small>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= packing_lane_article.quantity_available %><br/>
           <small class="text-muted"><%= packing_lane_article.quantity_unit_available.humanize %></small>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= packing_lane_article.quantity_difference %><br/>
           <small class="text-muted"><%= packing_lane_article.quantity_unit_difference.humanize %></small>
         </td>
