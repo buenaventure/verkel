@@ -1,5 +1,5 @@
-<td class="text-right">
-  <%= link_to stats.count, "##{link_id}", data: { toggle: 'collapse' }, class: "badge badge-#{problems_count_color(stats.count)}" %>
+<td class="text-end">
+  <%= link_to stats.count, "##{link_id}", data: { 'bs-toggle': 'collapse' }, class: "badge bg-#{problems_count_color(stats.count)}" %>
   <%= content_tag :div, class: 'collapse text-left', id: link_id do %>
     <ul>
       <% stats.take(5).each do |problem| %>

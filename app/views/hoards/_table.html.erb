@@ -1,9 +1,9 @@
 <table class="table table-sm">
   <thead>
     <tr>
-      <th class="text-right">Anzahl</th>
+      <th class="text-end">Anzahl</th>
       <th>vorhalten bis</th>
-      <th class="text-right">Bestellbedarf</th>
+      <th class="text-end">Bestellbedarf</th>
       <th colspan="2"></th>
     </tr>
   </thead>
@@ -11,14 +11,14 @@
   <tbody>
     <% hoards.order(:until).each do |hoard| %>
       <tr>
-        <td class="text-right">
+        <td class="text-end">
           <%= number_with_delimiter hoard.quantity %><br/>
           <small><%= hoard.quantity_unit.humanize %></small>
         </td>
         <td>
           <%= I18n.l hoard.until %>
         </td>
-        <td class="text-right"><%= number_with_delimiter hoard.missing_quantity %></td>
+        <td class="text-end"><%= number_with_delimiter hoard.missing_quantity %></td>
         <td><%= link_to 'Bearbeiten', edit_hoard_path(hoard) %></td>
         <td><%= link_to 'Löschen', hoard, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
       </tr>
@@ -27,11 +27,11 @@
 
   <tfoot>
     <tr>
-      <td class="text-right">
+      <td class="text-end">
         <%= number_with_delimiter hoards.sum(:quantity) %><br/>
       </td>
       <td></td>
-      <td class="text-right"><%= number_with_delimiter hoards.sum(:missing_quantity) %></td>
+      <td class="text-end"><%= number_with_delimiter hoards.sum(:missing_quantity) %></td>
       <td colspan="2"></td>
     </tr>
   </tfoot>

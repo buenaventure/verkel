@@ -9,16 +9,16 @@
           <%= tag.div class: "list-group-item" do %>
             <%= link_to I18n.l(box.datetime, format: :really_short), box %>
             <% if box.needs_order? %>
-            <span class="badge badge-danger">Bestellbedarf</span>
+            <span class="badge bg-danger">Bestellbedarf</span>
             <% end %>
             <% if box.awaiting_delivery? %>
-            <span class="badge badge-warning">offene Lieferung</span>
+            <span class="badge bg-warning">offene Lieferung</span>
             <% end %>
             <% if box.picked? %>
               <% box.packing_lane_boxes.each do |packing_lane_box| %>
                 <%= link_to packing_lane_box.packing_lane,
                             packing_lane_box,
-                            class: "badge badge-#{packing_lane_box_status_color(packing_lane_box)}" %>
+                            class: "badge bg-#{packing_lane_box_status_color(packing_lane_box)}" %>
               <% end %>
             <% end %>
           <% end %>

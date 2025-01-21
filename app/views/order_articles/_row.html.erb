@@ -1,11 +1,11 @@
 <%= content_tag :tr, id: dom_id(order_article) do %>
   <td><%= link_to order_article.article, order_article.article %></td>
-  <td class="text-right">
+  <td class="text-end">
     <%= number_with_delimiter order_article.quantity_ordered %><br/>
     <small class="text-muted"><%= order_article.quantity_unit_ordered.humanize %></small>
   </td>
   <% if order_article.order.delivered? || order_article.order.stored? %>
-  <td class="text-right">
+  <td class="text-end">
     <%= number_with_delimiter order_article.quantity_delivered %><br/>
     <small class="text-muted"><%= order_article.quantity_unit_delivered.humanize %></small>
   </td>

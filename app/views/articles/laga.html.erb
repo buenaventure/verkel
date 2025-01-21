@@ -1,15 +1,18 @@
 <%= form_with url: laga_articles_path, method: :get, data: { controller: "search-form", search_form_target: "form", turbo_frame: 'laga_list' } do |f| %>
   <div class="row">
     <div class="col">
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <div class="btn-group" data-bs-toggle="buttons">
         <label class="btn btn-secondary active">
-          <input type="radio" checked autocomplete="off" data-action="search-form#search" name="cooling" value="all"> Alle
+          <input type="radio" class="btn-check" checked autocomplete="off" data-action="search-form#search" name="cooling" value="all">
+          Alle
         </label>
         <label class="btn btn-danger">
-          <input type="radio" autocomplete="off" data-action="search-form#search" name="cooling" value="warm"> Warm
+          <input type="radio" class="btn-check" autocomplete="off" data-action="search-form#search" name="cooling" value="warm">
+          Warm
         </label>
         <label class="btn btn-primary">
-          <input type="radio" autocomplete="off" data-action="search-form#search" name="cooling" value="cold"> Kalt
+          <input type="radio" class="btn-check" autocomplete="off" data-action="search-form#search" name="cooling" value="cold">
+          Kalt
         </label>
       </div>
     </div>

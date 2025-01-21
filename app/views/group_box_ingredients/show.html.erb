@@ -9,7 +9,7 @@
     <tr>
       <th>Mahlzeit</th>
       <th>Teilnehmer*in</th>
-      <th class="text-right">Bedarf</th>
+      <th class="text-end">Bedarf</th>
     </tr>
   </thead>
   <tbody>
@@ -17,14 +17,14 @@
     <tr>
       <td><%= link_to calculation.meal, calculation.meal %></td>
       <td><%= link_to calculation.participant, calculation.participant %></td>
-      <td class="text-right"><%= calculation.quantity_unit.humanize %></td>
+      <td class="text-end"><%= calculation.quantity_unit.humanize %></td>
     </tr>
   <% end %>
   </tbody>
   <tfoot>
     <tr>
       <td colspan="2"></td>
-      <td class="text-right">
+      <td class="text-end">
         Summe <%= QuantityUnit.sum(@calculations.map(&:quantity_unit)).map(&:humanize).join(', ') %>
       </td>
     </tr>

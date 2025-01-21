@@ -1,14 +1,14 @@
 <h1>Lieferanten</h1>
 
-<%= link_to 'Neuen Lieferanten anlegen', new_supplier_path, class: 'btn btn-sm btn-primary float-right' %>
+<%= link_to 'Neuen Lieferanten anlegen', new_supplier_path, class: 'btn btn-sm btn-primary float-end' %>
 <table class="table table-sm">
   <thead>
     <tr>
       <th>Name</th>
-      <th class="text-right">nächster Bestelltermin</th>
-      <th class="text-right">nächster Bestellbedarf für</th>
-      <th class="text-right">nächstmögliche Lieferung</th>
-      <th class="text-right">Artikel</th>
+      <th class="text-end">nächster Bestelltermin</th>
+      <th class="text-end">nächster Bestellbedarf für</th>
+      <th class="text-end">nächstmögliche Lieferung</th>
+      <th class="text-end">Artikel</th>
     </tr>
   </thead>
 
@@ -16,10 +16,10 @@
     <% @suppliers.each do |supplier| %>
       <tr class="<%= supplier_table_status_class(supplier) %>">
         <td><%= link_to supplier, supplier %></td>
-        <td class="text-right"><%= I18n.l supplier.next_required_order_date&.in_time_zone, default: nil, format: :really_short %></td>
-        <td class="text-right"><%= I18n.l supplier.next_order_needed_date&.in_time_zone, default: nil, format: :really_short %></td>
-        <td class="text-right"><%= I18n.l supplier.next_possible_delivery, format: :really_short %></td>
-        <td class="text-right"><%= supplier.articles.count %></td>
+        <td class="text-end"><%= I18n.l supplier.next_required_order_date&.in_time_zone, default: nil, format: :really_short %></td>
+        <td class="text-end"><%= I18n.l supplier.next_order_needed_date&.in_time_zone, default: nil, format: :really_short %></td>
+        <td class="text-end"><%= I18n.l supplier.next_possible_delivery, format: :really_short %></td>
+        <td class="text-end"><%= supplier.articles.count %></td>
       </tr>
     <% end %>
   </tbody>

@@ -2,7 +2,7 @@
   <thead>
     <tr>
       <th>Zutat</th>
-      <th class="text-right">Menge</th>
+      <th class="text-end">Menge</th>
       <th>Verwendungszweck</th>
       <th colspan="2"></th>
     </tr>
@@ -12,7 +12,7 @@
     <% @group_box.extra_ingredients.each do |extra_ingredient| %>
       <tr>
         <td><%= extra_ingredient.ingredient %></td>
-        <td class="text-right"><%= humanize_unit(extra_ingredient.quantity, extra_ingredient.unit) %></td>
+        <td class="text-end"><%= humanize_unit(extra_ingredient.quantity, extra_ingredient.unit) %></td>
         <td><%= extra_ingredient.purpose %></td>
         <td><%= link_to 'Bearbeiten', edit_extra_ingredient_path(extra_ingredient) %></td>
         <td><%= link_to 'Löschen', extra_ingredient, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>

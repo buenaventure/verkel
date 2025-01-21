@@ -6,9 +6,9 @@
         <th>Vorrat</th>
       <% end %>
       <% @order.boxes.each do |box| %>
-        <th class="text-right"><%= link_to l(box.datetime, format: :really_short), box %></th>
+        <th class="text-end"><%= link_to l(box.datetime, format: :really_short), box %></th>
       <% end %>
-      <th class="text-right">Summe</th>
+      <th class="text-end">Summe</th>
     </tr>
   </thead>
 
@@ -17,16 +17,16 @@
       <tr>
         <td><%= link_to article, article %></td>
         <% if @order.hoard_requirements.any? %>
-          <td class="text-right">
+          <td class="text-end">
             <%= number_with_delimiter @order.hoard_requirements_by_article.fetch(article.id, nil) %>
           </td>
         <% end %>
         <% @order.boxes.each do |box| %>
-          <td class="text-right">
+          <td class="text-end">
             <%= number_with_delimiter @order.order_requirements_by_article_box.fetch([article.id, box.id], nil) %>
           </td>
         <% end %>
-        <td class="text-right">
+        <td class="text-end">
           <%= number_with_delimiter @order.requirements_by_article[article.id] %>
         </td>
       </tr>

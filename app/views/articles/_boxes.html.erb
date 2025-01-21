@@ -2,10 +2,10 @@
   <thead>
     <tr>
       <th>Kiste</th>
-      <th class="text-right">Gesamtbedarf</th>
-      <th class="text-right">Im Lager</th>
-      <th class="text-right">bestellt</th>
-      <th class="text-right">Bestellbedarf</th>
+      <th class="text-end">Gesamtbedarf</th>
+      <th class="text-end">Im Lager</th>
+      <th class="text-end">bestellt</th>
+      <th class="text-end">Bestellbedarf</th>
     </tr>
   </thead>
 
@@ -13,16 +13,16 @@
     <% @article.boxes.each do |box| %>
       <tr>
         <td><%= link_to I18n.l(box.datetime), box %></td>
-        <td class="text-right">
+        <td class="text-end">
           <%= number_with_delimiter @article.sums_by_box.fetch(box.id, 0) %>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= number_with_delimiter @article.order_requirement_of(box).stock %>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= number_with_delimiter @article.order_requirement_of(box).ordered %>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= number_with_delimiter @article.order_requirement_of(box).quantity %>
         </td>
       </tr>
@@ -31,16 +31,16 @@
   <tfoot>
     <tr>
       <td></td>
-      <td class="text-right">
+      <td class="text-end">
         <%= number_with_delimiter @article.group_box_articles.sum(:quantity) %>
       </td>
-      <td class="text-right">
+      <td class="text-end">
         <%= number_with_delimiter @article.article_box_order_requirements.sum(:stock) %>
       </td>
-      <td class="text-right">
+      <td class="text-end">
         <%= number_with_delimiter @article.article_box_order_requirements.sum(:ordered) %>
       </td>
-      <td class="text-right">
+      <td class="text-end">
         <%= number_with_delimiter @article.article_box_order_requirements.sum(:quantity) %>
       </td>
     </tr>

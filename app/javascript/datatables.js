@@ -1,6 +1,6 @@
-require('datatables.net-bs4')
-require('datatables.net-fixedcolumns-bs4')
-require('datatables.net-fixedheader-bs4')
+require('datatables.net-bs5')
+require('datatables.net-fixedcolumns-bs5')
+require('datatables.net-fixedheader-bs5')
 
 $.extend(true, $.fn.dataTable.defaults, {
   fixedHeader: true,

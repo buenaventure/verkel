@@ -2,8 +2,8 @@
   <thead>
     <tr>
       <th>Zutat</th>
-      <th class="text-right">Bedarf</th>
-      <th class="text-right">Fehlmenge</th>
+      <th class="text-end">Bedarf</th>
+      <th class="text-end">Fehlmenge</th>
       <% if defined?(show_meals) %><th>Mahlzeiten</th><% end %>
     </tr>
   </thead>
@@ -12,8 +12,8 @@
     <% @box.ingredients.order(:name).each do |ingredient| %>
       <tr>
         <td><%= link_to ingredient, ingredient %></td>
-        <td class="text-right"><%= @box.unit_sums[ingredient.id].map(&:humanize).join(', ') %></td>
-        <td class="text-right">
+        <td class="text-end"><%= @box.unit_sums[ingredient.id].map(&:humanize).join(', ') %></td>
+        <td class="text-end">
           <%= @box.missing_ingredient_sums_by_ingredient.fetch(ingredient.id, []).map(&:humanize).join(', ') %>
         </td>
         <% if defined?(show_meals) %>

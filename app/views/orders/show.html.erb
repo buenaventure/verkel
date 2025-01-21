@@ -1,4 +1,4 @@
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Löschen', @order, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
   <%= link_to 'Bearbeiten', edit_order_path(@order), class: 'btn btn-primary' %>
   <%= link_to 'Zurück', orders_path, class: 'btn btn-light' %>

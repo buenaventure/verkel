@@ -1,8 +1,13 @@
+$breadcrumb-padding-y: 0.75rem;
+$breadcrumb-padding-x: 1rem;
+$breadcrumb-bg: #e9ecef;
+$breadcrumb-border-radius: 0.25rem;
+
 @import 'bootstrap/scss/bootstrap';
 @import './actiontext.scss';
-@import 'datatables.net-bs4/css/dataTables.bootstrap4';
+@import 'datatables.net-bs5/css/dataTables.bootstrap5';
 @import 'select2/dist/css/select2.min';
-@import '@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min';
+@import 'select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min';
 
 // apply styles to HTML elements
 // to make views framework-neutral
@@ -14,15 +19,4 @@ main {
 section {
     @extend .row;
     margin-top: 20px;
-}
-
-.dataTable {
-    thead {
-        background-color: white;
-    }
-}
-
-button.select2-selection__choice__remove {
-    border: none;
-    background: none;
 }

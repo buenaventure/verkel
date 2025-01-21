@@ -8,7 +8,7 @@
     <thead>
       <tr>
         <th>Artikel</th>
-        <th class="text-right">Bestand</th>
+        <th class="text-end">Bestand</th>
       </tr>
     </thead>
 
@@ -16,8 +16,8 @@
       <%= f.simple_fields_for :packing_lane_article_stocks, @packing_lane_box.packing_lane_article_stocks do |stock| %>
         <tr>
           <td><%= link_to stock.object.article, stock.object.article %></td>
-          <td class="text-right">
-            <%= stock.input :quantity, label: false, input_html: { class: 'text-right' } %>
+          <td class="text-end">
+            <%= stock.input :quantity, label: false, input_html: { class: 'text-end' } %>
           </td>
         </tr>
       <% end %>

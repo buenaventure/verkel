@@ -1,4 +1,4 @@
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Bearbeiten', edit_meal_path(@meal), class: 'btn btn-primary' %>
   <%= link_to 'Zurück', meals_path, class: 'btn btn-default' %>
 </div>
@@ -16,7 +16,7 @@
   <thead>
     <tr>
       <th>Gruppe</th>
-      <th class="text-right">Portionen</th>
+      <th class="text-end">Portionen</th>
     </tr>
   </thead>
 
@@ -25,7 +25,7 @@
     <% @meal.group_meals.includes(:group).each do |group_meal| %>
       <tr>
         <td><%= link_to group_meal.group.name, group_meal.group %></td>
-        <td class="text-right"><%= @servings[group_meal.group_id] %></td>
+        <td class="text-end"><%= @servings[group_meal.group_id] %></td>
       </tr>
     <% end %>
   </tbody>
@@ -33,7 +33,7 @@
   <tfoot>
     <tr>
       <td></td>
-      <td class="text-right"><%= @meal.servings %></td>
+      <td class="text-end"><%= @meal.servings %></td>
       <td colspan="2"></td>
     </tr>
   </tfoot>

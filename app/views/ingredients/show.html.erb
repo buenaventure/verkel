@@ -1,4 +1,4 @@
-<div class="btn-group float-right" role="group">
+<div class="btn-group float-end" role="group">
   <%= link_to 'Löschen', @ingredient, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' }, class: 'btn btn-danger' %>
   <%= link_to 'Bearbeiten', edit_ingredient_path(@ingredient), class: 'btn btn-primary' %>
   <%= link_to 'Zurück', ingredients_path, class: 'btn btn-light' %>
@@ -38,7 +38,7 @@
   <% end %>
 </ul>
 
-<%= link_to 'Neue Alternative anlegen', new_ingredient_ingredient_alternative_path(@ingredient), class: 'btn btn-primary btn-sm float-right' %>
+<%= link_to 'Neue Alternative anlegen', new_ingredient_ingredient_alternative_path(@ingredient), class: 'btn btn-primary btn-sm float-end' %>
 <%= render 'ingredient_alternatives/table', ingredient_alternatives: @ingredient.ingredient_alternatives %>
 
 <h2>Gewicht</h2>
@@ -52,19 +52,19 @@
 
 <h2>Lieferanten</h2>
 
-<%= link_to 'Neuen Artikel anlegen', new_article_path(ingredient_id: @ingredient), class: 'btn btn-sm btn-primary float-right' %>
+<%= link_to 'Neuen Artikel anlegen', new_article_path(ingredient_id: @ingredient), class: 'btn btn-sm btn-primary float-end' %>
 <%= render 'articles/table', articles: @ingredient.articles, ingredient: true, show_price: true %>
 
 <table class="table table-sm">
   <thead>
     <tr>
       <th>Kiste</th>
-      <th class="text-right">Bedarf</th>
-      <th class="text-right">Im Lager</th>
-      <th class="text-right">bestellt</th>
-      <th class="text-right">Bestellbedarf</th>
-      <th class="text-right">Fehlmenge</th>
-      <th class="text-right">Überpackt</th>
+      <th class="text-end">Bedarf</th>
+      <th class="text-end">Im Lager</th>
+      <th class="text-end">bestellt</th>
+      <th class="text-end">Bestellbedarf</th>
+      <th class="text-end">Fehlmenge</th>
+      <th class="text-end">Überpackt</th>
     </tr>
   </thead>
 
@@ -72,22 +72,22 @@
     <% @ingredient.boxes.each do |box| %>
       <tr>
         <td><%= link_to I18n.l(box.datetime), box %></td>
-        <td class="text-right">
+        <td class="text-end">
           <%= humanize_units @ingredient.unit_sums_by_box[box.id] %>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= humanize_units @ingredient.order_requirement_of(box).stock %>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= humanize_units @ingredient.order_requirement_of(box).ordered %>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= humanize_units @ingredient.order_requirement_of(box).quantity %>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= humanize_units @ingredient.missing_ingredient_sums_by_box.fetch(box.id, QuantityUnits.new) %>
         </td>
-        <td class="text-right">
+        <td class="text-end">
           <%= (@ingredient.order_requirement_of(box).total.sum + @ingredient.missing_ingredient_sums_by_box.fetch(box.id, QuantityUnits.new) - @ingredient.unit_sums_by_box[box.id]).humanize  %>
         </td>
       </tr>
@@ -96,26 +96,26 @@
   <tfoot>
     <tr>
       <td></td>
-      <td class="text-right">
+      <td class="text-end">
         <% @ingredient.unit_sums.each do |unit_sum| %>
           <%= unit_sum.humanize %>
         <% end %>
       </td>
-      <td class="text-right">
+      <td class="text-end">
         <%= humanize_units_sum @ingredient.order_requirements.values.map(&:stock).flatten %>
       </td>
-      <td class="text-right">
+      <td class="text-end">
         <%= humanize_units_sum @ingredient.order_requirements.values.map(&:ordered).flatten %>
       </td>
-      <td class="text-right">
+      <td class="text-end">
         <%= humanize_units_sum @ingredient.order_requirements.values.map(&:quantity).flatten %>
       </td>
-      <td class="text-right">
+      <td class="text-end">
         <% @ingredient.missing_ingredient_sums.each do |unit_sum| %>
           <%= unit_sum.humanize %>
         <% end %>
       </td>
-      <td class="text-right">
+      <td class="text-end">
         <%= (QuantityUnits.new(@ingredient.order_requirements.values.map(&:total).flatten) + @ingredient.missing_ingredient_sums - @ingredient.unit_sums).humanize %>
       </td>
     </tr>

@@ -17,10 +17,10 @@
       <tr>
         <td><%= link_to diet.name, diet %></td>
         <td><%= diet.category %></td>
-        <td class="text-right"><%= diet.participants.count %></td>
-        <td class="text-right"><%= diet.ingredients.count %></td>
-        <td class="text-right"><%= diet.positive_recipes.count %></td>
-        <td class="text-right"><%= diet.negative_recipes.count %></td>
+        <td class="text-end"><%= diet.participants.count %></td>
+        <td class="text-end"><%= diet.ingredients.count %></td>
+        <td class="text-end"><%= diet.positive_recipes.count %></td>
+        <td class="text-end"><%= diet.negative_recipes.count %></td>
       </tr>
     <% end %>
   </tbody>

@@ -1,12 +1,7 @@
 <%# add navigation links to this file %>
 <% if user_signed_in? %>
 <li class="nav-item"><%= link_to 'Menü', meals_path, class: 'nav-link' %></li>
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" href="#"><span class="sr-only">ausklappen</span></a>
-  <div class="dropdown-menu">
-    <%= link_to 'Rezepte', recipes_path, class: 'dropdown-item' %>
-  </div>
-</li>
+<li class="nav-item"><%= link_to 'Rezepte', recipes_path, class: 'nav-link' %></li>
 <li class="nav-item"><%= link_to 'LAGA', laga_articles_path, class: 'nav-link' %></li>
 <li class="nav-item"><%= link_to 'Zutaten', ingredients_path, class: 'nav-link' %></li>
 <li class="nav-item"><%= link_to 'Artikel', articles_path, class: 'nav-link' %></li>
@@ -14,23 +9,18 @@
 <li class="nav-item"><%= link_to 'Bestellungen', orders_path, class: 'nav-link' %></li>
 <li class="nav-item"><%= link_to 'Kisten', boxes_path, class: 'nav-link' %></li>
 <li class="nav-item"><%= link_to 'Kochgruppen', groups_path, class: 'nav-link' %></li>
+<li class="nav-item"><%= link_to 'Teilnehmende', participants_path, class: 'nav-link' %></li>
+<li class="nav-item"><%= link_to 'Ernährungsweisen', diets_path, class: 'nav-link' %></li>
 <li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" href="#"><span class="sr-only">ausklappen</span></a>
-  <div class="dropdown-menu">
-    <%= link_to 'Teilnehmende', participants_path, class: 'dropdown-item' %>
-    <%= link_to 'Ernährungsweisen', diets_path, class: 'dropdown-item' %>
-  </div>
-</li>
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Berechnen</a>
+  <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Berechnen</a>
   <div class="dropdown-menu">
     <% Calculation.calculatables.each do |calculatable| %>
       <%= link_to calculatable.calculation, data: { turbo_method: :patch }, class: 'dropdown-item' do %>
         <%= I18n.t "calculatable.#{calculatable.calculatable_name}" %> neu berechnen
         <% if calculatable.fresh? %>
-          <span class="badge badge-pill badge-success">Alles frisch</span>
+          <span class="badge rounded-pill bg-success">Alles frisch</span>
         <% else %>
-          <span class="badge badge-pill badge-danger">Änderungen</span>
+          <span class="badge rounded-pill bg-danger">Änderungen</span>
         <% end %>
       <% end %>
     <% end %>
