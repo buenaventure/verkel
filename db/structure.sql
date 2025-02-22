@@ -187,11 +187,11 @@ CREATE TABLE public.article_box_order_requirements (
     id bigint NOT NULL,
     article_id bigint NOT NULL,
     box_id bigint NOT NULL,
-    quantity numeric(8,0),
+    quantity numeric(10,0),
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    stock numeric(8,0),
-    ordered numeric(8,0)
+    stock numeric(10,0),
+    ordered numeric(10,0)
 );
 
 
@@ -227,11 +227,11 @@ CREATE TABLE public.articles (
     updated_at timestamp(6) without time zone NOT NULL,
     ingredient_id bigint NOT NULL,
     notes text,
-    quantity numeric(8,1),
-    stock numeric(8,0) DEFAULT 0.0 NOT NULL,
+    quantity numeric(10,1),
+    stock numeric(10,0) DEFAULT 0.0 NOT NULL,
     priority integer DEFAULT 0 NOT NULL,
     name character varying DEFAULT ''::character varying NOT NULL,
-    order_limit numeric(8,0),
+    order_limit numeric(10,0),
     packing_type integer DEFAULT 0 NOT NULL,
     needs_cooling boolean DEFAULT false NOT NULL,
     nr integer
@@ -434,7 +434,7 @@ CREATE TABLE public.extra_ingredients (
     group_id bigint NOT NULL,
     box_id bigint NOT NULL,
     ingredient_id bigint NOT NULL,
-    quantity numeric(7,2),
+    quantity numeric(9,2),
     unit character varying,
     purpose character varying,
     created_at timestamp(6) without time zone NOT NULL,
@@ -470,7 +470,7 @@ CREATE TABLE public.group_box_articles (
     group_id bigint NOT NULL,
     box_id bigint NOT NULL,
     article_id bigint NOT NULL,
-    quantity numeric(8,0),
+    quantity numeric(10,0),
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -675,7 +675,7 @@ CREATE TABLE public.recipe_ingredients (
     id bigint NOT NULL,
     recipe_id bigint NOT NULL,
     ingredient_id bigint NOT NULL,
-    quantity numeric(7,2),
+    quantity numeric(9,2),
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     unit character varying,
@@ -882,7 +882,7 @@ CREATE VIEW public.group_box_ingredient_units AS
     box_id,
     ingredient_id,
     unit,
-    (sum(quantity))::numeric(8,2) AS quantity
+    sum(quantity) AS quantity
    FROM weighted_ingredient_sums_with_extra_ingredients
   GROUP BY group_id, box_id, ingredient_id, unit;
 
@@ -976,11 +976,11 @@ ALTER SEQUENCE public.groups_id_seq OWNED BY public.groups.id;
 CREATE TABLE public.hoards (
     id bigint NOT NULL,
     article_id bigint NOT NULL,
-    quantity numeric(8,0) NOT NULL,
+    quantity numeric(10,0) NOT NULL,
     until timestamp(6) without time zone NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    missing_quantity numeric(8,0) DEFAULT 0.0 NOT NULL
+    missing_quantity numeric(10,0) DEFAULT 0.0 NOT NULL
 );
 
 
@@ -1107,7 +1107,7 @@ CREATE TABLE public.missing_ingredients (
     group_id bigint NOT NULL,
     box_id bigint NOT NULL,
     ingredient_id bigint NOT NULL,
-    quantity numeric(8,2),
+    quantity numeric(10,2),
     unit character varying,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -1141,8 +1141,8 @@ CREATE TABLE public.order_articles (
     id bigint NOT NULL,
     order_id bigint NOT NULL,
     article_id bigint NOT NULL,
-    quantity_ordered numeric(8,0) DEFAULT 0.0,
-    quantity_delivered numeric(8,0) DEFAULT 0.0,
+    quantity_ordered numeric(10,0) DEFAULT 0.0,
+    quantity_delivered numeric(10,0) DEFAULT 0.0,
     created_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(6) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -1208,7 +1208,7 @@ CREATE TABLE public.packing_lane_article_stocks (
     id bigint NOT NULL,
     packing_lane_id bigint NOT NULL,
     article_id bigint NOT NULL,
-    quantity numeric(8,0) NOT NULL,
+    quantity numeric(10,0) NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     box_id bigint NOT NULL
@@ -1339,8 +1339,8 @@ CREATE TABLE public.stock_changes (
     id bigint NOT NULL,
     article_id bigint NOT NULL,
     user_id bigint NOT NULL,
-    quantity numeric(8,0) NOT NULL,
-    result numeric(8,0) NOT NULL,
+    quantity numeric(10,0) NOT NULL,
+    result numeric(10,0) NOT NULL,
     reference character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -2860,6 +2860,7 @@ ALTER TABLE ONLY public.missing_ingredients
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250222095439'),
 ('20250118112615'),
 ('20250118112614'),
 ('20250118112613'),
