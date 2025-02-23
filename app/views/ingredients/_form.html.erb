@@ -3,6 +3,7 @@
   <%= f.input :commodity_group %>
   <%= f.input :box_type, collection: Ingredient.box_types.keys.map { |key| [I18n.t("activerecord.enums.ingredient.box_type.#{key}"), key] }, include_blank: false %>
   <%= f.input :uses_hunger_factor %>
+  <%= f.input :on_demand %>
   <%= f.association :diets, collection: Diet.order(:name), input_html: { class: 'select2' } %>
   <%= f.button :submit, class: 'btn btn-success' %>
 <% end %>

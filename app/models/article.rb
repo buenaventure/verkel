@@ -27,6 +27,8 @@ class Article < ApplicationRecord
 
   scope :lexical, -> { joins(:ingredient).reorder('ingredients.commodity_group', 'ingredients.name', 'priority') }
 
+  delegate :on_demand?, to: :ingredient
+
   def to_s
     nr_str = nr.nil? ? '' : "##{nr} "
     name_str = name.blank? ? '' : "\"#{name}\" "

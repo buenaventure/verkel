@@ -73,16 +73,28 @@ class PackingListsGroups < Prawn::Document
     font('CabinSketch') do
       font_size(20) { text group.display_name, style: :bold }
     end
-    article_table(group, :warm)
+    article_table(article_table_entries(group, :warm))
+    if (warm_on_demand_entries = article_table_entries(group, :warm_on_demand)).present?
+      move_down 30
+      text 'auf Nachfrage', style: :bold, size: 12
+      article_table(warm_on_demand_entries)
+    end
+
     move_down 30
     text 'Kühlkiste', style: :bold, size: 14
-    article_table(group, :cold)
+    article_table(article_table_entries(group, :cold))
+    if (cold_on_demand_entries = article_table_entries(group, :cold_on_demand)).present?
+      move_down 30
+      text 'auf Nachfrage', style: :bold, size: 12
+      article_table(cold_on_demand_entries)
+    end
+
     missing_ingredients_table(group)
   end
 
-  def article_table(group, filter)
+  def article_table(entries)
     table(
-      [%w[Name Menge gepackt]] + table_data(@group_articles.fetch(group, []).select(&"#{filter}?".to_sym)),
+      [%w[Name Menge gepackt]] + table_data(entries),
       header: true, position: :center, width: bounds.width, column_widths: { 1 => 75, 2 => 66 }
     ) do
       cells.borders = [:top]
@@ -92,6 +104,10 @@ class PackingListsGroups < Prawn::Document
 
       columns(1..3).align = :right
     end
+  end
+
+  def article_table_entries(group, filter)
+    @group_articles.fetch(group, []).select(&"#{filter}?".to_sym)
   end
 
   def table_data(group_articles)

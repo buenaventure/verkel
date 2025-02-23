@@ -28,6 +28,8 @@ PackingLaneArticle = Struct.new(:article, :quantity_required, :stock, :packing_l
   end
 
   def move_diff_from_stock(user)
+    return if article.on_demand?
+
     quantity = [quantity_difference, article.stock].min
     return if quantity <= 0
 

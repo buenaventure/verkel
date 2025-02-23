@@ -20,10 +20,18 @@ class GroupBoxArticle < ApplicationRecord
   end
 
   def warm?
-    !article.needs_cooling?
+    !article.needs_cooling? && !article.on_demand?
   end
 
   def cold?
-    article.needs_cooling?
+    article.needs_cooling? && !article.on_demand?
+  end
+
+  def warm_on_demand?
+    !article.needs_cooling? && article.on_demand?
+  end
+
+  def cold_on_demand?
+    article.needs_cooling? && article.on_demand?
   end
 end

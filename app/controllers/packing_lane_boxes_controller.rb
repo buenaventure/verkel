@@ -1,7 +1,7 @@
 class PackingLaneBoxesController < ApplicationController
   authorize_resource
   before_action :set_packing_lane_box,
-                only: %i[show edit create_stock update destroy move_diff_from_stock move_to_stock packing_list]
+                only: %i[show edit create_stock update move_diff_from_stock move_to_stock packing_list]
 
   def show
     @packing_lane_article_stock = @packing_lane_box.packing_lane_article_stocks.new

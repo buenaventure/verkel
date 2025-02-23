@@ -143,6 +143,7 @@ de:
         commodity_group: Warengruppe
         diets: inkompatible Ernährungsweisen
         ingredient_substitutions: ersetzte Zutaten
+        on_demand: auf Nachfrage
         uses_hunger_factor: Hunger-Faktor berücksichtigen
       ingredient_alternative:
         alternative: alternative Zutat
@@ -239,6 +240,9 @@ de:
         absolute_servings: 'Überschreibt alle anderen Werte wenn nicht 0'
       group_meal_variant:
         absolute_servings: 'Überschreibt alle anderen Werte wenn nicht 0'
+      ingredient:
+        on_demand: diese Zutat in den Packlisten gesondert aufführen und bei der Vorkommissionierung nicht automatisch aus dem Lager in die Packstraße buchen
+        uses_hunger_factor: Bedarf für diese Zutat mit dem Faktor der Teilnehmer*in und dem der Gruppe multiplizieren. Typischerweise bei Sättigungsbeilagen
   date:
     formats:
       weekday: "%A, %d.%m."

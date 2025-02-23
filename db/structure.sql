@@ -10,13 +10,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: public; Type: SCHEMA; Schema: -; Owner: -
---
-
--- *not* creating schema, since initdb creates it
-
-
---
 -- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -763,7 +756,8 @@ CREATE TABLE public.ingredients (
     commodity_group character varying,
     no_buy boolean DEFAULT false NOT NULL,
     uses_hunger_factor boolean DEFAULT false NOT NULL,
-    box_type integer DEFAULT 0 NOT NULL
+    box_type integer DEFAULT 0 NOT NULL,
+    on_demand boolean DEFAULT false NOT NULL
 );
 
 
@@ -2860,6 +2854,7 @@ ALTER TABLE ONLY public.missing_ingredients
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250223161014'),
 ('20250222095439'),
 ('20250118112615'),
 ('20250118112614'),

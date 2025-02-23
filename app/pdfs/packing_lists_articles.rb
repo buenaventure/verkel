@@ -85,6 +85,9 @@ class PackingListsArticles < Prawn::Document
     font('CabinSketch') do
       font_size(20) { text article.packing_name, style: :bold }
     end
+
+    text '– Artikel nur auf Nachfrage packen! –', style: :bold, size: 20, align: :center if article.on_demand?
+
     table(
       [%w[Gruppe Menge gepackt]] + table_data(group_articles) +
       [['Summe',

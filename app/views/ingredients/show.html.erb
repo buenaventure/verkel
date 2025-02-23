@@ -27,6 +27,22 @@
       <%= unit_sum.humanize %>
     <% end %>
   </dd>
+  <dt>Eigenschaften</dt>
+  <dd>
+    <span class="badge bg-primary rounded-pill">
+      Kiste: <%= I18n.t("activerecord.enums.ingredient.box_type.#{@ingredient.box_type}") %>
+    </span>
+    <% if @ingredient.uses_hunger_factor? %>
+    <span class="badge bg-success rounded-pill">
+      Hunger-Faktor aktiv
+    </span>
+    <% end %>
+    <% if @ingredient.on_demand? %>
+    <span class="badge bg-warning rounded-pill">
+      Nur auf Nachfrage
+    </span>
+    <% end %>
+  </dd>
 </dl>
 
 <h2>problematische Ernährungsweisen</h2>

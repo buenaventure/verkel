@@ -70,7 +70,8 @@ class IngredientsController < ApplicationController
   end
 
   def ingredient_params
-    params.require(:ingredient).permit(:name, :commodity_group, :box_type, :uses_hunger_factor, diet_ids: [])
+    params.require(:ingredient).permit(:name, :commodity_group, :box_type, :uses_hunger_factor, :on_demand,
+                                       diet_ids: [])
   end
 
   def load_ingredient_sums

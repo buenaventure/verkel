@@ -69,6 +69,9 @@ class PackingListsMissingIngredients < Prawn::Document
     font('CabinSketch') do
       font_size(20) { text ingredient.name, style: :bold }
     end
+
+    text '– Artikel nur auf Nachfrage packen! –', style: :bold, size: 20, align: :center if ingredient.on_demand?
+
     table(
       [%w[Gruppe Menge gepackt]] + table_data(missing_ingredients),
       header: true, position: :center, width: bounds.width
