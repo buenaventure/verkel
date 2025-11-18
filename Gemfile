@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.4.1'
+ruby '3.4.7'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'bootsnap', '>= 1.4.4', require: false
@@ -20,6 +20,7 @@ gem 'kramdown', '~> 2.3'
 gem 'kramdown-parser-gfm', '~> 1.0'
 gem 'matrix'
 gem 'nokogiri'
+gem 'ostruct'
 gem 'pg'
 gem 'prawn'
 gem 'prawn-table'
@@ -45,6 +46,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'bundle_update_interactive'
   gem 'debug', '>= 1.0.0'
   gem 'listen', '~> 3.3'
   gem 'rack-mini-profiler', '~> 3.3'

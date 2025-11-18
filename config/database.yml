@@ -10,7 +10,7 @@ default: &default
   database: verkel
   pool: <%= ENV.fetch('RAILS_MAX_THREADS', 5 ) %>
   host: <%= ENV.fetch('DATABASE_HOST', '127.0.0.1' ) %>
-  username: <%= ENV.fetch('DATABASE_USER', 'verkel' ) %>
+  username: <%= ENV.fetch('DATABASE_USER', '' ) %>
   password: <%= ENV.fetch('DATABASE_PASSWORD', 'postgres' ) %>
 
 development:
@@ -27,3 +27,4 @@ test:
 production:
   <<: *default
   database: <%= ENV.fetch('DATABASE_NAME', 'verkel_production' ) %>
+  username: <%= ENV.fetch('DATABASE_USER', 'verkel' ) %>
