@@ -11,6 +11,7 @@ RUN apk --update --no-cache add \
     postgresql-dev \
     tzdata \
     yarn \
+    yaml \
     && rm -rf /var/cache/apk/*
 
 # bundle
