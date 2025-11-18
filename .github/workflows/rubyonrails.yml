@@ -17,15 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16-alpine
+        image: postgres:18-alpine
         ports:
           - "5432:5432"
         env:
           POSTGRES_DB: verkel_test
-          POSTGRES_USER: verkel
           POSTGRES_PASSWORD: postgres
     env:
       RAILS_ENV: test
+      DATABASE_USER: postgres
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
