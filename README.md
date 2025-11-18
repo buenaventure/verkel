@@ -8,7 +8,8 @@ Things you may want to cover:
 * Ruby version
 
 * System dependencies
-  `brew install postgresql@18`
+  - `brew install postgresql@18 yarn node`
+  - `yarn install`
 
 * Configuration
   can be put into an `.env` file
