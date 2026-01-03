@@ -3,7 +3,10 @@ module NormalizedQuantityUnit
 
   included do
     before_validation :normalize_unit
-    validates :unit, presence: true
+    validates :unit, presence: true, inclusion: {
+      in: -> { Unit.pluck(:name) + %w[g ml] },
+      message: '%<value>s ist keine erlaubte Einheit'
+    }
     validates :quantity, numericality: true
   end
 

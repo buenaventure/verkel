@@ -3,6 +3,16 @@
   <%= f.input :name %>
   <%= f.input :servings %>
   <%= f.input :content, input_html: { rows: 23 } %>
+  <% if recipe.errors[:recipe_ingredients] %>
+    <ul>
+    <% recipe.recipe_ingredients.select(&:invalid?).each do |recipe_ingredient| %>
+      <li>
+        <b><%= recipe_ingredient %></b>
+        <%= recipe_ingredient.errors.full_messages.to_sentence %>
+      </li>
+    <% end %>
+    </ul>
+  <% end %>
   <% if feature(:lama) %>
   <%= f.input :lama_uuid %>
   <% end %>

@@ -1,0 +1,20 @@
+<h1>Einheiten</h1>
+
+<%= link_to 'Neue Einheit hinzufügen', new_unit_path, class: 'btn btn-sm btn-primary float-end' %>
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @units.each do |unit| %>
+      <tr>
+        <td><%= unit.name %></td>
+        <td><%= link_to 'Löschen', unit, data: { turbo_method: :delete, turbo_confirm: 'Bist du sicher?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

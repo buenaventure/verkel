@@ -90,6 +90,9 @@ de:
       supplier:
         one: Lieferant
         other: Lieferanten
+      unit:
+        one: Einheit
+        other: Einheiten
     attributes:
       article:
         ingredient: Zutat
@@ -181,6 +184,8 @@ de:
         content: Rezept
         name: Name
         servings: Portionen
+      recipe_ingredient:
+        unit: Einheit
       supplier:
         address: Adresse
         delivery_time: maximale Lieferfrist (Stunden von Bestellung bis Bedarf in Kiste)

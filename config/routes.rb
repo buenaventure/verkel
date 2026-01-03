@@ -83,5 +83,6 @@ Rails.application.routes.draw do
     resource :extra_ingredients, only: :create
   end
   resources :users, except: :show
+  resources :units, only: %i[index new create destroy]
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
