@@ -45,13 +45,14 @@ class Article < ApplicationRecord
   end
 
   def packing_name
-    article_name = name && !name.blank? ? " - #{name}" : ''
-    "#{ingredient.name} - #{supplier.name}#{article_name}" + \
-      if packing_type == 'piece'
-        " - #{quantity_unit.humanize}"
-      else
-        ''
-      end
+    "#{ingredient.name} - #{packing_subheading}"
+  end
+
+  def packing_subheading
+    parts = [supplier.name]
+    parts << name if name.present?
+    parts << quantity_unit.humanize if packing_type == 'piece'
+    parts.join(' - ')
   end
 
   def base_price

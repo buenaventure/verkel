@@ -61,12 +61,12 @@ class PackingListsArticles < Prawn::Document
   end
 
   def packing_lane(packing_lane)
-    group_articles = group_articles_per_lane.fetch(packing_lane, []).group_by(&:article)
-    articles = group_articles.keys.sort_by { |ga| ga.ingredient.name }
-    articles.each_with_index do |article, index|
+    group_articles_by_ingredient = group_articles_per_lane.fetch(packing_lane, [])
+                                                          .group_by { |ga| ga.article.ingredient }
+    group_articles_by_ingredient.keys.sort_by(&:name).each_with_index do |ingredient, index|
       start_new_page if index != 0
       first_page = page_number
-      packing_list(article, group_articles[article])
+      ingredient_packing_list(ingredient, group_articles_by_ingredient[ingredient])
       (first_page..page_number).each do |i|
         go_to_page i
         canvas do
@@ -74,37 +74,49 @@ class PackingListsArticles < Prawn::Document
             [MARGIN, MARGIN + FOOTER_SIZE],
             width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
           ) do
-            text article.packing_name, size: 10, align: :right
+            text ingredient.name, size: 10, align: :right
           end
         end
       end
     end
   end
 
-  def packing_list(article, group_articles)
+  def ingredient_packing_list(ingredient, group_articles)
     font('CabinSketch') do
-      font_size(20) { text article.packing_name, style: :bold }
+      font_size(20) { text ingredient.name, style: :bold }
     end
 
-    text '– Artikel nur auf Nachfrage packen! –', style: :bold, size: 20, align: :center if article.on_demand?
+    group_articles_by_article = group_articles.group_by(&:article)
+    articles = group_articles_by_article.keys.sort_by { |a| [a.supplier.name, a.name || ''] }
 
-    table(
-      [%w[Gruppe Menge gepackt]] + table_data(group_articles) +
-      [['Summe',
-        case article.packing_type
-        when 'bulk' then QuantityUnit.sum(group_articles.map(&:quantity_unit)).humanize
-        when 'piece' then number_with_delimiter group_articles.map(&:quantity).sum
-        else raise ArgumentError
-        end, nil]],
-      header: true, position: :center, width: bounds.width
-    ) do
-      cells.borders = [:top]
+    articles.each_with_index do |article, article_index|
+      font('CabinSketch') do
+        font_size(16) { text article.packing_subheading, style: :bold }
+      end
 
-      row(0).font_style = :bold
-      row(0).borders = [:bottom]
+      text '– Artikel nur auf Nachfrage packen! –', style: :bold, size: 20, align: :center if article.on_demand?
 
-      columns(1..3).align = :right
-      row(-1).font_style = :bold
+      table(
+        [%w[Gruppe Menge gepackt]] + table_data(group_articles_by_article[article]) +
+        [['Summe',
+          case article.packing_type
+          when 'bulk' then QuantityUnit.sum(group_articles_by_article[article].map(&:quantity_unit)).humanize
+          when 'piece' then number_with_delimiter group_articles_by_article[article].map(&:quantity).sum
+          else raise ArgumentError
+          end, nil]],
+        header: true, position: :center, width: bounds.width
+      ) do
+        cells.borders = [:top]
+
+        row(0).font_style = :bold
+        row(0).borders = [:bottom]
+
+        columns(1..3).align = :right
+        row(-1).font_style = :bold
+      end
+
+      # Add some space between articles, but not after the last one
+      move_down 10 if article_index < articles.length - 1
     end
   end
 
