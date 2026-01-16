@@ -34,7 +34,7 @@ class RecipesController < ApplicationController
       if @recipe.save
         format.html { redirect_to @recipe, notice: 'Repept wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -44,7 +44,7 @@ class RecipesController < ApplicationController
       if @recipe.update(recipe_params)
         format.html { redirect_to @recipe, notice: 'Repept wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -68,6 +68,6 @@ class RecipesController < ApplicationController
   end
 
   def recipe_params
-    params.require(:recipe).permit(:name, :servings, :content, :lama_uuid)
+    params.expect(recipe: %i[name servings content lama_uuid])
   end
 end

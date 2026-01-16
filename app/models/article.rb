@@ -40,7 +40,7 @@ class Article < ApplicationRecord
   end
 
   def ordering_name
-    article_name = name && !name.blank? ? " - #{name}" : ''
+    article_name = name && name.present? ? " - #{name}" : ''
     "#{ingredient.name}#{article_name}"
   end
 
@@ -70,7 +70,7 @@ class Article < ApplicationRecord
   end
 
   def order_requirements
-    @order_requirements ||= article_box_order_requirements.map { |abor| [abor.box_id, abor] }.to_h
+    @order_requirements ||= article_box_order_requirements.index_by { |abor| abor.box_id }
   end
 
   def order_requirement_of(box)

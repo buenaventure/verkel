@@ -14,8 +14,8 @@ class QuantityUnits
 
   def sum
     self.class.new(
-      @quantity_units \
-      .group_by(&:unit) \
+      @quantity_units
+      .group_by(&:unit)
       .map do |unit, qu|
         QuantityUnit.new(qu.sum(&:quantity), unit)
       end

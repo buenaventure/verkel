@@ -17,6 +17,7 @@ class Order < ApplicationRecord
   default_scope { order(:coverage) }
 
   include DateTimeRange
+
   date_time_range :coverage
 
   def to_s
@@ -32,20 +33,20 @@ class Order < ApplicationRecord
   end
 
   def order_requirements
-    ArticleBoxOrderRequirement \
-      .joins(:article) \
+    ArticleBoxOrderRequirement
+      .joins(:article)
       .where(box: boxes, 'articles.supplier_id': supplier_id)
   end
 
   def hoard_requirements
-    Hoard \
-      .joins(:article).where('articles.supplier_id': supplier_id) \
+    Hoard
+      .joins(:article).where('articles.supplier_id': supplier_id)
       .where("'%s' <= until", coverage.begin)
   end
 
   def required_articles
-    Article \
-      .where(id: order_requirements.pluck(:article_id).union(hoard_requirements.pluck(:article_id))) \
+    Article
+      .where(id: order_requirements.pluck(:article_id).union(hoard_requirements.pluck(:article_id)))
       .includes(:ingredient).joins(:ingredient).reorder('ingredients.name', 'articles.name')
   end
 
@@ -114,17 +115,17 @@ class Order < ApplicationRecord
   end
 
   def order_requirements_by_article_box
-    @order_requirements_by_article_box ||= \
+    @order_requirements_by_article_box ||=
       order_requirements.group(:article_id, :box_id).sum(:quantity).to_h
   end
 
   def hoard_requirements_by_article
-    @hoard_requirements_by_article ||= \
+    @hoard_requirements_by_article ||=
       hoard_requirements.group(:article_id).sum(:missing_quantity).to_h
   end
 
   def requirements_by_article
-    @requirements_by_article ||= \
+    @requirements_by_article ||=
       order_requirements_by_article.merge(
         hoard_requirements_by_article
       ) do |_article_id, order_requirement, hoard_requirement|
@@ -147,7 +148,7 @@ class Order < ApplicationRecord
   end
 
   def order_articles_from_requirements
-    @order_articles_from_requirements ||= \
+    @order_articles_from_requirements ||=
       requirements_by_article.map do |article_id, quantity_sum|
         {
           order_id: id,

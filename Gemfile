@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -50,7 +52,12 @@ group :development do
   gem 'debug', '>= 1.0.0'
   gem 'listen', '~> 3.3'
   gem 'rack-mini-profiler', '~> 3.3'
-  gem 'rubocop'
+  gem 'rubocop', require: false
+  gem 'rubocop-factory_bot', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'rubocop-rspec_rails', require: false
   gem 'solargraph'
   gem 'spring'
   gem 'web-console', '>= 4.1.0'

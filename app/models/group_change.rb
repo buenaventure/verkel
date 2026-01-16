@@ -3,6 +3,7 @@ class GroupChange < ApplicationRecord
   belongs_to :group, optional: true
 
   include DateTimeRange
+
   date_time_range :timeframe
 
   validates :timeframe_end,
@@ -13,8 +14,8 @@ class GroupChange < ApplicationRecord
     "Kochgruppenänderung zu #{group}"
   end
 
-  def save(*args)
-    super(*args)
+  def save(*)
+    super
   rescue ActiveRecord::StatementInvalid => e
     raise e unless e.cause.is_a? PG::ExclusionViolation
 

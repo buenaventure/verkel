@@ -7,7 +7,7 @@ class Calculation < ApplicationRecord
     end
 
     def find_calculatable(calculatable_name)
-      calculatables.find { _1.calculatable_name == calculatable_name } or raise ActiveRecord::RecordNotFound
+      calculatables.find { it.calculatable_name == calculatable_name } or raise ActiveRecord::RecordNotFound
     end
 
     private
@@ -15,7 +15,7 @@ class Calculation < ApplicationRecord
     def calculatable_models
       load_models
       Object.descendants.select do
-        _1.included_modules.include?(Calculatable)
+        it.included_modules.include?(Calculatable)
       end
     end
 

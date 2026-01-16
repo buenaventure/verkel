@@ -21,7 +21,7 @@ class DietsController < ApplicationController
       if @diet.save
         format.html { redirect_to @diet, notice: 'Ernährungsweise wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -31,7 +31,7 @@ class DietsController < ApplicationController
       if @diet.update(diet_params)
         format.html { redirect_to @diet, notice: 'Ernährungsweise wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -55,6 +55,6 @@ class DietsController < ApplicationController
   end
 
   def diet_params
-    params.require(:diet).permit(:name, :category, ingredient_ids: [])
+    params.expect(diet: [:name, :category, { ingredient_ids: [] }])
   end
 end

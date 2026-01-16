@@ -34,7 +34,7 @@ class ArticleAvailabilityPlanner
   end
 
   def available?
-    @available_stock.positive? || @available_ordered.positive? || \
+    @available_stock.positive? || @available_ordered.positive? ||
       (@orderable && (@available_to_order.nil? || @available_to_order.positive?))
   end
 
@@ -93,7 +93,7 @@ class ArticleAvailabilityPlanner
   end
 
   def add_order_article_as_available(order_article)
-    @available_ordered += \
+    @available_ordered +=
       case order_article.order.state
       when 'ordered' then order_article.quantity_ordered
       when 'delivered' then order_article.quantity_delivered

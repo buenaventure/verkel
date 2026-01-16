@@ -16,7 +16,7 @@ class IngredientAlternativesController < ApplicationController
       if @ingredient_alternative.save
         format.html { redirect_to @ingredient, notice: 'Alternative Zutat wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -28,7 +28,7 @@ class IngredientAlternativesController < ApplicationController
           redirect_to @ingredient_alternative.ingredient, notice: 'Alternative Zutat wurde erfolgreich aktualisiert.'
         end
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -64,6 +64,6 @@ class IngredientAlternativesController < ApplicationController
   end
 
   def ingredient_alternative_params
-    params.require(:ingredient_alternative).permit(:alternative_id, :priority)
+    params.expect(ingredient_alternative: %i[alternative_id priority])
   end
 end

@@ -4,11 +4,11 @@ class GroupBox < ApplicationRecord
   delegate :datetime, to: :box
 
   def unit_sums_by_ingredient
-    @unit_sums_by_ingredient ||= \
-      GroupBoxIngredientUnitCache \
+    @unit_sums_by_ingredient ||=
+      GroupBoxIngredientUnitCache
       .where(group:, box:)
-      .group(:ingredient_id, :unit).sum(:quantity)\
-      .group_by { |k, _v| k[0] } \
+      .group(:ingredient_id, :unit).sum(:quantity)
+      .group_by { |k, _v| k[0] }
       .transform_values { |a| a.map { |b| QuantityUnit.new(b[1], b[0][1]) } }
   end
 
@@ -25,11 +25,11 @@ class GroupBox < ApplicationRecord
   end
 
   def group_box_articles
-    GroupBoxArticle \
-      .where(group:, box:) \
-      .non_zero \
-      .joins(article: :ingredient) \
-      .includes(article: %i[supplier ingredient]) \
+    GroupBoxArticle
+      .where(group:, box:)
+      .non_zero
+      .joins(article: :ingredient)
+      .includes(article: %i[supplier ingredient])
       .order('ingredients.name', 'articles.quantity': :desc)
   end
 

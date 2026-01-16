@@ -13,8 +13,8 @@ class CreateGroupChanges < ActiveRecord::Migration[7.0]
     reversible do |dir|
       dir.up do
         execute 'ALTER TABLE group_changes ' \
-          'ADD CONSTRAINT group_changes_participant_id_timeframe_excl ' \
-          'EXCLUDE USING gist (participant_id WITH =, timeframe WITH &&);'
+                'ADD CONSTRAINT group_changes_participant_id_timeframe_excl ' \
+                'EXCLUDE USING gist (participant_id WITH =, timeframe WITH &&);'
       end
     end
   end

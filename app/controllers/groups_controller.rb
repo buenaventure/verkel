@@ -4,7 +4,7 @@ class GroupsController < ApplicationController
 
   def index
     @groups = Group.order(name: :asc).includes(:packing_lane).all
-    @servings = \
+    @servings =
       GroupMealParticipant
       .group(:group_id, :meal_id).count
       .group_by { |k, _v| k[0] }
@@ -13,7 +13,7 @@ class GroupsController < ApplicationController
 
   def meals_overview
     @groups = Group.order(internal_name: :asc, name: :asc).all
-    @meals = \
+    @meals =
       Meal
       .includes(:recipe)
       .order(datetime: :asc)
@@ -27,17 +27,17 @@ class GroupsController < ApplicationController
   def diets_overview
     @groups = Group.reorder(internal_name: :asc, name: :asc).all
     @diets = Diet.order(:name)
-    @group_participants = \
-      GroupMealParticipant \
-      .distinct.pluck(:group_id, :participant_id) \
+    @group_participants =
+      GroupMealParticipant
+      .distinct.pluck(:group_id, :participant_id)
       .group_by { |i| i[0] }.transform_values { |v| v.map { |i| i[1] } }
   end
 
   def show
-    @group_meals = @group \
-                   .group_meals \
-                   .includes(meal: %i[recipe box]) \
-                   .joins(:meal) \
+    @group_meals = @group
+                   .group_meals
+                   .includes(meal: %i[recipe box])
+                   .joins(:meal)
                    .order('meals.datetime': :asc)
     @servings = @group.group_meal_participants.group(:meal_id).count
   end
@@ -55,7 +55,7 @@ class GroupsController < ApplicationController
       if @group.save
         format.html { redirect_to @group, notice: 'Kochgruppe wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -65,7 +65,7 @@ class GroupsController < ApplicationController
       if @group.update(group_params)
         format.html { redirect_to @group, notice: 'Kochgruppe wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -89,7 +89,7 @@ class GroupsController < ApplicationController
   end
 
   def group_params
-    params.require(:group).permit(:name, :internal_name, :hunger_factor, :notes, :packing_lane_id,
-                                  :skip_mandatory_meals)
+    params.expect(group: %i[name internal_name hunger_factor notes packing_lane_id
+                            skip_mandatory_meals])
   end
 end

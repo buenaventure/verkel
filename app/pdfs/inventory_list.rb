@@ -47,7 +47,7 @@ class InventoryList < Prawn::Document
       canvas do
         bounding_box(
           [MARGIN, MARGIN + FOOTER_SIZE],
-          width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
+          width: bounds.right - (2 * MARGIN), height: FOOTER_SIZE
         ) do
           float { text "Inventurliste Stand #{I18n.l Time.zone.now}", size: 10 }
           text "Seite #{page + 1} / #{total_pages}", size: 10, valign: :bottom, align: :right

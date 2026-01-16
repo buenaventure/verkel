@@ -16,7 +16,7 @@ class HoardsController < ApplicationController
       if @hoard.save
         format.html { redirect_to @article, notice: 'Vorrat wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -26,7 +26,7 @@ class HoardsController < ApplicationController
       if @hoard.update(hoard_params)
         format.html { redirect_to @hoard.article, notice: 'Vorrat wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -54,6 +54,6 @@ class HoardsController < ApplicationController
   end
 
   def hoard_params
-    params.require(:hoard).permit(:quantity, :until)
+    params.expect(hoard: %i[quantity until])
   end
 end

@@ -19,7 +19,7 @@ class BoxesController < ApplicationController
   def show; end
 
   def ingredient_meals
-    @ingredient_meals = \
+    @ingredient_meals =
       MealIngredientBox
       .where(box: @box)
       .includes(meal: :recipe)
@@ -42,7 +42,7 @@ class BoxesController < ApplicationController
       if @box.save
         format.html { redirect_to @box, notice: 'Kiste wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -52,7 +52,7 @@ class BoxesController < ApplicationController
       if @box.update(box_params)
         format.html { redirect_to @box, notice: 'Kiste wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -111,6 +111,6 @@ class BoxesController < ApplicationController
   end
 
   def box_params
-    params.require(:box).permit(:datetime, :box_type, :status, :groups_info)
+    params.expect(box: %i[datetime box_type status groups_info])
   end
 end

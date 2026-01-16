@@ -37,7 +37,7 @@ class OrdersController < ApplicationController
       if @order.save
         format.html { redirect_to @order, notice: 'Bestellung wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -49,9 +49,9 @@ class OrdersController < ApplicationController
       else
         format.html do
           if order_params.include?('order_articles_attributes')
-            render :edit_quantities, status: :unprocessable_entity
+            render :edit_quantities, status: :unprocessable_content
           else
-            render :edit, status: :unprocessable_entity
+            render :edit, status: :unprocessable_content
           end
         end
       end
@@ -117,17 +117,17 @@ class OrdersController < ApplicationController
   end
 
   def set_order_articles
-    @order_articles = @order.order_articles\
-                            .includes(article: :ingredient) \
+    @order_articles = @order.order_articles
+                            .includes(article: :ingredient)
                             .joins(article: :ingredient).order(:'ingredients.name', :'articles.name')
   end
 
   def order_params
-    return params.require(:order).permit(order_articles_attributes: %i[id quantity_delivered]) if current_user.laga?
+    return params.expect(order: [order_articles_attributes: %i[id quantity_delivered]]) if current_user.laga?
 
-    params.require(:order).permit(
-      :supplier_id, :coverage_begin, :coverage_end,
-      order_articles_attributes: %i[id quantity_ordered quantity_delivered]
+    params.expect(
+      order: [:supplier_id, :coverage_begin, :coverage_end,
+              { order_articles_attributes: %i[id quantity_ordered quantity_delivered] }]
     )
   end
 end

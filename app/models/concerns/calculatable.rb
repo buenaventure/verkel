@@ -48,7 +48,7 @@ module Calculatable
     def model_dependencies_state
       subquery_sql =
         self::MODEL_DEPENDENCIES.map do
-          _1.select('max(updated_at) over (), count(*) over ()').to_sql
+          it.select('max(updated_at) over (), count(*) over ()').to_sql
         end.join(') UNION (')
       ActiveRecord::Base.connection.execute(
         "SELECT max(max) as updated_at, sum(count) as count FROM ((#{subquery_sql})) as _"

@@ -1,0 +1,17 @@
+<%= "inherit_from: .rubocop_todo.yml" if ENV["CI"] %>
+
+# Your own specialized rules go here
+plugins:
+  - rubocop-factory_bot
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rspec_rails
+
+AllCops:
+    NewCops: enable
+
+Rails/CreateTableWithTimestamps:
+  Enabled: false
+Rails/RedirectBackOrTo:
+  Enabled: false

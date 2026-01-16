@@ -21,7 +21,7 @@ class SuppliersController < ApplicationController
       if @supplier.save
         format.html { redirect_to @supplier, notice: 'Lieferant wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -31,7 +31,7 @@ class SuppliersController < ApplicationController
       if @supplier.update(supplier_params)
         format.html { redirect_to @supplier, notice: 'Lieferant wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -55,6 +55,6 @@ class SuppliersController < ApplicationController
   end
 
   def supplier_params
-    params.require(:supplier).permit(:name, :notes, :delivery_time, :address, :email, :phone)
+    params.expect(supplier: %i[name notes delivery_time address email phone])
   end
 end

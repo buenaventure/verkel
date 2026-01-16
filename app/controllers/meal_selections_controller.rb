@@ -20,7 +20,7 @@ class MealSelectionsController < ApplicationController
                       notice: 'Mahlzeiten-Auswahl wurde erfolgreich erstellt.'
         end
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -57,6 +57,6 @@ class MealSelectionsController < ApplicationController
   end
 
   def meal_selection_params
-    params.require(:meal_selection).permit(:meal_id)
+    params.expect(meal_selection: [:meal_id])
   end
 end

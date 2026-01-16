@@ -51,7 +51,7 @@ class PackingLaneBox
   end
 
   def packing_lane_article_stocks
-    @packing_lane_article_stocks ||= \
+    @packing_lane_article_stocks ||=
       packing_lane.packing_lane_article_stocks.where(box: box)
   end
 
@@ -63,7 +63,7 @@ class PackingLaneBox
         existing_record.assign_attributes(attributes.except('id'))
       else
         raise RecordNotFound.new(
-          "Couldn't find PackingLaneArticleStock with ID=#{attributes['id']} for"\
+          "Couldn't find PackingLaneArticleStock with ID=#{attributes['id']} for" \
           "PackingLane with ID=#{packing_lane.id} and Box with ID=#{box.id}",
           PackingLaneArticleStock, 'id', attributes['id']
         )
@@ -72,20 +72,20 @@ class PackingLaneBox
   end
 
   def group_box_article_sums
-    @group_box_article_sums ||= \
-      GroupBoxArticle\
-      .where(group: groups, box: box)\
+    @group_box_article_sums ||=
+      GroupBoxArticle
+      .where(group: groups, box: box)
       .group(:article_id).sum(:quantity)
   end
 
   def packing_lane_article_stock_sums
-    @packing_lane_article_stock_sums ||= \
-      packing_lane_article_stocks.map { |stock| [stock.article_id, stock] }.to_h
+    @packing_lane_article_stock_sums ||=
+      packing_lane_article_stocks.index_by { |stock| stock.article_id }
   end
 
   def articles
-    Article\
-      .where(id: group_box_article_sums.keys + packing_lane_article_stock_sums.keys) \
+    Article
+      .where(id: group_box_article_sums.keys + packing_lane_article_stock_sums.keys)
       .includes(:ingredient)
       .reorder('ingredients.name')
   end
@@ -103,10 +103,10 @@ class PackingLaneBox
   end
 
   def missing_ingredients
-    sums = MissingIngredient \
-           .where(box:, 'groups.packing_lane_id': packing_lane.id).includes(:ingredient, group: :packing_lane) \
+    sums = MissingIngredient
+           .where(box:, 'groups.packing_lane_id': packing_lane.id).includes(:ingredient, group: :packing_lane)
            .group(:ingredient_id, :unit).sum(:quantity)
-    ingredients = Ingredient.where(id: sums.keys.map { |key| key[0] }).map { |i| [i.id, i] }.to_h
+    ingredients = Ingredient.where(id: sums.keys.map { |key| key[0] }).index_by { |i| i.id }
     sums.map do |key, sum|
       [ingredients[key[0]], key[1], sum]
     end
@@ -114,13 +114,13 @@ class PackingLaneBox
 
   def move_diff_from_stock(user)
     ActiveRecord::Base.transaction do
-      packing_lane_articles.each { _1.move_diff_from_stock user }
+      packing_lane_articles.each { it.move_diff_from_stock user }
     end
   end
 
   def move_to_stock(user)
     ActiveRecord::Base.transaction do
-      packing_lane_articles.each { _1.move_to_stock user }
+      packing_lane_articles.each { it.move_to_stock user }
     end
   end
 

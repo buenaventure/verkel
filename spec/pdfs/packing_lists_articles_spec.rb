@@ -66,9 +66,9 @@ RSpec.describe PackingListsArticles, type: :model do
       create(:group_box_article, group: group3, box:, article: article4, quantity: 2)
       create(:group_box_article, group: group3, box:, article: article5, quantity: 1)
 
-      pdf = PackingListsArticles.new(box, filter: nil)
+      pdf = described_class.new(box, filter: nil)
 
-      output_path = Rails.root.join('tmp', 'packing_lists_articles_example.pdf')
+      output_path = Rails.root.join('tmp/packing_lists_articles_example.pdf')
       File.binwrite(output_path, pdf.render)
 
       expect(File.exist?(output_path)).to be true

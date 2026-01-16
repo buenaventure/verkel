@@ -31,10 +31,10 @@ class ArticlePackingPlanner
     @all_articles = Article.all.group_by(&:ingredient_unit).transform_values do |articles|
       articles.map { |a| ArticleAvailabilityPlanner.new(a) }
     end
-    @demands = GroupBoxIngredientUnitCache \
-               .includes(:ingredient, :box) \
-               .where.not(box: nil) \
-               .all \
+    @demands = GroupBoxIngredientUnitCache
+               .includes(:ingredient, :box)
+               .where.not(box: nil)
+               .all
                .group_by(&:ingredient_unit)
   end
 

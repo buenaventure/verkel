@@ -26,11 +26,11 @@ class PackingListsArticles < Prawn::Document
   private
 
   def group_articles_per_lane
-    @group_articles_per_lane ||= \
-      GroupBoxArticle \
-      .where(box: @box, **filter_arguments) \
-      .non_zero \
-      .includes(article: %i[ingredient supplier], group: :packing_lane) \
+    @group_articles_per_lane ||=
+      GroupBoxArticle
+      .where(box: @box, **filter_arguments)
+      .non_zero
+      .includes(article: %i[ingredient supplier], group: :packing_lane)
       .group_by do |group_article|
         group_article.group.packing_lane
       end
@@ -47,7 +47,7 @@ class PackingListsArticles < Prawn::Document
         canvas do
           bounding_box(
             [MARGIN, MARGIN + FOOTER_SIZE],
-            width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
+            width: bounds.right - (2 * MARGIN), height: FOOTER_SIZE
           ) do
             text "Kiste #{I18n.l @box.datetime, format: :short}", size: 10
             float do
@@ -72,7 +72,7 @@ class PackingListsArticles < Prawn::Document
         canvas do
           bounding_box(
             [MARGIN, MARGIN + FOOTER_SIZE],
-            width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
+            width: bounds.right - (2 * MARGIN), height: FOOTER_SIZE
           ) do
             text ingredient.name, size: 10, align: :right
           end

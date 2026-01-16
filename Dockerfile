@@ -31,7 +31,7 @@ COPY . ./
 RUN RAILS_ENV=production SECRET_KEY_BASE=0 bundle exec rails assets:precompile
 RUN rm -rf node_modules
 RUN rm -rf tmp/* && mkdir tmp/pids
-RUN rm -rf vendor/bundle/ruby/3.1.0/cache
+RUN rm -rf vendor/bundle/ruby/*/cache
 
 
 FROM ruby:3.4.8-alpine

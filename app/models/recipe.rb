@@ -48,8 +48,8 @@ class Recipe < ApplicationRecord
 
   def parse_ingredients(content)
     Nokogiri::HTML
-      .parse(Kramdown::Document.new(content).to_html) \
-      .xpath('//strong|//b')\
+      .parse(Kramdown::Document.new(content).to_html)
+      .xpath('//strong|//b')
       .each_with_index.map do |b, i|
         match = b.text.match(INGREDIENT_REGEXP)
         raise "ungültige Zutat \"#{b.text}\"" unless match
@@ -57,7 +57,7 @@ class Recipe < ApplicationRecord
         positive_diets, negative_diets = parse_diets(match[:diets])
         RecipeIngredient.new(
           ingredient: Ingredient.find_or_create_by(name: match[:name]),
-          quantity: BigDecimal(match[:quantity].gsub(',', '.')),
+          quantity: BigDecimal(match[:quantity].tr(',', '.')),
           unit: match[:unit],
           positive_diets: positive_diets,
           negative_diets: negative_diets,

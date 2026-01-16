@@ -10,7 +10,7 @@ class UnitsController < ApplicationController
       if @unit.save
         format.html { redirect_to units_path, notice: 'Einheit wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -30,6 +30,6 @@ class UnitsController < ApplicationController
   private
 
   def unit_params
-    params.require(:unit).permit(:name)
+    params.expect(unit: [:name])
   end
 end

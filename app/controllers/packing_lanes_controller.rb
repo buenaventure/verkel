@@ -21,7 +21,7 @@ class PackingLanesController < ApplicationController
       if @packing_lane.save
         format.html { redirect_to packing_lane_url(@packing_lane), notice: 'Packstraße wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -32,7 +32,7 @@ class PackingLanesController < ApplicationController
         format.html { redirect_to packing_lane_url(@packing_lane), notice: 'Packstraße wurde erfolgreich bearbeitet.' }
       else
         format.html do
-          render :edit, status: :unprocessable_entity
+          render :edit, status: :unprocessable_content
         end
       end
     end
@@ -57,6 +57,6 @@ class PackingLanesController < ApplicationController
   end
 
   def packing_lane_params
-    params.require(:packing_lane).permit(:name)
+    params.expect(packing_lane: [:name])
   end
 end

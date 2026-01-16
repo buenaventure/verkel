@@ -3,8 +3,8 @@ class MealsController < ApplicationController
   before_action :set_meal, only: %i[show edit update destroy]
 
   def index
-    @meals = Meal \
-             .includes(:recipe, :box, { group_meals: :group }) \
+    @meals = Meal
+             .includes(:recipe, :box, { group_meals: :group })
              .order(datetime: :asc)
     @servings = GroupMealParticipant.group(:meal_id).count
   end
@@ -26,7 +26,7 @@ class MealsController < ApplicationController
       if @meal.save
         format.html { redirect_to @meal, notice: 'Mahlzeit wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -36,7 +36,7 @@ class MealsController < ApplicationController
       if @meal.update(meal_params)
         format.html { redirect_to @meal, notice: 'Mahlzeit wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -60,6 +60,6 @@ class MealsController < ApplicationController
   end
 
   def meal_params
-    params.require(:meal).permit(:datetime, :name, :recipe_id, :estimated_share, :optional, :bundle)
+    params.expect(meal: %i[datetime name recipe_id estimated_share optional bundle])
   end
 end

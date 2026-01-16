@@ -1,6 +1,6 @@
 module IngredientsHelper
   def estimated_need_per_meal(ingredient)
-    ingredient \
+    ingredient
       .in_meals.map do |meal_ingredient|
       if meal_ingredient.recipe_servings
         factor = meal_ingredient.needed_servings(
@@ -22,7 +22,7 @@ module IngredientsHelper
       end
     end.group_by do |need|
       [need[:meal].id, need[:quantity_unit].unit]
-    end \
+    end
     .map do |meal_unit, needs|
       raise unless needs.all? { |need| need[:weight] == needs[0][:weight] }
 
@@ -39,7 +39,7 @@ module IngredientsHelper
 
   def estimated_need_total(ingredient)
     QuantityUnit.sum(
-      estimated_need_per_meal(ingredient) \
+      estimated_need_per_meal(ingredient)
         .map { |need| estimate_weight(need) }
     )
   end

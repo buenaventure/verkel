@@ -22,7 +22,7 @@ class ParticipantsController < ApplicationController
       if @participant.save
         format.html { redirect_to @participant, notice: 'Teilnehmer*in wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -32,7 +32,7 @@ class ParticipantsController < ApplicationController
       if @participant.update(participant_params)
         format.html { redirect_to @participant, notice: 'Teilnehmer*in wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -58,6 +58,6 @@ class ParticipantsController < ApplicationController
   end
 
   def participant_params
-    params.require(:participant).permit(:group_id, :age, :comment, :external_id, diet_ids: [])
+    params.expect(participant: [:group_id, :age, :comment, :external_id, { diet_ids: [] }])
   end
 end

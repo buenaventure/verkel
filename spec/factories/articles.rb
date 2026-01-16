@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :article do
-    association :ingredient
-    association :supplier
+    ingredient
+    supplier
     name { '' }
     quantity { 1 }
     unit { 'pcs' }

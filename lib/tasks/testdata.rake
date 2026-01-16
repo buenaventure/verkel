@@ -7,7 +7,7 @@ namespace :testdata do
     offset = args.offset.to_i || 0
     Participant.insert_all(
       Group.insert_all(
-        (1..args.num_groups.to_i).map { { name: format('Kochgruppe #%02d', _1 + offset) } },
+        (1..args.num_groups.to_i).map { { name: format('Kochgruppe #%02d', it + offset) } },
         unique_by: :name, returning: :id
       ).map do |g|
         group_id = g['id']

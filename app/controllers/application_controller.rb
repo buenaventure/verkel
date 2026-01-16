@@ -41,10 +41,10 @@ class ApplicationController < ActionController::Base
     when 'edit', 'update' then instance.breadcrumb(:edit)
     when 'new', 'create' then klass.breadcrumb(breadcrumb_parent, :new)
     else
-      if !instance.nil?
-        instance.breadcrumb(action_name.to_sym)
-      else
+      if instance.nil?
         klass.breadcrumb(breadcrumb_parent, action_name.to_sym)
+      else
+        instance.breadcrumb(action_name.to_sym)
       end
     end
   rescue StandardError => e

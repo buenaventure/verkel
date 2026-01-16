@@ -3,9 +3,9 @@ class ArticlesController < ApplicationController
   before_action :set_article, only: %i[show edit update destroy update_stock]
 
   def index
-    @articles = \
-      Article \
-      .includes(:supplier, :ingredient, :active_packing_lane_article_stocks, :article_box_order_requirements) \
+    @articles =
+      Article
+      .includes(:supplier, :ingredient, :active_packing_lane_article_stocks, :article_box_order_requirements)
       .joins(:ingredient).lexical
     @order_counts = OrderArticle.all.group(:article_id).count
   end
@@ -30,7 +30,7 @@ class ArticlesController < ApplicationController
       if @article.save
         format.html { redirect_to @article, notice: 'Artikel wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -40,7 +40,7 @@ class ArticlesController < ApplicationController
       if @article.update(article_params)
         format.html { redirect_to @article, notice: 'Artikel wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -61,7 +61,7 @@ class ArticlesController < ApplicationController
     @article_stock_action = ArticleStockAction.new(
       article: @article,
       user: current_user,
-      **params.require(:article_stock_action).permit(:action)
+      **params.expect(article_stock_action: [:action])
     )
     @article_stock_action.call if @article_stock_action.valid?
   end
@@ -77,9 +77,9 @@ class ArticlesController < ApplicationController
   end
 
   def article_params
-    params.require(:article).permit(
-      :ingredient_id, :supplier_id, :price, :quantity, :unit, :notes, :name,
-      :order_limit, :priority, :needs_cooling, :packing_type, :nr
+    params.expect(
+      article: %i[ingredient_id supplier_id price quantity unit notes name
+                  order_limit priority needs_cooling packing_type nr]
     )
   end
 

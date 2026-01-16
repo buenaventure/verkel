@@ -16,7 +16,7 @@ class Ingredient < ApplicationRecord
   has_many :missing_ingredients
 
   scope :in_meal_or_extra, lambda {
-    left_outer_joins(:extra_ingredients, recipes: :meals) \
+    left_outer_joins(:extra_ingredients, recipes: :meals)
       .where('("extra_ingredients"."id" IS NOT NULL OR "meals"."id" IS NOT NULL)').distinct
   }
 
@@ -27,12 +27,12 @@ class Ingredient < ApplicationRecord
   after_save :persist_diet_names
 
   def in_meals
-    Meal \
-      .joins(recipe: :recipe_ingredients) \
-      .where(recipe: { recipe_ingredients: { ingredient_id: id } }) \
+    Meal
+      .joins(recipe: :recipe_ingredients)
+      .where(recipe: { recipe_ingredients: { ingredient_id: id } })
       .joins('LEFT OUTER JOIN ingredient_weights ON ' \
-        'ingredient_weights.ingredient_id = recipe_ingredients.ingredient_id AND ' \
-        'ingredient_weights.unit = recipe_ingredients.unit') \
+             'ingredient_weights.ingredient_id = recipe_ingredients.ingredient_id AND ' \
+             'ingredient_weights.unit = recipe_ingredients.unit')
       .select(
         'meals.*',
         'recipe.name', 'recipe.servings AS recipe_servings',
@@ -48,41 +48,41 @@ class Ingredient < ApplicationRecord
 
   def unit_sums
     @unit_sums ||= QuantityUnits.new(
-      group_box_ingredient_unit_caches \
-      .group(:unit).sum(:quantity)\
+      group_box_ingredient_unit_caches
+      .group(:unit).sum(:quantity)
       .map { |a| QuantityUnit.new(a[1], a[0]) }
     )
   end
 
   def unit_sums_by_box
-    @unit_sums_by_box = \
-      group_box_ingredient_unit_caches \
-      .group(:box_id, :unit).sum(:quantity)\
-      .group_by { |k, _v| k[0] } \
+    @unit_sums_by_box =
+      group_box_ingredient_unit_caches
+      .group(:box_id, :unit).sum(:quantity)
+      .group_by { |k, _v| k[0] }
       .transform_values { |a| QuantityUnits.new(a.map { |b| QuantityUnit.new(b[1], b[0][1]) }) }
   end
 
   def missing_ingredient_sums
     @missing_ingredient_sums ||= QuantityUnits.new(
-      missing_ingredients \
-      .group(:unit).sum(:quantity)\
+      missing_ingredients
+      .group(:unit).sum(:quantity)
       .map { |a| QuantityUnit.new(a[1], a[0]) }
     )
   end
 
   def missing_ingredient_sums_by_box
-    @missing_ingredient_sums_by_box = \
-      missing_ingredients \
-      .group(:box_id, :unit).sum(:quantity)\
-      .group_by { |k, _v| k[0] } \
+    @missing_ingredient_sums_by_box =
+      missing_ingredients
+      .group(:box_id, :unit).sum(:quantity)
+      .group_by { |k, _v| k[0] }
       .transform_values { |a| QuantityUnits.new(a.map { |b| QuantityUnit.new(b[1], b[0][1]) }) }
   end
 
   def order_requirements
-    @order_requirements = \
-      ArticleBoxOrderRequirement \
-      .joins(:article).includes(:article) \
-      .merge(Article.unscope(:order).where(ingredient_id: id)) \
+    @order_requirements =
+      ArticleBoxOrderRequirement
+      .joins(:article).includes(:article)
+      .merge(Article.unscope(:order).where(ingredient_id: id))
       .group_by(&:box_id).map do |box_id, order_requirements|
         [box_id, OrderRequirement.new(
           box_id:,

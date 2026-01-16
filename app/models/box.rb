@@ -21,18 +21,18 @@ class Box < ApplicationRecord
   end
 
   def unit_sums
-    @unit_sums = \
-      group_box_ingredient_unit_caches \
-      .group(:ingredient_id, :unit).sum(:quantity)\
-      .group_by { |k, _v| k[0] } \
+    @unit_sums =
+      group_box_ingredient_unit_caches
+      .group(:ingredient_id, :unit).sum(:quantity)
+      .group_by { |k, _v| k[0] }
       .transform_values { |a| a.map { |b| QuantityUnit.new(b[1], b[0][1]) } }
   end
 
   def missing_ingredient_sums_by_ingredient
-    @missing_ingredient_sums_by_ingredient = \
-      missing_ingredients \
-      .group(:ingredient_id, :unit).sum(:quantity)\
-      .group_by { |k, _v| k[0] } \
+    @missing_ingredient_sums_by_ingredient =
+      missing_ingredients
+      .group(:ingredient_id, :unit).sum(:quantity)
+      .group_by { |k, _v| k[0] }
       .transform_values { |a| a.map { |b| QuantityUnit.new(b[1], b[0][1]) } }
   end
 
@@ -41,7 +41,7 @@ class Box < ApplicationRecord
   end
 
   def order_requirements
-    @order_requirements ||= article_box_order_requirements.map { |abor| [abor.article_id, abor] }.to_h
+    @order_requirements ||= article_box_order_requirements.index_by { |abor| abor.article_id }
   end
 
   def order_requirement_of(article)

@@ -11,7 +11,7 @@ class OrderArticlesController < ApplicationController
         format.html { redirect_to @order }
         format.turbo_stream
       else
-        format.html { render partial: 'new', locals: { order_article: @order_article }, status: :unprocessable_entity }
+        format.html { render partial: 'new', locals: { order_article: @order_article }, status: :unprocessable_content }
       end
     end
   end
@@ -41,6 +41,6 @@ class OrderArticlesController < ApplicationController
   end
 
   def order_article_params
-    params.require(:order_article).permit(:article_id, :quantity_ordered, :quantity_delivered)
+    params.expect(order_article: %i[article_id quantity_ordered quantity_delivered])
   end
 end

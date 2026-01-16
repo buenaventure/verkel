@@ -18,7 +18,7 @@ class GroupChangesController < ApplicationController
           redirect_to @participant, notice: 'Gruppenänderung wurde erfolgreich erstellt.'
         end
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -30,7 +30,7 @@ class GroupChangesController < ApplicationController
           redirect_to @group_change.participant, notice: 'Gruppenänderung wurde erfolgreich geändert.'
         end
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -58,6 +58,6 @@ class GroupChangesController < ApplicationController
   end
 
   def group_change_params
-    params.require(:group_change).permit(:group_id, :timeframe_begin, :timeframe_end)
+    params.expect(group_change: %i[group_id timeframe_begin timeframe_end])
   end
 end

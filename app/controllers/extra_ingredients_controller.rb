@@ -18,7 +18,7 @@ class ExtraIngredientsController < ApplicationController
           redirect_to [@group_box.box, @group_box.group], notice: 'Extra-Zutat wurde erfolgreich erstellt.'
         end
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -31,7 +31,7 @@ class ExtraIngredientsController < ApplicationController
                       notice: 'Extra-Zutat wurde erfolgreich aktualisiert.'
         end
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -67,6 +67,6 @@ class ExtraIngredientsController < ApplicationController
   end
 
   def extra_ingredient_params
-    params.require(:extra_ingredient).permit(:ingredient_id, :quantity, :unit, :purpose)
+    params.expect(extra_ingredient: %i[ingredient_id quantity unit purpose])
   end
 end

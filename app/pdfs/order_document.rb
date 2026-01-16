@@ -46,7 +46,7 @@ class OrderDocument < Prawn::Document
         order_article.quantity_unit_ordered.humanize,
         "#{number_with_delimiter order_article.price_ordered}\u00A0€"
       ]
-    end + \
+    end +
       [[
         'Summe',
         nil,

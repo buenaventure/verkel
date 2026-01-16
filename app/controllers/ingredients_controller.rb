@@ -3,7 +3,7 @@ class IngredientsController < ApplicationController
   before_action :set_ingredient, only: %i[show edit update destroy]
 
   def index
-    @ingredients = \
+    @ingredients =
       Ingredient.where(no_buy: false).order(commodity_group: :asc, name: :asc)
     load_ingredient_sums
   end
@@ -15,9 +15,9 @@ class IngredientsController < ApplicationController
   end
 
   def with_missing_alternatives
-    @ingredients = GroupMealParticipantRecipeIngredientSubstCalculation \
-                   .where(final_ingredient_id: nil) \
-                   .includes(:group, recipe_ingredient: :ingredient, participant: :diets, meal: :recipe) \
+    @ingredients = GroupMealParticipantRecipeIngredientSubstCalculation
+                   .where(final_ingredient_id: nil)
+                   .includes(:group, recipe_ingredient: :ingredient, participant: :diets, meal: :recipe)
                    .group_by(&:ingredient)
   end
 
@@ -36,7 +36,7 @@ class IngredientsController < ApplicationController
       if @ingredient.save
         format.html { redirect_to @ingredient, notice: 'Zutat wurde erfolgreich erstellt.' }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -46,7 +46,7 @@ class IngredientsController < ApplicationController
       if @ingredient.update(ingredient_params)
         format.html { redirect_to @ingredient, notice: 'Zutat wurde erfolgreich aktualisiert.' }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -70,20 +70,20 @@ class IngredientsController < ApplicationController
   end
 
   def ingredient_params
-    params.require(:ingredient).permit(:name, :commodity_group, :box_type, :uses_hunger_factor, :on_demand,
-                                       diet_ids: [])
+    params.expect(ingredient: [:name, :commodity_group, :box_type, :uses_hunger_factor, :on_demand,
+                               { diet_ids: [] }])
   end
 
   def load_ingredient_sums
-    @unit_sums = \
-      GroupBoxIngredientUnitCache \
-      .group(:ingredient_id, :unit).sum(:quantity)\
-      .group_by { |k, _v| k[0] } \
+    @unit_sums =
+      GroupBoxIngredientUnitCache
+      .group(:ingredient_id, :unit).sum(:quantity)
+      .group_by { |k, _v| k[0] }
       .transform_values { |a| a.map { |b| QuantityUnit.new(b[1], b[0][1]) } }
-    @missing_sums = \
-      MissingIngredient \
-      .group(:ingredient_id, :unit).sum(:quantity)\
-      .group_by { |k, _v| k[0] } \
+    @missing_sums =
+      MissingIngredient
+      .group(:ingredient_id, :unit).sum(:quantity)
+      .group_by { |k, _v| k[0] }
       .transform_values { |a| a.map { |b| QuantityUnit.new(b[1], b[0][1]) } }
   end
 end

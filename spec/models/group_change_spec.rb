@@ -1,10 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe GroupChange, type: :model do
+RSpec.describe GroupChange do
   let(:participant) { Participant.create! age: 23 }
+
   describe 'timeframe' do
     it 'can be set to bounded time range' do
-      group_change = GroupChange.create!(
+      group_change = described_class.create!(
         participant:,
         timeframe_begin: { 3 => 1, 2 => 1, 1 => 2024, 4 => 0, 5 => 0 },
         timeframe_end: { 3 => 2, 2 => 1, 1 => 2024, 4 => 0, 5 => 0 }
@@ -15,7 +16,7 @@ RSpec.describe GroupChange, type: :model do
     end
 
     it 'allows begin to be unbounded' do
-      group_change = GroupChange.create!(
+      group_change = described_class.create!(
         participant:,
         timeframe_begin: { 3 => nil, 2 => nil, 1 => nil, 4 => nil, 5 => nil },
         timeframe_end: { 3 => 2, 2 => 1, 1 => 2024, 4 => 0, 5 => 0 }
@@ -26,7 +27,7 @@ RSpec.describe GroupChange, type: :model do
     end
 
     it 'allows end to be unbounded' do
-      group_change = GroupChange.create!(
+      group_change = described_class.create!(
         participant:,
         timeframe_begin: { 3 => 1, 2 => 1, 1 => 2024, 4 => 0, 5 => 0 },
         timeframe_end: { 3 => nil, 2 => nil, 1 => nil, 4 => nil, 5 => nil }
@@ -37,7 +38,7 @@ RSpec.describe GroupChange, type: :model do
     end
 
     it 'can be completely unbounded' do
-      group_change = GroupChange.create!(
+      group_change = described_class.create!(
         participant:,
         timeframe_begin: { 3 => nil, 2 => nil, 1 => nil, 4 => nil, 5 => nil },
         timeframe_end: { 3 => nil, 2 => nil, 1 => nil, 4 => nil, 5 => nil }

@@ -5,7 +5,7 @@ module Import
     include ::CsvImportable
 
     def import_params
-      params.require(:import).permit(:group_id, :box_id)
+      params.expect(import: %i[group_id box_id])
     end
   end
 end

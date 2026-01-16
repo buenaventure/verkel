@@ -25,10 +25,10 @@ class PackingListsMissingIngredients < Prawn::Document
   private
 
   def missing_ingredients_per_lane
-    @missing_ingredients_per_lane ||= \
-      MissingIngredient \
-      .where(box: @box) \
-      .includes(:ingredient, group: :packing_lane) \
+    @missing_ingredients_per_lane ||=
+      MissingIngredient
+      .where(box: @box)
+      .includes(:ingredient, group: :packing_lane)
       .group_by do |missing_ingredient|
         missing_ingredient.group.packing_lane
       end
@@ -45,7 +45,7 @@ class PackingListsMissingIngredients < Prawn::Document
         canvas do
           bounding_box(
             [MARGIN, MARGIN + FOOTER_SIZE],
-            width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
+            width: bounds.right - (2 * MARGIN), height: FOOTER_SIZE
           ) do
             float { text "Packstraße <b>#{packing_lane}</b> Fehlmengen", size: 10, align: :right, inline_format: true }
             text "Kiste #{I18n.l @box.datetime, format: :short}", size: 10
@@ -84,8 +84,8 @@ class PackingListsMissingIngredients < Prawn::Document
   end
 
   def table_data(missing_ingredients)
-    missing_ingredients \
-      .sort_by { |missing_ingredient| missing_ingredient.group.display_name } \
+    missing_ingredients
+      .sort_by { |missing_ingredient| missing_ingredient.group.display_name }
       .map do |missing_ingredient|
         [
           missing_ingredient.group.display_name,

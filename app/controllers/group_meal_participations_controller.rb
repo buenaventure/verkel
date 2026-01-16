@@ -25,7 +25,7 @@ class GroupMealParticipationsController < ApplicationController
                       notice: 'Mahlzeiten-Teilnahme wurde erfolgreich erstellt.'
         end
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
       end
     end
   end
@@ -38,7 +38,7 @@ class GroupMealParticipationsController < ApplicationController
                       notice: 'Mahlzeiten-Teilnahme wurde erfolgreich aktualisiert.'
         end
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end
@@ -75,6 +75,6 @@ class GroupMealParticipationsController < ApplicationController
   end
 
   def group_meal_participation_params
-    params.require(:group_meal_participation).permit(:meal_id, :participant_id)
+    params.expect(group_meal_participation: %i[meal_id participant_id])
   end
 end

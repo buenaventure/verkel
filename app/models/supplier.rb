@@ -18,8 +18,8 @@ class Supplier < ApplicationRecord
       'ON articles.id = article_box_order_requirements.article_id ' \
       'INNER JOIN boxes ON boxes.id = article_box_order_requirements.box_id ' \
       'WHERE articles.supplier_id = suppliers.id AND article_box_order_requirements.quantity > 0 ' \
-      'ORDER BY datetime LIMIT 1) '\
-      ' - suppliers.delivery_time * interval \'1 hour\') as next_required_order_date'
+      'ORDER BY datetime LIMIT 1)  ' \
+      "- suppliers.delivery_time * interval '1 hour') as next_required_order_date"
     )
   }
 

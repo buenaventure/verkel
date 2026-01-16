@@ -19,13 +19,9 @@ class PackingListLane < Prawn::Document
     body
   end
 
-  def box
-    @packing_lane_box.box
-  end
+  delegate :box, to: :@packing_lane_box
 
-  def packing_lane
-    @packing_lane_box.packing_lane
-  end
+  delegate :packing_lane, to: :@packing_lane_box
 
   def packing_lane_articles
     case @filter
@@ -37,8 +33,8 @@ class PackingListLane < Prawn::Document
   end
 
   def filename
-    "#{I18n.l(box.datetime, format: :sortable).parameterize}-packliste-"\
-    "#{packing_lane.name.parameterize}-#{I18n.t(@filter || 'all')}.pdf"
+    "#{I18n.l(box.datetime, format: :sortable).parameterize}-packliste-" \
+      "#{packing_lane.name.parameterize}-#{I18n.t(@filter || 'all')}.pdf"
   end
 
   private
@@ -56,7 +52,7 @@ class PackingListLane < Prawn::Document
       canvas do
         bounding_box(
           [MARGIN, MARGIN + FOOTER_SIZE],
-          width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
+          width: bounds.right - (2 * MARGIN), height: FOOTER_SIZE
         ) do
           float do
             text "Packstraße <b>#{packing_lane.name}</b> #{I18n.t @filter}",

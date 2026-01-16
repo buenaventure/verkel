@@ -1,10 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe Recipe, type: :model do
+RSpec.describe Recipe do
   context 'ingredient parsing' do
     it 'creates ingredients on create' do
-      expect(Recipe.create!(name: 'test', content: 'test').recipe_ingredients).to be_empty
-      recipe_ingredients = Recipe.create!(name: 'test2', content: '**5 g Zucker** **2 ml Honig**').recipe_ingredients
+      expect(described_class.create!(name: 'test', content: 'test').recipe_ingredients).to be_empty
+      recipe_ingredients = described_class.create!(name: 'test2',
+                                                   content: '**5 g Zucker** **2 ml Honig**').recipe_ingredients
       expect(recipe_ingredients.size).to eq(2)
       expect(recipe_ingredients[0].quantity).to eq(5)
       expect(recipe_ingredients[0].unit).to eq('g')
@@ -15,7 +16,8 @@ RSpec.describe Recipe, type: :model do
     end
 
     it 'normalizes units' do
-      recipe_ingredients = Recipe.create!(name: 'test', content: '**1 l Wasser** **1 kg Mehl**').recipe_ingredients
+      recipe_ingredients = described_class.create!(name: 'test',
+                                                   content: '**1 l Wasser** **1 kg Mehl**').recipe_ingredients
       expect(recipe_ingredients.size).to eq(2)
       expect(recipe_ingredients[0].quantity).to eq(1000)
       expect(recipe_ingredients[0].unit).to eq('ml')
@@ -27,7 +29,7 @@ RSpec.describe Recipe, type: :model do
 
     context 'update' do
       it 'updates recipe_ingredients without creating new records' do
-        recipe = Recipe.create!(name: 'test', content: '**5 g Zucker**')
+        recipe = described_class.create!(name: 'test', content: '**5 g Zucker**')
         existing_recipe_ingredient_id = recipe.recipe_ingredients[0].id
         recipe.content = '**5 g Zucker** **10 g Mehl**'
         recipe.save!
@@ -43,7 +45,7 @@ RSpec.describe Recipe, type: :model do
       end
 
       it 'removes ingredients' do
-        recipe = Recipe.create!(name: 'test', content: '**5 g Zucker**')
+        recipe = described_class.create!(name: 'test', content: '**5 g Zucker**')
         recipe.content = 'nix'
         recipe.save!
         expect(recipe.ingredients.size).to eq(0)

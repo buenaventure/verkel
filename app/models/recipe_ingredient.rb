@@ -22,7 +22,7 @@ class RecipeIngredient < ApplicationRecord
     (
       positive_diets.map do |diet|
         "+#{diet.name}"
-      end + \
+      end +
       negative_diets.map do |diet|
         "-#{diet.name}"
       end

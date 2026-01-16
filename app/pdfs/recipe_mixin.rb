@@ -35,20 +35,20 @@ module RecipeMixin
   private
 
   def prepare_for_prawn(html)
-    html \
-      .gsub(/ data-weight-factor="[0-9.]*"/, '') \
-      .gsub("\n", ' ') \
-      .gsub(/<h1 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"20\">").gsub('</h1>', "</font>\n") \
-      .gsub(/<h2 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"18\">").gsub('</h2>', "</font>\n") \
-      .gsub(/<h3 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"16\">").gsub('</h3>', "</font>\n") \
-      .gsub(/<h4 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"14\">").gsub('</h4>', "</font>\n") \
-      .gsub(/<h5 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"12\">").gsub('</h5>', "</font>\n") \
-      .gsub(%r{</p> *<ul>}, "\n").gsub(%r{</ul> *<p>}, '') \
-      .gsub('<ul>', "\n").gsub('</ul>', '') \
-      .gsub('<p>', "\n").gsub('</p>', "\n") \
-      .gsub('<li>', '• ').gsub('</li>', "\n") \
-      .gsub('<strong>', '<b>').gsub('</strong>', '</b>') \
-      .gsub('<em>', '<i>').gsub('</em>', '</i>') \
+    html
+      .gsub(/ data-weight-factor="[0-9.]*"/, '')
+      .tr("\n", ' ')
+      .gsub(/<h1 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"20\">").gsub('</h1>', "</font>\n")
+      .gsub(/<h2 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"18\">").gsub('</h2>', "</font>\n")
+      .gsub(/<h3 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"16\">").gsub('</h3>', "</font>\n")
+      .gsub(/<h4 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"14\">").gsub('</h4>', "</font>\n")
+      .gsub(/<h5 ?(.*?)>/, "\n<font name=\"CabinSketch\" size=\"12\">").gsub('</h5>', "</font>\n")
+      .gsub(%r{</p> *<ul>}, "\n").gsub(%r{</ul> *<p>}, '')
+      .gsub('<ul>', "\n").gsub('</ul>', '')
+      .gsub('<p>', "\n").gsub('</p>', "\n")
+      .gsub('<li>', '• ').gsub('</li>', "\n")
+      .gsub('<strong>', '<b>').gsub('</strong>', '</b>')
+      .gsub('<em>', '<i>').gsub('</em>', '</i>')
       .gsub('<del>', '<strikethrough>').gsub('</del>', '</strikethrough>')
   end
 end

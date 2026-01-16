@@ -14,20 +14,20 @@ class PackingListsGroups < Prawn::Document
       margin: MARGIN,
       bottom_margin: MARGIN + FOOTER_SIZE)
     @box = box
-    @group_articles = \
-      GroupBoxArticle \
-      .where(box: @box) \
-      .non_zero \
-      .joins(article: :ingredient) \
-      .includes(:group, article: %i[supplier ingredient]) \
-      .order('ingredients.name', 'articles.quantity': :desc) \
+    @group_articles =
+      GroupBoxArticle
+      .where(box: @box)
+      .non_zero
+      .joins(article: :ingredient)
+      .includes(:group, article: %i[supplier ingredient])
+      .order('ingredients.name', 'articles.quantity': :desc)
       .group_by(&:group)
-    @missing_ingredients = \
-      MissingIngredient \
-      .where(box: @box) \
-      .joins(:ingredient) \
-      .includes(:group, :ingredient) \
-      .order('ingredients.name') \
+    @missing_ingredients =
+      MissingIngredient
+      .where(box: @box)
+      .joins(:ingredient)
+      .includes(:group, :ingredient)
+      .order('ingredients.name')
       .group_by(&:group)
     load_fonts
     body
@@ -43,29 +43,29 @@ class PackingListsGroups < Prawn::Document
     @box.groups.includes(:packing_lane)
         .reorder('packing_lanes.name', :internal_name, :name)
         .each_with_index do |group, index|
-      start_new_page if index != 0
-      first_page = page_number
-      groups_info unless @box.groups_info.blank?
-      packing_list(group)
-      total_pages = (first_page..page_number).size
-      (first_page..page_number).each_with_index do |i, page|
-        go_to_page i
-        canvas do
-          bounding_box(
-            [MARGIN, MARGIN + FOOTER_SIZE],
-            width: bounds.right - 2 * MARGIN, height: FOOTER_SIZE
-          ) do
-            float { text group.display_name, size: 10, align: :right }
-            text "Kiste #{I18n.l @box.datetime, format: :short}", size: 10
-            float { text "Seite #{page + 1} / #{total_pages}", size: 10, valign: :bottom, align: :right }
-            if group.packing_lane
-              text "Packstraße <b>#{group.packing_lane.name}</b>", size: 10, valign: :bottom, inline_format: true
-            else
-              text 'Packstraße fehlt', size: 10, style: :bold, color: 'FF0000', valign: :bottom
+          start_new_page if index != 0
+          first_page = page_number
+          groups_info if @box.groups_info.present?
+          packing_list(group)
+          total_pages = (first_page..page_number).size
+          (first_page..page_number).each_with_index do |i, page|
+            go_to_page i
+            canvas do
+              bounding_box(
+                [MARGIN, MARGIN + FOOTER_SIZE],
+                width: bounds.right - (2 * MARGIN), height: FOOTER_SIZE
+              ) do
+                float { text group.display_name, size: 10, align: :right }
+                text "Kiste #{I18n.l @box.datetime, format: :short}", size: 10
+                float { text "Seite #{page + 1} / #{total_pages}", size: 10, valign: :bottom, align: :right }
+                if group.packing_lane
+                  text "Packstraße <b>#{group.packing_lane.name}</b>", size: 10, valign: :bottom, inline_format: true
+                else
+                  text 'Packstraße fehlt', size: 10, style: :bold, color: 'FF0000', valign: :bottom
+                end
+              end
             end
           end
-        end
-      end
     end
   end
 
@@ -107,7 +107,7 @@ class PackingListsGroups < Prawn::Document
   end
 
   def article_table_entries(group, filter)
-    @group_articles.fetch(group, []).select(&"#{filter}?".to_sym)
+    @group_articles.fetch(group, []).select(&:"#{filter}?")
   end
 
   def table_data(group_articles)
@@ -124,9 +124,9 @@ class PackingListsGroups < Prawn::Document
     font('CabinSketch') do
       font_size(20) { text 'Gruß an die Küche', style: :bold }
     end
-    info_text = \
-      @box.groups_info.body.to_html \
-          .gsub(/<div ?(.*?)>/, '') \
+    info_text =
+      @box.groups_info.body.to_html
+          .gsub(/<div ?(.*?)>/, '')
           .gsub(%r{</div ?(.*?)>}, '')
     text prepare_for_prawn(info_text), inline_format: true
     text "\n"
