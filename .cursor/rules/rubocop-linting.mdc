@@ -1,0 +1,18 @@
+---
+description: Always run RuboCop linting on Ruby and ERB files
+globs:
+  - "**/*.rb"
+  - "**/*.erb"
+alwaysApply: false
+---
+
+Whenever editing Ruby (`.rb`) or ERB (`.erb`) files, run RuboCop to check for linting violations and suggest fixes. Use the project's `bin/rubocop` command if present. Ensure that code style is consistent with existing RuboCop configuration.
+
+- Fix any RuboCop violations before finalizing code changes
+- Run `bin/rubocop` to check files when editing Ruby or ERB files
+- Use `bin/rubocop -a` to automatically autocorrect many common problems
+- Address RuboCop errors before committing or merging code
+
+Examples:
+- On saving `app/models/user.rb`, run RuboCop checks
+- On editing `app/views/posts/index.erb`, analyze ERB code with RuboCop
