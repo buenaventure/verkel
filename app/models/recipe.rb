@@ -1,15 +1,16 @@
 INGREDIENT_REGEXP = /^(?<quantity>\d+(?:,\d+)?) (?<unit>\S+) (?<name>[^()]*)(?:\((?<diets>.*)\))?$/
 
 class Recipe < ApplicationRecord
-  has_many :recipe_ingredients, dependent: :delete_all
+  has_many :recipe_ingredients, dependent: :delete_all, autosave: true
   has_many :ingredients, through: :recipe_ingredients
   has_many :meals, -> { order(datetime: :asc) }, dependent: :destroy
   validates :name, presence: true
   validates :lama_uuid, uniqueness: true, if: :lama_uuid
+  validates_associated :recipe_ingredients
 
   scope :with_meal, -> { joins(:meals) }
 
-  before_save :set_ingredients_from_content
+  before_validation :set_ingredients_from_content
 
   def to_s
     name
@@ -29,11 +30,11 @@ class Recipe < ApplicationRecord
   end
 
   def update_ingredients(new_recipe_ingredients)
-    existing_ids = recipe_ingredient_ids
+    existing_ids = recipe_ingredient_ids.dup
     new_recipe_ingredients.each do |recipe_ingredient|
-      if (existing_ri = recipe_ingredients.find_by(index: recipe_ingredient.index))
+      if (existing_ri = recipe_ingredients.detect { it.index == recipe_ingredient.index })
         existing_ids.delete(existing_ri.id)
-        existing_ri.update!(
+        existing_ri.assign_attributes(
           recipe_ingredient.attributes.except('id', 'recipe_id', 'created_at', 'updated_at', 'positive_diets',
                                               'negative_diets')
         )
@@ -43,7 +44,9 @@ class Recipe < ApplicationRecord
         recipe_ingredients << recipe_ingredient
       end
     end
-    recipe_ingredients.where(id: existing_ids).destroy_all
+    recipe_ingredients.each do |existing_ri|
+      existing_ri.mark_for_destruction if existing_ids.include?(existing_ri.id)
+    end
   end
 
   def parse_ingredients(content)
