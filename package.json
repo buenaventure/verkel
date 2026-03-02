@@ -22,6 +22,9 @@
   },
   "version": "0.1.0",
   "devDependencies": {},
+  "resolutions": {
+    "serialize-javascript": "^7.0.3"
+  },
   "scripts": {
     "build": "webpack --config ./webpack.config.js",
     "build:css": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules"
