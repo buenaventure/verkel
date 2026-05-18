@@ -85,7 +85,7 @@ class PackingLaneBoxesController < ApplicationController
   end
 
   def packing_lane_box_params
-    params.expect(packing_lane_box: [packing_lane_article_stocks_attributes: %i[id quantity]])
+    params.expect(packing_lane_box: [{ packing_lane_article_stocks_attributes: [%i[id quantity]] }])
   end
 
   def packing_lane_article_stock_params
