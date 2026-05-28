@@ -7,9 +7,9 @@ module DateTimeRange
         convert_time_range_value send(name)&.begin
       end
 
-      define_method("#{name}_begin=") do |datetime_hash|
+      define_method("#{name}_begin=") do |value|
         send("#{name}=", Range.new(
-                           hash_to_datetime(datetime_hash),
+                           parse_boundary_datetime(value),
                            send(name)&.end,
                            false
                          ))
@@ -19,10 +19,10 @@ module DateTimeRange
         convert_time_range_value send(name)&.end
       end
 
-      define_method("#{name}_end=") do |datetime_hash|
+      define_method("#{name}_end=") do |value|
         send("#{name}=", Range.new(
                            send(name)&.begin,
-                           hash_to_datetime(datetime_hash),
+                           parse_boundary_datetime(value),
                            false
                          ))
       end
@@ -37,12 +37,12 @@ module DateTimeRange
     value&.in_time_zone
   end
 
-  def hash_to_datetime(datetime_hash)
-    return nil if datetime_hash.nil?
+  def parse_boundary_datetime(value)
+    return nil if value.blank?
 
-    values = datetime_hash.sort.map(&:last)
-    return nil if values.any?(&:nil?)
-
-    Time.zone.local(*values)
+    time = value.respond_to?(:in_time_zone) ? value.in_time_zone : Time.zone.parse(value.to_s)
+    time.presence
+  rescue ArgumentError, TypeError
+    nil
   end
 end

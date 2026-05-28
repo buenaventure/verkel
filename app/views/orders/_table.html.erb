@@ -1,4 +1,8 @@
-<%= link_to 'Neue Bestellung anlegen', new_order_path(supplier_id: @supplier), class: 'btn btn-primary btn-sm float-end' %>
+<div class="d-flex justify-content-end mb-2 mt-4">
+  <%= link_to 'Neue Bestellung anlegen',
+              new_order_path(supplier_id: local_assigns[:supplier] || @supplier),
+              class: 'btn btn-primary btn-sm' %>
+</div>
 <table class="table table-sm" id="orders-table">
   <thead>
     <tr>

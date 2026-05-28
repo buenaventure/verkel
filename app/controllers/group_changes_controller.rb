@@ -59,7 +59,7 @@ class GroupChangesController < ApplicationController
 
   def group_change_params
     params.expect(
-      group_change: [:group_id, { timeframe_begin: {}, timeframe_end: {} }]
+      group_change: %i[group_id timeframe_begin timeframe_end]
     )
   end
 end

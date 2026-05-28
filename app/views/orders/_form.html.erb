@@ -4,11 +4,11 @@
 
   <div class="form-inputs">
     <%= f.association :supplier, collection: Supplier.order(:name) %>
-    <%= f.input :coverage_begin, as: :datetime %>
-    <%= f.input :coverage_end, as: :datetime %>
+    <%= f.input :coverage_begin, as: :datetime, html5: true %>
+    <%= f.input :coverage_end, as: :datetime, html5: true %>
   </div>
 
-  <div class="form-actions">
+  <div class="form-actions mt-3">
     <%= f.button :submit, class: 'btn btn-primary' %>
   </div>
 <% end %>

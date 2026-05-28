@@ -7,8 +7,8 @@ RSpec.describe GroupChange do
     it 'can be set to bounded time range' do
       group_change = described_class.create!(
         participant:,
-        timeframe_begin: { 3 => 1, 2 => 1, 1 => 2024, 4 => 0, 5 => 0 },
-        timeframe_end: { 3 => 2, 2 => 1, 1 => 2024, 4 => 0, 5 => 0 }
+        timeframe_begin: Time.zone.local(2024, 1, 1),
+        timeframe_end: Time.zone.local(2024, 1, 2)
       )
       group_change.reload
       expect(group_change.timeframe_begin).to eq Time.zone.local(2024, 1, 1)
@@ -18,8 +18,8 @@ RSpec.describe GroupChange do
     it 'allows begin to be unbounded' do
       group_change = described_class.create!(
         participant:,
-        timeframe_begin: { 3 => nil, 2 => nil, 1 => nil, 4 => nil, 5 => nil },
-        timeframe_end: { 3 => 2, 2 => 1, 1 => 2024, 4 => 0, 5 => 0 }
+        timeframe_begin: nil,
+        timeframe_end: Time.zone.local(2024, 1, 2)
       )
       group_change.reload
       expect(group_change.timeframe_begin).to be_nil
@@ -29,8 +29,8 @@ RSpec.describe GroupChange do
     it 'allows end to be unbounded' do
       group_change = described_class.create!(
         participant:,
-        timeframe_begin: { 3 => 1, 2 => 1, 1 => 2024, 4 => 0, 5 => 0 },
-        timeframe_end: { 3 => nil, 2 => nil, 1 => nil, 4 => nil, 5 => nil }
+        timeframe_begin: Time.zone.local(2024, 1, 1),
+        timeframe_end: nil
       )
       group_change.reload
       expect(group_change.timeframe_begin).to eq Time.zone.local(2024, 1, 1)
@@ -40,8 +40,8 @@ RSpec.describe GroupChange do
     it 'can be completely unbounded' do
       group_change = described_class.create!(
         participant:,
-        timeframe_begin: { 3 => nil, 2 => nil, 1 => nil, 4 => nil, 5 => nil },
-        timeframe_end: { 3 => nil, 2 => nil, 1 => nil, 4 => nil, 5 => nil }
+        timeframe_begin: nil,
+        timeframe_end: nil
       )
       group_change.reload
       expect(group_change.timeframe_begin).to be_nil

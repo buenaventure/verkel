@@ -86,8 +86,8 @@ RSpec.describe 'Orders' do
         {
           order: {
             supplier_id: supplier.id,
-            coverage_begin: multiparameter_attributes(coverage_begin),
-            coverage_end: multiparameter_attributes(coverage_end)
+            coverage_begin:,
+            coverage_end:
           }
         }
       end
@@ -118,8 +118,8 @@ RSpec.describe 'Orders' do
         {
           order: {
             supplier_id: supplier.id,
-            coverage_begin: multiparameter_attributes(coverage_end),
-            coverage_end: multiparameter_attributes(coverage_begin)
+            coverage_begin: coverage_end,
+            coverage_end: coverage_begin
           }
         }
       end
@@ -146,8 +146,8 @@ RSpec.describe 'Orders' do
         {
           order: {
             supplier_id: supplier.id,
-            coverage_begin: multiparameter_attributes(new_coverage_begin),
-            coverage_end: multiparameter_attributes(new_coverage_end)
+            coverage_begin: new_coverage_begin,
+            coverage_end: new_coverage_end
           }
         }
       end
@@ -173,8 +173,8 @@ RSpec.describe 'Orders' do
         {
           order: {
             supplier_id: supplier.id,
-            coverage_begin: multiparameter_attributes(order.coverage_end),
-            coverage_end: multiparameter_attributes(order.coverage_begin)
+            coverage_begin: order.coverage_end,
+            coverage_end: order.coverage_begin
           }
         }
       end

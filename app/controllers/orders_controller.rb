@@ -126,9 +126,12 @@ class OrdersController < ApplicationController
     return params.expect(order: [{ order_articles_attributes: [%i[id quantity_delivered]] }]) if current_user.laga?
 
     params.expect(
-      order: [:supplier_id,
-              { coverage_begin: {}, coverage_end: {} },
-              { order_articles_attributes: [%i[id quantity_ordered quantity_delivered]] }]
+      order: [
+        :supplier_id,
+        :coverage_begin,
+        :coverage_end,
+        { order_articles_attributes: [%i[id quantity_ordered quantity_delivered]] }
+      ]
     )
   end
 end

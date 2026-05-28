@@ -43,8 +43,8 @@ RSpec.describe 'GroupChanges' do
     {
       group_change: {
         group_id: group.id,
-        timeframe_begin: multiparameter_attributes(timeframe_begin),
-        timeframe_end: multiparameter_attributes(timeframe_end)
+        timeframe_begin:,
+        timeframe_end:
       }
     }
   end
