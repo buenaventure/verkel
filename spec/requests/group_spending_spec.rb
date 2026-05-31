@@ -28,8 +28,8 @@ RSpec.describe 'Group spendings' do
         get group_spendings_path
 
         expect(response.body).to include('Kostenübersicht')
-        expect(response.body).to include('5,00')
-        expect(response.body).to include('7,50')
+        expect(response.body).to include("5,0\u00A0€")
+        expect(response.body).to include("7,5\u00A0€")
       end
     end
 
@@ -61,8 +61,8 @@ RSpec.describe 'Group spendings' do
 
         expect(response.body).to include(group.display_name)
         expect(response.body).to include('Summe endgültig')
-        expect(response.body).to include('5,00')
-        expect(response.body).to include('12,50')
+        expect(response.body).to include("5,0\u00A0€")
+        expect(response.body).to include("12,5\u00A0€")
       end
     end
   end
