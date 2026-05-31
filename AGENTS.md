@@ -44,9 +44,11 @@ Without Foreman, run all three processes in separate terminals.
 | Task | Command |
 |------|---------|
 | Lint | `bin/rubocop` (many existing offenses; CI does not run RuboCop) |
-| Tests | `bin/rspec` or `bin/rake` with `RAILS_ENV=test` after `bin/rails db:schema:load` |
+| Tests | `bin/rake spec` (or `bin/rake`, same as CI) after `bin/rails db:schema:load` |
 
-Tests only need PostgreSQL; they do not need asset watchers.
+Run the suite via **Rake**, not bare `bin/rspec`. CSS/JS are built by Yarn into gitignored `app/assets/builds/`; `cssbundling-rails` hooks that step onto `test:prepare`, which Rake runs before specs. Direct `bin/rspec` skips the build and request specs that render the layout fail looking for `sassc`.
+
+Tests only need PostgreSQL; they do not need asset watchers running during the suite.
 
 ### Seeded demo login
 

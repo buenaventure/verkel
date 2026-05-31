@@ -18,7 +18,7 @@ Things you may want to cover:
   `bin/rails db:setup`
 
 * How to run the test suite
-  `bin/rspec`
+  `bin/rake spec` (builds CSS/JS via `test:prepare` first; same as CI’s `bin/rake`)
 
 * Services (job queues, cache servers, search engines, etc.)
 
