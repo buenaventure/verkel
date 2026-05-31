@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class GroupSpending
-  extend ActiveModel::Naming
+  extend ActiveModel::Translation
   include ActiveModel::Conversion
   include Breadcrumb
 

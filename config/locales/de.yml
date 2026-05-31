@@ -237,6 +237,9 @@ de:
   activemodel:
     models:
       article_stock_action: Lagerbestandsänderung für einen Artikel
+      group_spending:
+        one: Gruppenkosten
+        other: Gruppenkosten
     attributes:
       article_stock_action:
         action: Mengenänderung
