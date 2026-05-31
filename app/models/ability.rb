@@ -26,6 +26,8 @@ class Ability
     elsif user.admin?
       can :manage, :all
     end
+
+    can %i[index show], GroupSpending if user.office? || user.admin?
     # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)

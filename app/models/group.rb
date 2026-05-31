@@ -27,4 +27,6 @@ class Group < ApplicationRecord
       "#{internal_name} (#{name})"
     end
   end
+
+  def spending = GroupSpending.new(self)
 end

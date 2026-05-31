@@ -1,0 +1,28 @@
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Artikel</th>
+      <th class="text-end">Menge</th>
+      <th class="text-end">Einzelpreis</th>
+      <th class="text-end">Summe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% article_costs.each do |article_cost| %>
+      <tr>
+        <td><%= link_to article_cost.article.packing_name, article_cost.article %></td>
+        <td class="text-end"><%= article_cost.humanize_quantity %></td>
+        <td class="text-end"><%= euro article_cost.unit_price %></td>
+        <td class="text-end"><%= euro article_cost.line_total %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <% if local_assigns.fetch(:show_total, true) %>
+    <tfoot>
+      <tr>
+        <th colspan="3" class="text-end">Summe</th>
+        <th class="text-end"><%= euro article_costs.sum(&:line_total) %></th>
+      </tr>
+    </tfoot>
+  <% end %>
+</table>

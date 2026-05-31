@@ -1,6 +1,9 @@
 <div class="btn-group float-end" role="group">
   <%= link_to 'Besonderheitenübersicht', diets_overview_groups_path, class: 'btn btn-secondary' %>
   <%= link_to 'Mahlzeitenübersicht', meals_overview_groups_path, class: 'btn btn-secondary' %>
+  <% if can?(:index, GroupSpending) %>
+    <%= link_to 'Kostenübersicht', group_spendings_path, class: 'btn btn-secondary' %>
+  <% end %>
   <%= link_to 'Neue Kochgruppe', new_group_path, class: 'btn btn-primary' %>
 </div>
 

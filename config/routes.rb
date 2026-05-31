@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       get 'all_packing_lists'
     end
   end
+  resources :group_spendings, only: %i[index show], param: :group_id
   resources :groups do
     resources :group_meal_participations, shallow: true, except: :show, path: 'meal_participations'
     get 'meals_overview', on: :collection

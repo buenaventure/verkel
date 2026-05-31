@@ -47,6 +47,7 @@ de:
       group:
         one: Kochgruppe
         other: Kochgruppen
+      group_spending: Gruppenkosten
       group_change:
         one: Kochgruppenänderung
         other: Kochgruppenänderungen
@@ -272,6 +273,9 @@ de:
     meals_overview: Mahlzeitenübersicht
     diets_overview: Ernährungsbesonderheitenübersicht
     ingredient_meals: Zutaten mit Mahlzeiten
+  group_spending:
+    index: Kostenübersicht
+    show: Kostendetails
   warm: warm
   cold: kalt
   all: alle

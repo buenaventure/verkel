@@ -1,7 +1,6 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -471,6 +470,25 @@ CREATE TABLE public.group_box_articles (
 
 
 --
+-- Name: group_box_article_costs; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.group_box_article_costs AS
+ SELECT group_box_articles.id AS group_box_article_id,
+    group_box_articles.group_id,
+    group_box_articles.box_id,
+    group_box_articles.article_id,
+    group_box_articles.quantity,
+    articles.price AS unit_price,
+    round((group_box_articles.quantity * articles.price), 2) AS line_total,
+    (boxes.status = 2) AS is_final
+   FROM ((public.group_box_articles
+     JOIN public.articles ON ((articles.id = group_box_articles.article_id)))
+     JOIN public.boxes ON ((boxes.id = group_box_articles.box_id)))
+  WHERE ((group_box_articles.quantity <> (0)::numeric) AND (articles.price IS NOT NULL));
+
+
+--
 -- Name: group_box_articles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -487,6 +505,21 @@ CREATE SEQUENCE public.group_box_articles_id_seq
 --
 
 ALTER SEQUENCE public.group_box_articles_id_seq OWNED BY public.group_box_articles.id;
+
+
+--
+-- Name: group_box_costs; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.group_box_costs AS
+ SELECT group_box_article_costs.group_id,
+    group_box_article_costs.box_id,
+    boxes.datetime AS box_datetime,
+    group_box_article_costs.is_final,
+    sum(group_box_article_costs.line_total) AS total_cost
+   FROM (public.group_box_article_costs
+     JOIN public.boxes ON ((boxes.id = group_box_article_costs.box_id)))
+  GROUP BY group_box_article_costs.group_id, group_box_article_costs.box_id, boxes.datetime, group_box_article_costs.is_final;
 
 
 --
@@ -2908,6 +2941,7 @@ ALTER TABLE ONLY public.missing_ingredients
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260529120000'),
 ('20260103203508'),
 ('20250223161014'),
 ('20250222095439'),
