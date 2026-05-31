@@ -1,0 +1,31 @@
+<p>
+  <%= link_to 'Zurück zur Kostenübersicht', group_spendings_path %>
+</p>
+
+<h1>Kosten für <%= @group_spending.display_name %></h1>
+
+<div class="row mb-4">
+  <div class="col-md-6">
+    <dl class="row mb-0">
+      <dt class="col-sm-6">Summe endgültig</dt>
+      <dd class="col-sm-6 text-end"><%= @group_spending.final_total.positive? ? euro(@group_spending.final_total) : '—' %></dd>
+      <dt class="col-sm-6">Summe gesamt (geschätzt)</dt>
+      <dd class="col-sm-6 text-end"><%= @group_spending.total_estimate.positive? ? euro(@group_spending.total_estimate) : '—' %></dd>
+    </dl>
+  </div>
+</div>
+
+<% if @group_spending.costs_by_box.any? %>
+  <% @group_spending.costs_by_box.each do |box, article_costs| %>
+    <h2 class="h5 mt-4">
+      <%= link_to l(box.datetime), box %>
+      <span class="badge <%= box.packed? ? 'text-bg-success' : 'text-bg-warning' %> ms-2">
+        <%= box.packed? ? 'endgültig' : 'geschätzt' %>
+      </span>
+      <%= link_to 'Details', box_group_path(box, @group_spending.group, anchor: 'costs'), class: 'btn btn-sm btn-outline-secondary ms-2' %>
+    </h2>
+    <%= render 'group_box_article_costs/table', article_costs: %>
+  <% end %>
+<% else %>
+  <p class="text-muted">Keine Kosten für diese Kochgruppe vorhanden.</p>
+<% end %>

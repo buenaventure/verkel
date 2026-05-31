@@ -1,0 +1,63 @@
+<h1>Kostenübersicht</h1>
+
+<p class="text-muted">
+  Kosten pro Kochgruppe und Kiste. Abgeschlossene Kisten (Packstraße) sind endgültig, geplante Kisten können sich noch ändern.
+</p>
+
+<div class="mb-3">
+  <span class="badge text-bg-success me-2">Endgültig</span> Kiste bereits ausgegeben (Packstraße)
+  <span class="badge text-bg-warning ms-3 me-2">Geschätzt</span> Kiste noch in Planung
+</div>
+
+<div class="table-responsive">
+  <table class="table table-sm">
+    <thead>
+      <tr>
+        <th>Kochgruppe</th>
+        <% @group_spending_overview.boxes.each do |box| %>
+          <th class="text-end <%= box.packed? ? 'table-success' : 'table-warning' %>">
+            <%= link_to l(box.datetime), box, class: 'text-reset' %>
+            <div class="fw-normal small"><%= box.packed? ? 'endgültig' : 'geschätzt' %></div>
+          </th>
+        <% end %>
+        <th class="text-end table-success">Summe endgültig</th>
+        <th class="text-end table-warning">Summe gesamt</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @group_spending_overview.groups.each do |group| %>
+        <tr>
+          <td><%= group.display_name %></td>
+          <% @group_spending_overview.boxes.each do |box| %>
+            <% cost = @group_spending_overview.costs_by_group_and_box[[group.id, box.id]] %>
+            <td class="text-end <%= box.packed? ? 'table-success' : 'table-warning' %>">
+              <% if cost %>
+                <%= link_to euro(cost.total_cost), box_group_path(box, group, anchor: 'costs'),
+                            class: box.packed? ? 'text-success-emphasis' : 'text-warning-emphasis' %>
+              <% else %>
+                —
+              <% end %>
+            </td>
+          <% end %>
+          <td class="text-end table-success fw-semibold">
+            <% final_total = @group_spending_overview.final_totals_by_group[group.id] %>
+            <% if final_total %>
+              <%= euro final_total %>
+            <% else %>
+              —
+            <% end %>
+          </td>
+          <td class="text-end table-warning fw-semibold">
+            <% total = @group_spending_overview.total_totals_by_group[group.id] %>
+            <% if total %>
+              <%= link_to euro(total), group_spending_path(group), class: 'text-warning-emphasis' %>
+            <% else %>
+              —
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

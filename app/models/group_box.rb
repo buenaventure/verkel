@@ -1,4 +1,6 @@
 class GroupBox < ApplicationRecord
+  include Spending
+
   belongs_to :group
   belongs_to :box
   delegate :datetime, to: :box
