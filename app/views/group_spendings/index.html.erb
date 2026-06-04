@@ -7,6 +7,7 @@
 <div class="mb-3">
   <span class="badge text-bg-success me-2">Endgültig</span> Kiste bereits ausgegeben (Packstraße)
   <span class="badge text-bg-warning ms-3 me-2">Geschätzt</span> Kiste noch in Planung
+  <span class="badge text-bg-danger ms-3 me-2">Preis fehlt</span> Kochgruppe enthält Artikel ohne Preis
 </div>
 
 <div class="table-responsive">
@@ -27,12 +28,22 @@
 
     <tbody>
       <% @group_spending_overview.groups.each do |group| %>
+        <% missing_price_count = @group_spending_overview.missing_price_article_counts_by_group.fetch(group.id, 0) %>
         <tr>
-          <td><%= group.display_name %></td>
+          <td>
+            <%= group.display_name %>
+            <% if missing_price_count.positive? %>
+              <%= link_to group_spending_path(group),
+                          class: 'badge text-bg-danger ms-2 text-decoration-none',
+                          title: "#{missing_price_count} Artikel ohne Preis" do %>
+                <%= missing_price_count %> ohne Preis
+              <% end %>
+            <% end %>
+          </td>
           <% @group_spending_overview.boxes.each do |box| %>
             <% cost = @group_spending_overview.costs_by_group_and_box[[group.id, box.id]] %>
             <td class="text-end <%= box.packed? ? 'table-success' : 'table-warning' %>">
-              <% if cost %>
+              <% if cost&.total_cost %>
                 <%= link_to euro(cost.total_cost), box_group_path(box, group, anchor: 'costs'),
                             class: box.packed? ? 'text-success-emphasis' : 'text-warning-emphasis' %>
               <% else %>

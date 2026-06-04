@@ -10,6 +10,11 @@ class GroupBoxArticleCost < ApplicationRecord
   belongs_to :article
 
   scope :final, -> { where(is_final: true) }
+  scope :missing_price, -> { where(unit_price: nil) }
+
+  def missing_price?
+    unit_price.nil?
+  end
 
   def humanize_quantity
     case article.packing_type

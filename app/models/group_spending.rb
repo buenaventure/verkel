@@ -25,6 +25,11 @@ class GroupSpending
     def total_totals_by_group
       @total_totals_by_group ||= GroupBoxCost.totals_by_group
     end
+
+    def missing_price_article_counts_by_group
+      @missing_price_article_counts_by_group ||=
+        GroupBoxArticleCost.missing_price.group(:group_id).distinct.count(:article_id)
+    end
   end
 
   def self.overview = Overview.new
@@ -60,6 +65,10 @@ class GroupSpending
 
   def total_estimate
     @total_estimate ||= GroupBoxCost.where(group:).sum(:total_cost)
+  end
+
+  def missing_price_article_count
+    @missing_price_article_count ||= article_costs.select(&:missing_price?).map(&:article_id).uniq.count
   end
 
   def to_param

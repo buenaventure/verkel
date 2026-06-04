@@ -3,4 +3,4 @@
   <%= link_to 'Neuen Artikel anlegen', new_article_path, class: 'btn btn-sm btn-primary' %>
 </div>
 
-<%= render 'table', articles: @articles %>
+<%= render 'table', articles: @articles, show_price: true, show_base_price: false %>

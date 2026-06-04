@@ -1,3 +1,6 @@
+<% display_price = local_assigns.fetch(:show_price, false) %>
+<% display_base_price = display_price && local_assigns.fetch(:show_base_price, true) %>
+
 <table id="articles-table" class="table table-sm">
   <thead>
     <tr>
@@ -8,9 +11,11 @@
       <th>Nr.</th>
       <th class="text-end">Lager</th>
       <th class="text-end">Überschuss</th>
-      <% if defined?(show_price) %>
-      <th class="text-end">Preis</th>
-      <th class="text-end">Grundpreis</th>
+      <% if display_price %>
+        <th class="text-end">Preis</th>
+      <% end %>
+      <% if display_base_price %>
+        <th class="text-end">Grundpreis</th>
       <% end %>
       <th class="text-end">max. Bestellmenge</th>
       <% if defined?(@order_counts) %><th>Bestellungen</th><% end %>
@@ -33,9 +38,23 @@
         <td><%= article.nr %></td>
         <td class="text-end"><%= number_with_delimiter article.stock %></td>
         <td class="text-end"><%= article.surplus %></td>
-        <% if defined?(show_price) %>
-        <td class="text-end"><%= number_with_delimiter article.price %> €</td>
-        <td class="text-end"><%= number_with_precision(article.base_price, precision: 2) %> €/(kg/l/Stk)</td>
+        <% if display_price %>
+          <td class="text-end">
+            <% if article.price %>
+              <%= euro article.price %>
+            <% else %>
+              <span class="text-danger fw-semibold">Fehlt</span>
+            <% end %>
+          </td>
+        <% end %>
+        <% if display_base_price %>
+          <td class="text-end">
+            <% if article.base_price %>
+              <%= number_with_precision(article.base_price, precision: 2) %> €/(kg/l/Stk)
+            <% else %>
+              —
+            <% end %>
+          </td>
         <% end %>
         <td class="text-end"><%= number_with_delimiter article.order_limit %></td>
         <% if defined?(@order_counts) %><td><%= @order_counts.fetch(article.id, 0) %></td><% end %>

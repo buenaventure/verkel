@@ -8,11 +8,13 @@ RSpec.describe GroupBoxCost do
   let(:packed_box) { create(:box, :packed) }
   let(:planned_box) { create(:box) }
   let(:zero_article) { create(:article, price: 3, unit: 'g', packing_type: :piece, quantity: 500) }
+  let(:missing_price_article) { create(:article, price: nil, unit: 'g', packing_type: :piece, quantity: 500) }
 
   before do
     create(:group_box_article, group:, box: packed_box, article:, quantity: 2)
     create(:group_box_article, group:, box: planned_box, article:, quantity: 1)
     create(:group_box_article, group:, box: planned_box, article: zero_article, quantity: 0)
+    create(:group_box_article, group:, box: planned_box, article: missing_price_article, quantity: 1)
   end
 
   it 'calculates line totals from current article prices', :aggregate_failures do
@@ -33,6 +35,14 @@ RSpec.describe GroupBoxCost do
   end
 
   it 'excludes zero-quantity rows' do
-    expect(GroupBoxArticleCost.count).to eq(2)
+    expect(GroupBoxArticleCost.where(article: zero_article)).to be_empty
+  end
+
+  it 'exposes rows with missing article prices', :aggregate_failures do
+    article_cost = GroupBoxArticleCost.find_by(group:, box: planned_box, article: missing_price_article)
+
+    expect(article_cost).to be_missing_price
+    expect(article_cost.line_total).to be_nil
+    expect(GroupBoxArticleCost.missing_price).to contain_exactly(article_cost)
   end
 end

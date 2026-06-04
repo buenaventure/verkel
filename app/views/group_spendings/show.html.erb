@@ -15,6 +15,13 @@
   </div>
 </div>
 
+<% if @group_spending.missing_price_article_count.positive? %>
+  <div class="alert alert-danger">
+    <strong>Preis fehlt:</strong>
+    <%= @group_spending.missing_price_article_count %> Artikel in dieser Kochgruppe haben keinen Preis und sind unten markiert.
+  </div>
+<% end %>
+
 <% if @group_spending.costs_by_box.any? %>
   <% @group_spending.costs_by_box.each do |box, article_costs| %>
     <h2 class="h5 mt-4">
