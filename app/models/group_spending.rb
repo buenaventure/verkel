@@ -2,6 +2,7 @@
 
 # Read model for group spending overview and detail pages.
 class GroupSpending
+  extend ActiveModel::Naming
   extend ActiveModel::Translation
   include ActiveModel::Conversion
   include Breadcrumb
