@@ -485,7 +485,7 @@ CREATE VIEW public.group_box_article_costs AS
    FROM ((public.group_box_articles
      JOIN public.articles ON ((articles.id = group_box_articles.article_id)))
      JOIN public.boxes ON ((boxes.id = group_box_articles.box_id)))
-  WHERE ((group_box_articles.quantity <> (0)::numeric) AND (articles.price IS NOT NULL));
+   WHERE (group_box_articles.quantity <> (0)::numeric);
 
 
 --
@@ -2941,6 +2941,7 @@ ALTER TABLE ONLY public.missing_ingredients
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260604062000'),
 ('20260529120000'),
 ('20260103203508'),
 ('20250223161014'),

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Cost calculation row for one article assigned to a group box.
 class GroupBoxArticleCost < ApplicationRecord
   include ActionView::Helpers::NumberHelper
 

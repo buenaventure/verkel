@@ -36,7 +36,7 @@ RSpec.describe GroupSpending do
   end
 
   describe '#spending on Group' do
-    it 'wraps the group' do
+    it 'wraps the group', :aggregate_failures do
       expect(group.spending).to be_a(described_class)
       expect(group.spending.final_total).to eq(8)
     end

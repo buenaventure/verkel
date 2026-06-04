@@ -17,9 +17,7 @@ RSpec.describe 'Group spendings' do
 
   describe 'GET /group_spendings' do
     context 'when signed in as office user' do
-      let(:user) { create(:user, role: :office) }
-
-      before { sign_in user, scope: :user }
+      before { sign_in create(:user, role: :office), scope: :user }
 
       it 'returns a successful response' do
         get group_spendings_path
@@ -37,9 +35,7 @@ RSpec.describe 'Group spendings' do
     end
 
     context 'when signed in as read-only user' do
-      let(:user) { create(:user, role: :read_only) }
-
-      before { sign_in user, scope: :user }
+      before { sign_in create(:user, role: :read_only), scope: :user }
 
       it 'denies access' do
         get group_spendings_path
@@ -50,9 +46,7 @@ RSpec.describe 'Group spendings' do
 
   describe 'GET /group_spendings/:group_id' do
     context 'when signed in as office user' do
-      let(:user) { create(:user, role: :office) }
-
-      before { sign_in user, scope: :user }
+      before { sign_in create(:user, role: :office), scope: :user }
 
       it 'returns a successful response' do
         get group_spending_path(group)
@@ -66,6 +60,11 @@ RSpec.describe 'Group spendings' do
         expect(response.body).to include('Summe endgültig')
         expect(response.body).to include("5,0\u00A0€")
         expect(response.body).to include("12,5\u00A0€")
+      end
+
+      it 'shows and highlights missing-price articles', :aggregate_failures do
+        get group_spending_path(group)
+
         expect(response.body).to include('Preis fehlt:')
         expect(response.body).to include(missing_price_article.packing_name)
         expect(response.body).to include('table-danger')

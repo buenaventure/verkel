@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+# Read model for group spending overview and detail pages.
 class GroupSpending
   extend ActiveModel::Translation
   include ActiveModel::Conversion
   include Breadcrumb
 
+  # Read model for the group spending overview matrix.
   class Overview
     def groups
       @groups ||= Group.order(internal_name: :asc, name: :asc).all
