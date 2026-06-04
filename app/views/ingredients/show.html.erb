@@ -68,7 +68,9 @@
 
 <h2>Lieferanten</h2>
 
-<%= link_to 'Neuen Artikel anlegen', new_article_path(ingredient_id: @ingredient), class: 'btn btn-sm btn-primary float-end' %>
+<div class="d-flex justify-content-end mb-2 mt-4">
+  <%= link_to 'Neuen Artikel anlegen', new_article_path(ingredient_id: @ingredient), class: 'btn btn-sm btn-primary' %>
+</div>
 <%= render 'articles/table', articles: @ingredient.articles, ingredient: true, show_price: true %>
 
 <table class="table table-sm">
