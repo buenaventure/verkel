@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Shared view helpers.
 module ApplicationHelper
   def german_list(array)
     [array[0...-1].join(', '), array[-1]].reject(&:blank?).join(' und ')
@@ -20,8 +23,10 @@ module ApplicationHelper
     end
   end
 
-  def euro(price)
-    "#{number_with_delimiter price}\u00A0€"
+  def euro(price, delimiter: nil)
+    options = delimiter ? { delimiter: } : {}
+
+    "#{number_with_delimiter(price, **options)}\u00A0€"
   end
 
   private

@@ -44,7 +44,7 @@
             <% cost = @group_spending_overview.costs_by_group_and_box[[group.id, box.id]] %>
             <td class="text-end <%= box.packed? ? 'table-success' : 'table-warning' %>">
               <% if cost&.total_cost %>
-                <%= link_to euro(cost.total_cost), box_group_path(box, group, anchor: 'costs'),
+                <%= link_to euro(cost.total_cost, delimiter: '.'), box_group_path(box, group, anchor: 'costs'),
                             class: box.packed? ? 'text-success-emphasis' : 'text-warning-emphasis' %>
               <% else %>
                 —
@@ -54,7 +54,7 @@
           <td class="text-end table-success fw-semibold">
             <% final_total = @group_spending_overview.final_totals_by_group[group.id] %>
             <% if final_total %>
-              <%= euro final_total %>
+              <%= euro final_total, delimiter: '.' %>
             <% else %>
               —
             <% end %>
@@ -62,7 +62,7 @@
           <td class="text-end table-warning fw-semibold">
             <% total = @group_spending_overview.total_totals_by_group[group.id] %>
             <% if total %>
-              <%= link_to euro(total), group_spending_path(group), class: 'text-warning-emphasis' %>
+              <%= link_to euro(total, delimiter: '.'), group_spending_path(group), class: 'text-warning-emphasis' %>
             <% else %>
               —
             <% end %>

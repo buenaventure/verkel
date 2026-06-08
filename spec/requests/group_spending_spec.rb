@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Group spendings' do
   let(:group) { create(:group) }
-  let(:article) { create(:article, price: 2.5, unit: 'g', packing_type: :piece, quantity: 500) }
+  let(:article) { create(:article, price: 1250.5, unit: 'g', packing_type: :piece, quantity: 500) }
   let(:missing_price_article) { create(:article, price: nil, unit: 'g', packing_type: :piece, quantity: 500) }
   let(:packed_box) { create(:box, :packed, datetime: 1.day.ago) }
   let(:planned_box) { create(:box, datetime: 1.day.from_now) }
@@ -28,8 +28,8 @@ RSpec.describe 'Group spendings' do
         get group_spendings_path
 
         expect(response.body).to include('Kostenübersicht')
-        expect(response.body).to include("5,0\u00A0€")
-        expect(response.body).to include("7,5\u00A0€")
+        expect(response.body).to include("2.501,0\u00A0€")
+        expect(response.body).to include("3.751,5\u00A0€")
         expect(response.body).to include('1 ohne Preis')
       end
     end
@@ -58,8 +58,8 @@ RSpec.describe 'Group spendings' do
 
         expect(response.body).to include(group.display_name)
         expect(response.body).to include('Summe endgültig')
-        expect(response.body).to include("5,0\u00A0€")
-        expect(response.body).to include("12,5\u00A0€")
+        expect(response.body).to include("2 501,0\u00A0€")
+        expect(response.body).to include("6 252,5\u00A0€")
       end
 
       it 'shows and highlights missing-price articles', :aggregate_failures do
