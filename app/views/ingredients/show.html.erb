@@ -69,7 +69,7 @@
 <h2>Lieferanten</h2>
 
 <%= link_to 'Neuen Artikel anlegen', new_article_path(ingredient_id: @ingredient), class: 'btn btn-sm btn-primary float-end' %>
-<%= render 'articles/table', articles: @ingredient.articles, ingredient: true, show_price: true %>
+<%= render 'articles/table', articles: @ingredient.articles, ingredient: true %>
 
 <table class="table table-sm">
   <thead>

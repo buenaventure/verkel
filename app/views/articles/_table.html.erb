@@ -1,5 +1,4 @@
-<%# locals: (articles:, ingredient: false, supplier: false, show_price: false, show_base_price: true, order_counts: nil) %>
-<% display_base_price = show_price && show_base_price %>
+<%# locals: (articles:, ingredient: false, supplier: false, show_base_price: true, order_counts: nil) %>
 
 <table id="articles-table" class="table table-sm">
   <thead>
@@ -11,10 +10,8 @@
       <th>Nr.</th>
       <th class="text-end">Lager</th>
       <th class="text-end">Überschuss</th>
-      <% if show_price %>
-        <th class="text-end">Preis</th>
-      <% end %>
-      <% if display_base_price %>
+      <th class="text-end">Preis</th>
+      <% if show_base_price %>
         <th class="text-end">Grundpreis</th>
       <% end %>
       <th class="text-end">max. Bestellmenge</th>
@@ -38,16 +35,14 @@
         <td><%= article.nr %></td>
         <td class="text-end"><%= number_with_delimiter article.stock %></td>
         <td class="text-end"><%= article.surplus %></td>
-        <% if show_price %>
-          <td class="text-end">
-            <% if article.price %>
-              <%= euro article.price %>
-            <% else %>
-              <span class="text-danger fw-semibold">Fehlt</span>
-            <% end %>
-          </td>
-        <% end %>
-        <% if display_base_price %>
+        <td class="text-end">
+          <% if article.price %>
+            <%= euro article.price %>
+          <% else %>
+            <span class="text-danger fw-semibold">Fehlt</span>
+          <% end %>
+        </td>
+        <% if show_base_price %>
           <td class="text-end">
             <% if article.base_price %>
               <%= number_with_precision(article.base_price, precision: 2) %> €/(kg/l/Stk)
