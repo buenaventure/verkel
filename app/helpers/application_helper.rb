@@ -3,11 +3,11 @@
 # Shared view helpers.
 module ApplicationHelper
   def german_list(array)
-    [array[0...-1].join(', '), array[-1]].reject(&:blank?).join(' und ')
+    [array[0...-1].join(', '), array[-1]].compact_blank.join(' und ')
   end
 
   def icon(name)
-    "<img src=\"#{image_path("open-iconic/#{name}.svg")}\" alt=\"icon #{name}\" width=\"16\" height=\"16\">".html_safe
+    tag.img(src: image_path("open-iconic/#{name}.svg"), alt: "icon #{name}", width: 16, height: 16)
   end
 
   def page_title(breadcrumbs)
