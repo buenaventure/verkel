@@ -1,6 +1,8 @@
-<div class="btn-group float-end" role="group">
-  <%= link_to 'Inventurliste', inventory_list_articles_path(format: 'pdf'), class: 'btn btn-sm btn-secondary' %>
-  <%= link_to 'Neuen Artikel anlegen', new_article_path, class: 'btn btn-sm btn-primary' %>
+<div class="d-flex justify-content-end mb-2 mt-4">
+  <div class="btn-group" role="group">
+    <%= link_to 'Inventurliste', inventory_list_articles_path(format: 'pdf'), class: 'btn btn-sm btn-secondary' %>
+    <%= link_to 'Neuen Artikel anlegen', new_article_path, class: 'btn btn-sm btn-primary' %>
+  </div>
 </div>
 
 <%= render 'table', articles: @articles, show_base_price: false, order_counts: @order_counts %>
