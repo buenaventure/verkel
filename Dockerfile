@@ -55,4 +55,7 @@ RUN apk --update --no-cache upgrade && rm -rf /var/cache/apk/*
 
 EXPOSE 3000
 
+RUN chmod +x bin/docker-entrypoint.sh
+
+ENTRYPOINT ["bin/docker-entrypoint.sh"]
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
