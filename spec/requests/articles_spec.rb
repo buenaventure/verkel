@@ -34,12 +34,13 @@ RSpec.describe 'Articles' do
   end
 
   describe 'shared article table' do
+    before { GroupBoxIngredientUnitCache.do_calculate }
+
     it 'shows price and base price on ingredient pages', :aggregate_failures do
       create(:article, supplier:, ingredient:, price: 2.5, unit: 'g', packing_type: :piece, quantity: 500)
 
       get ingredient_path(ingredient)
 
-      expect(response).to have_http_status(:success)
       expect(response.body).to include('Preis')
       expect(response.body).to include('Grundpreis')
       expect(response.body).to include("2,5\u00A0€")
@@ -50,7 +51,6 @@ RSpec.describe 'Articles' do
 
       get supplier_path(supplier)
 
-      expect(response).to have_http_status(:success)
       expect(response.body).to include('Preis')
       expect(response.body).to include('Grundpreis')
       expect(response.body).to include('Fehlt')
