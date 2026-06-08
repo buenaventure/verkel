@@ -1,24 +1,24 @@
-<% display_price = local_assigns.fetch(:show_price, false) %>
-<% display_base_price = display_price && local_assigns.fetch(:show_base_price, true) %>
+<%# locals: (articles:, ingredient: false, supplier: false, show_price: false, show_base_price: true, order_counts: nil) %>
+<% display_base_price = show_price && show_base_price %>
 
 <table id="articles-table" class="table table-sm">
   <thead>
     <tr>
       <th>Name</th>
-      <% unless defined?(ingredient) %><th>Warengruppe</th><th>Zutat</th><% end %>
-      <% unless defined?(supplier) %><th>Lieferant</th><% end %>
-      <% if defined?(ingredient) %><th>Prio</th><% end %>
+      <% unless ingredient %><th>Warengruppe</th><th>Zutat</th><% end %>
+      <% unless supplier %><th>Lieferant</th><% end %>
+      <% if ingredient %><th>Prio</th><% end %>
       <th>Nr.</th>
       <th class="text-end">Lager</th>
       <th class="text-end">Überschuss</th>
-      <% if display_price %>
+      <% if show_price %>
         <th class="text-end">Preis</th>
       <% end %>
       <% if display_base_price %>
         <th class="text-end">Grundpreis</th>
       <% end %>
       <th class="text-end">max. Bestellmenge</th>
-      <% if defined?(@order_counts) %><th>Bestellungen</th><% end %>
+      <% if order_counts %><th>Bestellungen</th><% end %>
       <th>Notizen</th>
     </tr>
   </thead>
@@ -27,18 +27,18 @@
     <% articles.each do |article| %>
       <tr>
         <td><%= link_to article %></td>
-        <% unless defined?(ingredient) %>
+        <% unless ingredient %>
           <td><%= article.ingredient.commodity_group %></td>
           <td><%= link_to article.ingredient, article.ingredient %></td>
         <% end %>
-        <% unless defined?(supplier) %>
+        <% unless supplier %>
           <td><%= link_to article.supplier, article.supplier %></td>
         <% end %>
-        <% if defined?(ingredient) %><td><%= article.priority %></td><% end %>
+        <% if ingredient %><td><%= article.priority %></td><% end %>
         <td><%= article.nr %></td>
         <td class="text-end"><%= number_with_delimiter article.stock %></td>
         <td class="text-end"><%= article.surplus %></td>
-        <% if display_price %>
+        <% if show_price %>
           <td class="text-end">
             <% if article.price %>
               <%= euro article.price %>
@@ -57,7 +57,7 @@
           </td>
         <% end %>
         <td class="text-end"><%= number_with_delimiter article.order_limit %></td>
-        <% if defined?(@order_counts) %><td><%= @order_counts.fetch(article.id, 0) %></td><% end %>
+        <% if order_counts %><td><%= order_counts.fetch(article.id, 0) %></td><% end %>
         <td><%= article.notes %></td>
       </tr>
     <% end %>
