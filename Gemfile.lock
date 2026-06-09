@@ -270,7 +270,7 @@ GEM
       date
       stringio
     public_suffix (7.0.5)
-    puma (6.6.1)
+    puma (8.0.2)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.6)
@@ -536,7 +536,7 @@ DEPENDENCIES
   pg
   prawn
   prawn-table
-  puma (~> 6.0)
+  puma (~> 8.0)
   rack-mini-profiler (~> 3.3)
   rails (~> 8.0.0)
   rails-i18n (~> 8.0.0)
