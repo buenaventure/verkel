@@ -7,6 +7,17 @@
 <div class="row mb-4">
   <div class="col-md-6">
     <dl class="row mb-0">
+      <dt class="col-sm-6 d-flex justify-content-between align-items-baseline">
+        <span>Budget</span>
+        <% if can? :update, @group_spending.group %>
+          <%= link_to(@group_spending.budget.present? ? 'Bearbeiten' : 'Budget festlegen',
+                      edit_group_path(@group_spending.group),
+                      class: 'small') %>
+        <% end %>
+      </dt>
+      <dd class="col-sm-6 text-end">
+        <%= @group_spending.budget.present? ? euro(@group_spending.budget) : '—' %>
+      </dd>
       <dt class="col-sm-6">Summe endgültig</dt>
       <dd class="col-sm-6 text-end"><%= @group_spending.final_total.positive? ? euro(@group_spending.final_total) : '—' %></dd>
       <dt class="col-sm-6">Summe gesamt (geschätzt)</dt>
@@ -14,6 +25,32 @@
     </dl>
   </div>
 </div>
+
+<% if @group_spending.over_budget? %>
+  <div class="alert alert-danger">
+    <strong>Budget überschritten:</strong>
+    Die geschätzten Gesamtkosten liegen über dem Budget von <%= euro @group_spending.budget %>.
+  </div>
+<% elsif @group_spending.near_budget? %>
+  <div class="alert alert-warning">
+    <strong>Budget fast erreicht:</strong>
+    Die geschätzten Gesamtkosten nähern sich dem Budget von <%= euro @group_spending.budget %>.
+  </div>
+<% end %>
+
+<% if @group_spending.spending_timeline.any? %>
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h6 card-title">Kostenverlauf</h2>
+      <div style="height: 300px;"
+           data-controller="group-spending-chart"
+           data-group-spending-chart-timeline-value="<%= @group_spending.spending_timeline.to_json %>"
+           <% if @group_spending.budget.present? %>data-group-spending-chart-budget-value="<%= @group_spending.budget %>"<% end %>>
+        <canvas></canvas>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <% if @group_spending.missing_price_article_count.positive? %>
   <div class="alert alert-danger">

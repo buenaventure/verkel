@@ -10,7 +10,7 @@ class GroupSpending
   # Read model for the group spending overview matrix.
   class Overview
     def groups
-      @groups ||= Group.order(internal_name: :asc, name: :asc).all
+      @groups ||= Group.order(internal_name: :asc, name: :asc).map { spending_for(it) }
     end
 
     def boxes
@@ -33,6 +33,43 @@ class GroupSpending
       @missing_price_article_counts_by_group ||=
         GroupBoxArticleCost.missing_price.group(:group_id).distinct.count(:article_id)
     end
+
+    def timelines_by_group
+      @timelines_by_group ||=
+        GroupBoxCost
+        .joins(:box)
+        .includes(:box)
+        .order('boxes.datetime ASC')
+        .group_by(&:group_id)
+        .transform_values { GroupSpending.build_timeline(it) }
+    end
+
+    private
+
+    def spending_for(group)
+      GroupSpending.new(
+        group,
+        timeline: timelines_by_group[group.id] || [],
+        total_estimate: total_totals_by_group[group.id],
+        final_total: final_totals_by_group[group.id],
+        missing_price_article_count: missing_price_article_counts_by_group.fetch(group.id, 0)
+      )
+    end
+  end
+
+  def self.build_timeline(costs)
+    costs.each_with_object([]) do |cost, timeline|
+      previous = timeline.last
+      cumulative_total = (previous&.fetch(:cumulative_total) || 0) + (cost.total_cost || 0)
+      cumulative_final = (previous&.fetch(:cumulative_final) || 0) + (cost.is_final ? (cost.total_cost || 0) : 0)
+      timeline << {
+        datetime: cost.box.datetime.iso8601,
+        cumulative_total: cumulative_total.to_f,
+        cumulative_final: cumulative_final.to_f,
+        is_final: cost.is_final,
+        period_cost: cost.total_cost&.to_f
+      }
+    end
   end
 
   def self.overview = Overview.new
@@ -41,13 +78,17 @@ class GroupSpending
     new(Group.find(group_id))
   end
 
-  def initialize(group)
+  def initialize(group, **attrs)
     @group = group
+    @spending_timeline = attrs[:timeline] if attrs.key?(:timeline)
+    @final_total = attrs[:final_total] if attrs.key?(:final_total)
+    @total_estimate = attrs[:total_estimate] if attrs.key?(:total_estimate)
+    @missing_price_article_count = attrs[:missing_price_article_count] if attrs.key?(:missing_price_article_count)
   end
 
   attr_reader :group
 
-  delegate :display_name, to: :group
+  delegate :id, :display_name, :budget, to: :group
 
   def article_costs
     @article_costs ||=
@@ -63,15 +104,42 @@ class GroupSpending
   end
 
   def final_total
-    @final_total ||= GroupBoxCost.final.where(group:).sum(:total_cost)
+    return @final_total if instance_variable_defined?(:@final_total)
+
+    @final_total = GroupBoxCost.final.where(group:).sum(:total_cost)
   end
 
   def total_estimate
-    @total_estimate ||= GroupBoxCost.where(group:).sum(:total_cost)
+    return @total_estimate if instance_variable_defined?(:@total_estimate)
+
+    @total_estimate = GroupBoxCost.where(group:).sum(:total_cost)
   end
 
   def missing_price_article_count
-    @missing_price_article_count ||= article_costs.select(&:missing_price?).map(&:article_id).uniq.count
+    return @missing_price_article_count if instance_variable_defined?(:@missing_price_article_count)
+
+    @missing_price_article_count = article_costs.select(&:missing_price?).map(&:article_id).uniq.count
+  end
+
+  def spending_timeline
+    return @spending_timeline if instance_variable_defined?(:@spending_timeline)
+
+    @spending_timeline =
+      self.class.build_timeline(
+        GroupBoxCost.where(group:).joins(:box).includes(:box).order('boxes.datetime ASC')
+      )
+  end
+
+  def over_budget?
+    budget.present? && total_estimate.to_d > budget.to_d
+  end
+
+  def sparkline?
+    budget.present? && spending_timeline.any?
+  end
+
+  def near_budget?(threshold: 0.9)
+    budget.present? && total_estimate.to_d >= budget.to_d * threshold && !over_budget?
   end
 
   def to_param

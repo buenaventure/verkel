@@ -8,6 +8,7 @@
   <span class="badge text-bg-success me-2">Endgültig</span> Kiste bereits ausgegeben (Packstraße)
   <span class="badge text-bg-warning ms-3 me-2">Geschätzt</span> Kiste noch in Planung
   <span class="badge text-bg-danger ms-3 me-2">Preis fehlt</span> Kochgruppe enthält Artikel ohne Preis
+  <span class="badge text-bg-danger ms-3 me-2">Überschritten</span> Geschätzte Kosten über dem Budget
 </div>
 
 <div class="table-responsive">
@@ -21,48 +22,72 @@
             <div class="fw-normal small"><%= box.packed? ? 'endgültig' : 'geschätzt' %></div>
           </th>
         <% end %>
+        <th class="text-end">Budget</th>
+        <th>Verlauf</th>
         <th class="text-end table-success">Summe endgültig</th>
         <th class="text-end table-warning">Summe gesamt</th>
       </tr>
     </thead>
 
     <tbody>
-      <% @group_spending_overview.groups.each do |group| %>
-        <% missing_price_count = @group_spending_overview.missing_price_article_counts_by_group.fetch(group.id, 0) %>
+      <% @group_spending_overview.groups.each do |spending| %>
         <tr>
           <td>
-            <%= group.display_name %>
-            <% if missing_price_count.positive? %>
-              <%= link_to group_spending_path(group),
+            <%= spending.display_name %>
+            <% if spending.missing_price_article_count.positive? %>
+              <%= link_to group_spending_path(spending),
                           class: 'badge text-bg-danger ms-2 text-decoration-none',
-                          title: "#{missing_price_count} Artikel ohne Preis" do %>
-                <%= missing_price_count %> ohne Preis
+                          title: "#{spending.missing_price_article_count} Artikel ohne Preis" do %>
+                <%= spending.missing_price_article_count %> ohne Preis
               <% end %>
             <% end %>
           </td>
           <% @group_spending_overview.boxes.each do |box| %>
-            <% cost = @group_spending_overview.costs_by_group_and_box[[group.id, box.id]] %>
+            <% cost = @group_spending_overview.costs_by_group_and_box[[spending.id, box.id]] %>
             <td class="text-end <%= box.packed? ? 'table-success' : 'table-warning' %>">
               <% if cost&.total_cost %>
-                <%= link_to euro(cost.total_cost, delimiter: '.'), box_group_path(box, group, anchor: 'costs'),
+                <%= link_to euro(cost.total_cost, delimiter: '.'), box_group_path(box, spending.group, anchor: 'costs'),
                             class: box.packed? ? 'text-success-emphasis' : 'text-warning-emphasis' %>
               <% else %>
                 —
               <% end %>
             </td>
           <% end %>
+          <td class="text-end">
+            <% if spending.budget.present? %>
+              <%= euro spending.budget, delimiter: '.' %>
+            <% else %>
+              —
+            <% end %>
+          </td>
+          <td>
+            <% if spending.sparkline? %>
+              <div class="d-flex align-items-center gap-2">
+                <div style="width: 100px; height: 32px;"
+                     data-controller="group-spending-sparkline"
+                     data-group-spending-sparkline-timeline-value="<%= spending.spending_timeline.to_json %>"
+                     data-group-spending-sparkline-budget-value="<%= spending.budget %>">
+                  <canvas></canvas>
+                </div>
+                <% if spending.over_budget? %>
+                  <span class="badge text-bg-danger">Überschritten</span>
+                <% end %>
+              </div>
+            <% else %>
+              —
+            <% end %>
+          </td>
           <td class="text-end table-success fw-semibold">
-            <% final_total = @group_spending_overview.final_totals_by_group[group.id] %>
-            <% if final_total %>
-              <%= euro final_total, delimiter: '.' %>
+            <% if spending.final_total %>
+              <%= euro spending.final_total, delimiter: '.' %>
             <% else %>
               —
             <% end %>
           </td>
           <td class="text-end table-warning fw-semibold">
-            <% total = @group_spending_overview.total_totals_by_group[group.id] %>
-            <% if total %>
-              <%= link_to euro(total, delimiter: '.'), group_spending_path(group), class: 'text-warning-emphasis' %>
+            <% if spending.total_estimate %>
+              <%= link_to euro(spending.total_estimate, delimiter: '.'), group_spending_path(spending),
+                          class: 'text-warning-emphasis' %>
             <% else %>
               —
             <% end %>

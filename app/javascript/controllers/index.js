@@ -6,3 +6,9 @@ import { application } from "./application"
 
 import SearchFormController from "./search_form_controller.js"
 application.register("search-form", SearchFormController)
+
+import GroupSpendingChartController from "./group_spending_chart_controller.js"
+application.register("group-spending-chart", GroupSpendingChartController)
+
+import GroupSpendingSparklineController from "./group_spending_sparkline_controller.js"
+application.register("group-spending-sparkline", GroupSpendingSparklineController)

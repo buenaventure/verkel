@@ -1,6 +1,7 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -485,7 +486,7 @@ CREATE VIEW public.group_box_article_costs AS
    FROM ((public.group_box_articles
      JOIN public.articles ON ((articles.id = group_box_articles.article_id)))
      JOIN public.boxes ON ((boxes.id = group_box_articles.box_id)))
-   WHERE (group_box_articles.quantity <> (0)::numeric);
+  WHERE (group_box_articles.quantity <> (0)::numeric);
 
 
 --
@@ -564,7 +565,8 @@ CREATE TABLE public.groups (
     hunger_factor numeric(4,3) DEFAULT 1.0 NOT NULL,
     packing_lane_id bigint,
     internal_name character varying,
-    skip_mandatory_meals boolean DEFAULT false NOT NULL
+    skip_mandatory_meals boolean DEFAULT false NOT NULL,
+    budget numeric(10,2)
 );
 
 
@@ -2941,6 +2943,7 @@ ALTER TABLE ONLY public.missing_ingredients
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260609120000'),
 ('20260604062000'),
 ('20260529120000'),
 ('20260103203508'),
