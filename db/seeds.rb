@@ -17,11 +17,11 @@ CONTENT
 meal = Meal.create!(recipe:, datetime: Time.zone.now.middle_of_day + 1.month)
 
 packing_lane = PackingLane.create!(name: 'Tiere des Waldes')
-group_fuchs = Group.create!(name: 'Test-Kochgruppe', internal_name: 'Fuchs', packing_lane:)
+group_fuchs = Group.create!(name: 'Test-Kochgruppe', internal_name: 'Fuchs', packing_lane:, budget: 1_000)
 create_group_participants!(group: group_fuchs, meal:, ages: [12, 14])
 
-group_hase = Group.create!(name: 'Test-Kochgruppe 2', internal_name: 'Hase', packing_lane:)
-group_uhu = Group.create!(name: 'Test-Kochgruppe 3', internal_name: 'Uhu', packing_lane:)
+group_hase = Group.create!(name: 'Test-Kochgruppe 2', internal_name: 'Hase', packing_lane:, budget: 500)
+group_uhu = Group.create!(name: 'Test-Kochgruppe 3', internal_name: 'Uhu', packing_lane:, budget: 250)
 
 supplier = Supplier.create!(name: 'Supermarkt', email: 'super.markt@example.com', phone: '0123456789')
 upsert_article!(ingredient: spaghetti, supplier:, quantity: 500, unit: 'g', packing_type: :piece, price: 1.89)

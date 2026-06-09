@@ -11,6 +11,7 @@ class Group < ApplicationRecord
 
   validates :name, uniqueness: true, presence: true
   validates :internal_name, uniqueness: true, unless: ->(group) { group.internal_name.blank? }
+  validates :budget, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
   before_save do
     self.internal_name = nil if internal_name.blank?

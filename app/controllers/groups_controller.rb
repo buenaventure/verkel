@@ -89,7 +89,7 @@ class GroupsController < ApplicationController
   end
 
   def group_params
-    params.expect(group: %i[name internal_name hunger_factor notes packing_lane_id
+    params.expect(group: %i[name internal_name budget hunger_factor notes packing_lane_id
                             skip_mandatory_meals])
   end
 end

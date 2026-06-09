@@ -9,6 +9,7 @@
     "@rails/actiontext": "^8.0.0",
     "@rails/activestorage": "^8.0.0",
     "bootstrap": "^5.3.3",
+    "chart.js": "^4.5.1",
     "datatables.net-bs5": "^2.2.1",
     "datatables.net-fixedcolumns-bs5": "^5.0.4",
     "datatables.net-fixedheader-bs5": "^4.0.1",

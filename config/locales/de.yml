@@ -124,6 +124,7 @@ de:
         unit: Einheit
         purpose: Verwendungszweck
       group:
+        budget: Budget
         hunger_factor: Hunger-Faktor
         internal_name: interner Name
         name: Name
