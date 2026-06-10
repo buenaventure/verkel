@@ -113,9 +113,7 @@ class ArticlePackingPlanner
     )
     remaining = required - covered
 
-    unless immediate_only
-      handle_remaining(remaining, articles, required_articles, entry) if remaining.positive?
-    end
+    handle_remaining(remaining, articles, required_articles, entry) if !immediate_only && remaining.positive?
 
     add_required_articles(entry, required_articles)
     covered
@@ -198,14 +196,15 @@ class ArticlePackingPlanner
       quantity -= covered
     end
 
-    return unless quantity.positive?
-
-    if (article = select_filling_article(articles))
+    if quantity.positive? && (article = select_filling_article(articles))
       required_articles[article.id] += 1
-      raise if article.reserve(1) != 1
-    else
-      add_missing_ingredient(entry, quantity)
+      reserved = article.reserve(1)
+      raise if reserved != 1
+
+      quantity -= reserved * article.quantity
     end
+
+    add_missing_ingredient(entry, quantity) if quantity.positive?
   end
 
   def select_filling_article(articles)
@@ -249,14 +248,23 @@ class ArticlePackingPlanner
     }
   end
 
-  def add_required_articles(entry, articles)
-    @group_box_articles += articles.reject { |_, quantity| quantity.zero? }.map do |article_id, quantity|
-      {
-        group_id: entry.group_id,
-        box_id: entry.box_id,
-        article_id: article_id,
-        quantity: quantity
-      }
+  def add_required_articles(entry, required_articles)
+    required_articles.each do |article_id, quantity|
+      next if quantity.zero?
+
+      existing = @group_box_articles.find do |row|
+        row[:group_id] == entry.group_id && row[:box_id] == entry.box_id && row[:article_id] == article_id
+      end
+      if existing
+        existing[:quantity] += quantity
+      else
+        @group_box_articles << {
+          group_id: entry.group_id,
+          box_id: entry.box_id,
+          article_id: article_id,
+          quantity: quantity
+        }
+      end
     end
   end
 
