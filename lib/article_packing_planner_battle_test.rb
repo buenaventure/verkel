@@ -18,6 +18,8 @@
 # 11. whole_piece_packages — piece articles are packed in whole package counts.
 # 12. uniqueness — at most one row per natural key in each output table.
 # 13. total_accounted — packed ingredient units plus missing never fall short of demand.
+# 14. hoards_respected — hoarded stock stays blocked until its release date; missing_quantity
+#     stays within bounds after the planner updates hoard records.
 #
 # Run via: RAILS_ENV=test bin/rails runner script/battle_test_article_packing_planner.rb
 class ArticlePackingPlannerBattleTest
@@ -83,6 +85,7 @@ class ArticlePackingPlannerBattleTest
     boxes = create_boxes
     packed_boxes = boxes.select(&:packed?)
     articles = create_articles(ingredients, suppliers)
+    create_hoards!(articles, boxes)
     groups = Array.new(rand_range(2, 6)) { FactoryBot.create(:group) }
     demands = create_demands(groups, boxes, ingredients)
     seed_packed_box_plans!(packed_boxes, groups, articles)
@@ -117,6 +120,7 @@ class ArticlePackingPlannerBattleTest
     check_no_demand_leak_into_packed_boxes!(scenario)
     check_whole_piece_packages!(scenario)
     check_uniqueness!
+    check_hoards_respected!(scenario)
   end
 
   def verify_idempotency!(scenario)
@@ -319,6 +323,51 @@ class ArticlePackingPlannerBattleTest
     assert_unique!(ArticleBoxOrderRequirement, %i[article_id box_id], 'article_box_order_requirements')
   end
 
+  def check_hoards_respected!(scenario)
+    hoards = Hoard.where(article_id: scenario.articles_by_id.keys)
+    hoards.find_each do |hoard|
+      missing = hoard.missing_quantity.to_d
+      quantity = hoard.quantity.to_d
+      next if missing >= 0 && missing <= quantity
+
+      fail_invariant!(
+        scenario,
+        'hoards_respected',
+        "hoard #{hoard.id} missing_quantity #{missing} outside 0..#{quantity}"
+      )
+    end
+
+    article_ids_with_hoards = hoards.distinct.pluck(:article_id)
+    article_ids_with_hoards.each do |article_id|
+      verify_hoard_stock_drawdown!(scenario, article_id)
+    end
+  end
+
+  def verify_hoard_stock_drawdown!(scenario, article_id)
+    abors = ArticleBoxOrderRequirement
+            .where(article_id:)
+            .includes(:box)
+            .joins(:box)
+            .order('boxes.datetime')
+    return if abors.none?
+
+    simulator = HoardStockSimulator.new(scenario.initial_stock.fetch(article_id), hoards: Hoard.where(article_id:))
+    abors.each do |abor|
+      simulator.advance_to(abor.box.datetime)
+      stock_used = abor.stock.to_d
+      available = simulator.available_stock
+      if stock_used > available
+        fail_invariant!(
+          scenario,
+          'hoards_respected',
+          "article #{article_id} box #{abor.box_id} drew #{stock_used} stock packages " \
+          "but only #{available} were free of hoard reservation at #{abor.box.datetime}"
+        )
+      end
+      simulator.reserve_stock(stock_used)
+    end
+  end
+
   def assert_unique!(model, columns, label)
     duplicates = model.group(columns).having('COUNT(*) > 1').count
     return if duplicates.empty?
@@ -421,6 +470,20 @@ class ArticlePackingPlannerBattleTest
     end
   end
 
+  def create_hoards!(articles, boxes)
+    articles.each do |article|
+      next if article.stock.zero?
+      next if @rng.rand < 0.6
+
+      anchor = boxes.sample(random: @rng).datetime
+      Hoard.create!(
+        article:,
+        quantity: @rng.rand(1..article.stock),
+        until: anchor + @rng.rand(-2..4).days
+      )
+    end
+  end
+
   def create_articles(ingredients, suppliers)
     ingredients.flat_map do |ingredient|
       packing_type = PACKING_TYPES.sample(random: @rng)
@@ -502,5 +565,45 @@ class ArticlePackingPlannerBattleTest
     puts "FAILED — #{@failures.size}/#{@trials} trials violated invariants:"
     @failures.each { |failure| puts "  trial #{failure[:trial]}: #{failure[:message]}" }
     exit 1
+  end
+
+  # Replays hoard blocking/release to verify stock reservations honour hoard.until.
+  class HoardStockSimulator
+    def initialize(total_stock, hoards:)
+      @hoards = hoards.sort_by(&:until)
+      @released_hoard_ids = Set.new
+      @current_hoard = [total_stock, @hoards.sum(&:quantity)].min
+      @available_stock = total_stock - @current_hoard
+    end
+
+    attr_reader :available_stock
+
+    def advance_to(datetime)
+      @hoards.each do |hoard|
+        next if hoard.until > datetime
+        next if @released_hoard_ids.include?(hoard.id)
+
+        release_hoard(hoard)
+        @released_hoard_ids.add(hoard.id)
+      end
+    end
+
+    def reserve_stock(quantity)
+      reserved = [quantity, @available_stock].min
+      @available_stock -= reserved
+      reserved
+    end
+
+    private
+
+    def release_hoard(hoard)
+      if @current_hoard < hoard.quantity
+        @available_stock += @current_hoard
+        @current_hoard = 0
+      else
+        @available_stock += hoard.quantity
+        @current_hoard -= hoard.quantity
+      end
+    end
   end
 end
