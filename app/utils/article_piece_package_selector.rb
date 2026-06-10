@@ -2,6 +2,27 @@
 
 # Picks a combination of piece-sized article packages that covers at least the
 # required amount while minimising package count, then overshoot, then priority.
+#
+# Algorithm: depth-first search with backtracking over article types. Articles are
+# processed in fixed order (priority ascending, then package size descending).
+# At each step the search tries every package count from 0 up to max_packages
+# for the current article, then recurses to the next. Whenever units_covered
+# meets or exceeds required, the current combination is a candidate. The winning
+# combination is the lexicographic minimum by (package count, overshoot,
+# priority score).
+#
+# Branch-and-bound pruning skips a subtree when packages_used already exceeds
+# the best solution's package count, or when packages_used equals the best but
+# units_covered plus an upper bound on further units cannot beat the best
+# solution's coverage.
+#
+# Complexity: let n be the number of available article types and M_i the maximum
+# package count tried for article i (stock/order ceiling, capped by
+# ceil(required / quantity)). Without pruning the search explores O(∏(M_i + 1))
+# combinations; each visited node does O(n) work for the dominance check, so
+# worst-case time is O(n · ∏(M_i + 1)). Recursion depth and combination storage
+# are O(n). In practice n is small (few pack sizes per ingredient) and pruning
+# removes most branches once a good solution exists.
 class ArticlePiecePackageSelector
   def initialize(required_units, articles, only: nil)
     raise ArgumentError, "invalid only: #{only.inspect}" unless ArticleAvailabilityPlanner::RESERVE_ONLY.include?(only)
