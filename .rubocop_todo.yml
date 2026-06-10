@@ -199,6 +199,7 @@ RSpec/ExampleLength:
     - 'spec/models/group_change_spec.rb'
     - 'spec/models/recipe_spec.rb'
     - 'spec/pdfs/packing_lists_articles_spec.rb'
+    - 'spec/utils/article_packing_planner_spec.rb'
 
 # Offense count: 8
 # Configuration parameters: Max.
