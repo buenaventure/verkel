@@ -73,7 +73,7 @@ RSpec.describe ArticlePiecePackageSelector do
       combination = described_class.new(20, planners, only: :immediate).select
 
       expect(combination).to eq(article.id => 1)
-      expect(described_class.new(40, planners, only: :immediate).select).to eq({})
+      expect(described_class.new(40, planners, only: :immediate).select).to eq(article.id => 1)
     end
 
     it 'with only: :orderable ignores stock', :aggregate_failures do

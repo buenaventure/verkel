@@ -2,8 +2,8 @@
 
 # Picks a combination of piece-sized article packages that covers at least the
 # required amount while minimising package count, then overshoot, then priority.
-# When demand cannot be fully met (full mode only), returns the combination with
-# the most units covered instead.
+# When demand cannot be fully met, returns the combination with the most units
+# covered instead (draining available packages for the active only: mode).
 #
 # Algorithm: depth-first search with backtracking over article types. Articles are
 # processed in fixed order (priority ascending, then package size descending).
@@ -40,7 +40,7 @@ class ArticlePiecePackageSelector
     search(0, 0, 0, {}, best_holder = { value: nil }, partial_holder = { value: nil })
     combination = if best_holder[:value]
                     best_holder[:value][:combination]
-                  elsif @only.nil? && partial_holder[:value]
+                  elsif partial_holder[:value]
                     partial_holder[:value][:combination]
                   else
                     {}
@@ -56,7 +56,7 @@ class ArticlePiecePackageSelector
       return
     end
     if index >= @articles.length
-      consider_partial(partial_holder, packages_used, units_covered, combination) if @only.nil?
+      consider_partial(partial_holder, packages_used, units_covered, combination)
       return
     end
     return if dominated?(best_holder[:value], packages_used, units_covered)

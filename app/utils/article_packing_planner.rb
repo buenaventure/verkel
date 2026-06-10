@@ -9,7 +9,9 @@
 #       process_ingredient_unit_in_box — reset article planners for this box
 #         process_with_fair_sharing    — proportional split when stock is scarce
 #           fulfill_demand             — immediate share per group
-#           fulfill_orderable_shortfall  — orderable share for the rest
+#           allocate_shared_shortfall    — fairly shared leftover immediate capacity
+#           allocate_sequential_shortfall — orderable capacity in group order
+#           exhaust_remaining_capacity   — spend leftover pools when demand stays unmet
 #         fulfill_demand               — single-group path
 #           reserve_for_demand
 #             allocate_units             — piece packages first, then bulk
@@ -75,7 +77,7 @@ class ArticlePackingPlanner
     if needs_fair_sharing?(entries, articles)
       process_with_fair_sharing(entries, articles)
     else
-      entries.each { fulfill_demand(it, articles, it.quantity) }
+      entries.each { fulfill_single_group_demand(it, articles) }
     end
     add_order_requirements(box, articles)
   end
@@ -88,25 +90,128 @@ class ArticlePackingPlanner
     entries.sum(&:quantity) > articles.sum(&:total_coverable_units)
   end
 
-  # Two-pass split: immediate stock/orders by proportional share, then
-  # orderable capacity for whatever each group still lacks.
+  # Three-step split: proportional immediate stock/orders, fairly shared leftover
+  # immediate capacity, then sequential orderable capacity before recording gaps.
   def process_with_fair_sharing(entries, articles)
     total_demand = entries.sum(&:quantity)
     immediate_shares = proportional_shares(entries, articles.sum(&:immediate_units), total_demand)
+    covered_by_entry = entries.index_with { 0 }
 
     entries.each do |entry|
-      covered = fulfill_demand(entry, articles, immediate_shares.fetch(entry), only: :immediate)
-      fulfill_orderable_shortfall(entry, articles, entry.quantity - covered) if entry.quantity > covered
+      covered_by_entry[entry] += fulfill_demand(entry, articles, immediate_shares.fetch(entry), only: :immediate)
+    end
+
+    allocate_shared_shortfall!(entries, articles, covered_by_entry, only: :immediate)
+    allocate_sequential_shortfall!(entries, articles, covered_by_entry, only: :orderable)
+    exhaust_remaining_capacity!(entries, articles, covered_by_entry)
+    record_unmet_shortfalls!(entries, covered_by_entry)
+  end
+
+  def fulfill_single_group_demand(entry, articles)
+    covered_by_entry = { entry => reserve_for_demand(entry, articles, entry.quantity) }
+    exhaust_remaining_capacity!([entry], articles, covered_by_entry)
+    record_unmet_shortfalls!([entry], covered_by_entry)
+  end
+
+  def allocate_shared_shortfall!(entries, articles, covered_by_entry, only:)
+    shortfalls = current_shortfalls(entries, covered_by_entry)
+    return if shortfalls.empty?
+
+    pool_units = remaining_capacity_units(articles, only:)
+    return if pool_units.zero?
+
+    shares = proportional_shares(
+      shortfalls.map(&:first),
+      pool_units,
+      shortfalls.sum { |_, shortfall| shortfall },
+      weight: ->(entry) { entry_shortfall(entry, covered_by_entry) }
+    )
+
+    shortfalls.each do |entry, shortfall|
+      allowance = [shares.fetch(entry), shortfall].min
+      covered_by_entry[entry] += fulfill_demand(entry, articles, allowance, only:)
+    end
+  end
+
+  def allocate_sequential_shortfall!(entries, articles, covered_by_entry, only:)
+    current_shortfalls(entries, covered_by_entry).each do |entry, shortfall|
+      covered_by_entry[entry] += fulfill_demand(entry, articles, shortfall, only:)
+    end
+  end
+
+  def record_unmet_shortfalls!(entries, covered_by_entry)
+    entries.each do |entry|
+      shortfall = entry_shortfall(entry, covered_by_entry)
+      add_missing_ingredient(entry, shortfall) if shortfall.positive?
+    end
+  end
+
+  # When demand is still unmet, assign every remaining package to groups with
+  # shortfall (overshoot is fine) so stock and order limits are fully spent.
+  def exhaust_remaining_capacity!(entries, articles, covered_by_entry)
+    return if current_shortfalls(entries, covered_by_entry).empty?
+
+    %i[immediate orderable].each do |only|
+      loop do
+        pool_units = remaining_capacity_units(articles, only:)
+        break if pool_units.zero?
+
+        shortfalls = current_shortfalls(entries, covered_by_entry)
+        break if shortfalls.empty?
+
+        shares = proportional_shares(
+          shortfalls.map(&:first),
+          pool_units,
+          shortfalls.sum { |_, shortfall| shortfall },
+          weight: ->(entry) { entry_shortfall(entry, covered_by_entry) }
+        )
+        progress = false
+        shortfalls.each do |entry, _shortfall|
+          allowance = shares.fetch(entry)
+          next if allowance.zero?
+
+          spent = fulfill_demand(entry, articles, allowance, only:)
+          covered_by_entry[entry] += spent
+          progress = true if spent.positive?
+        end
+        break unless progress
+      end
+    end
+  end
+
+  def current_shortfalls(entries, covered_by_entry)
+    entries.filter_map do |entry|
+      shortfall = entry_shortfall(entry, covered_by_entry)
+      [entry, shortfall] if shortfall.positive?
+    end
+  end
+
+  def entry_shortfall(entry, covered_by_entry)
+    entry.quantity - covered_by_entry.fetch(entry)
+  end
+
+  def remaining_capacity_units(articles, only:)
+    articles.sum do |article|
+      packages =
+        case only
+        when :immediate then article.immediate_packages
+        when :orderable then article.orderable_packages
+        else article.max_packages
+        end
+      next 0 if packages == Float::INFINITY
+
+      packages * article.quantity
     end
   end
 
   # Largest-remainder allocation: floor shares, then distribute leftover units
   # to entries with the highest fractional parts (group_id breaks ties).
-  def proportional_shares(entries, total_available, total_demand)
-    return entries.index_with { 0 } unless total_demand.positive?
+  def proportional_shares(entries, total_available, total_weight, weight: nil)
+    return entries.index_with { 0 } unless total_weight.positive?
 
+    weight_for = weight || ->(entry) { entry.quantity }
     allocations = entries.map do |entry|
-      exact_share = Rational(total_available) * entry.quantity / total_demand
+      exact_share = Rational(total_available) * weight_for.call(entry) / total_weight
       { entry:, floor: exact_share.floor, fraction: exact_share - exact_share.floor }
     end
     remainder = total_available - allocations.sum { it[:floor] }
@@ -122,12 +227,7 @@ class ArticlePackingPlanner
     reserve_for_demand(entry, articles, required, only:)
   end
 
-  # Fair-sharing second pass: reserve only from orderable supplier capacity.
-  def fulfill_orderable_shortfall(entry, articles, shortfall)
-    reserve_for_demand(entry, articles, shortfall, only: :orderable, record_missing: true)
-  end
-
-  # Shared reservation path for fulfill_demand and fulfill_orderable_shortfall.
+  # Shared reservation path for fulfill_demand and fair-sharing shortfall passes.
   def reserve_for_demand(entry, articles, units, only: nil, record_missing: false)
     return 0 unless units.positive?
 
@@ -136,7 +236,7 @@ class ArticlePackingPlanner
     covered = allocate_units(piece_articles, bulk_articles, units, required_articles, only:)
 
     remaining = units - covered
-    add_missing_ingredient(entry, remaining) if remaining.positive? && (record_missing || only.nil?)
+    add_missing_ingredient(entry, remaining) if remaining.positive? && record_missing
     add_required_articles(entry, required_articles)
     covered
   end

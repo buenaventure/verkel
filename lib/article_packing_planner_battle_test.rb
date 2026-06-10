@@ -27,6 +27,9 @@ require 'set'
 # 16. hoard_shortfall_separate_from_abor — hoard gaps are recorded only on Hoard rows;
 #     ArticleBoxOrderRequirement.quantity reflects pack-demand orders only (the two may
 #     coexist but are never merged during planning).
+# 17. capacity_exhausted_when_missing — when a group still has unmet demand for an
+#     ingredient in a box, every article for that ingredient has no stock, incoming
+#     orders, or orderable capacity left after that box (chronologically replayed).
 #
 # Run via: RAILS_ENV=test bin/rails runner script/battle_test_article_packing_planner.rb
 class ArticlePackingPlannerBattleTest
@@ -129,6 +132,7 @@ class ArticlePackingPlannerBattleTest
     check_whole_piece_packages!(scenario)
     check_uniqueness!
     check_hoards_respected!(scenario)
+    check_capacity_exhausted_when_missing!(scenario)
     check_article_availability_replay!(scenario)
   end
 
@@ -330,6 +334,59 @@ class ArticlePackingPlannerBattleTest
     assert_unique!(GroupBoxArticle, %i[group_id box_id article_id], 'group_box_articles')
     assert_unique!(MissingIngredient, %i[group_id box_id ingredient_id unit], 'missing_ingredients')
     assert_unique!(ArticleBoxOrderRequirement, %i[article_id box_id], 'article_box_order_requirements')
+  end
+
+  def check_capacity_exhausted_when_missing!(scenario)
+    packed_box_ids = Box.where(status: :packed).pluck(:id).to_set
+
+    MissingIngredient.where('quantity > 0').find_each do |missing|
+      next if packed_box_ids.include?(missing.box_id)
+
+      box = Box.find(missing.box_id)
+      Article.where(ingredient_id: missing.ingredient_id, unit: missing.unit).find_each do |article|
+        remaining = remaining_capacity_after_box(scenario, article, box)
+        next if capacity_exhausted?(remaining)
+
+        fail_invariant!(
+          scenario,
+          'capacity_exhausted_when_missing',
+          "box #{box.id} ingredient #{missing.ingredient_id} #{missing.unit} has missing " \
+          "#{missing.quantity.to_d} but article #{article.id} still has " \
+          "stock=#{remaining[:stock]}, ordered=#{remaining[:ordered]}, " \
+          "orderable=#{remaining[:orderable].inspect}"
+        )
+      end
+    end
+  end
+
+  def remaining_capacity_after_box(scenario, article, target_box)
+    planner = ArticleAvailabilityPlanner.new(article)
+    boxes_for_ingredient(scenario, article.ingredient_id)
+      .select { |box| box.datetime <= target_box.datetime }
+      .each do |box|
+        planner.start_processing(box)
+        abor = ArticleBoxOrderRequirement.find_by(article_id: article.id, box_id: box.id)
+        next unless abor
+
+        planner.send(:reserve_stock, abor.stock.to_d)
+        planner.send(:reserve_ordered, abor.ordered.to_d)
+        planner.send(:reserve_orderable, abor.quantity.to_d)
+      end
+
+    {
+      stock: planner.instance_variable_get(:@available_stock).to_d,
+      ordered: planner.instance_variable_get(:@available_ordered).to_d,
+      orderable: planner.instance_variable_get(:@available_to_order),
+      orderable_flag: planner.orderable?
+    }
+  end
+
+  def capacity_exhausted?(remaining)
+    return false unless remaining[:stock].zero? && remaining[:ordered].zero?
+    return true unless remaining[:orderable_flag]
+
+    limit = remaining[:orderable]
+    limit.nil? ? false : limit.to_d.zero?
   end
 
   def check_hoards_respected!(scenario)
