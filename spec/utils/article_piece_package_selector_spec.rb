@@ -59,6 +59,12 @@ RSpec.describe ArticlePiecePackageSelector do
       expect(combination).to eq(preferred.id => 1)
     end
 
+    it 'returns the best partial combination when demand exceeds available stock', :aggregate_failures do
+      article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 16, stock: 1)
+
+      expect(select(32, article)).to eq(article.id => 1)
+    end
+
     it 'with only: :immediate considers only stock and incoming orders', :aggregate_failures do
       future_box = create(:box, datetime: 2.days.from_now)
       article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 20, stock: 1, order_limit: 10)

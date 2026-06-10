@@ -13,7 +13,6 @@
 #         fulfill_demand               — single-group path
 #           reserve_for_demand
 #             allocate_units             — piece packages first, then bulk
-#             top_up_whole_packages      — round up sub-package gaps (full mode only)
 #       add_order_requirements
 #     update_plan
 #     finish_articles                  — release hoard bookkeeping on articles
@@ -118,9 +117,9 @@ class ArticlePackingPlanner
   end
 
   # only — passed through to ArticleAvailabilityPlanner#reserve
-  # Returns units covered by allocate_units (excludes whole-package top-up).
+  # Returns units covered by allocate_units.
   def fulfill_demand(entry, articles, required, only: nil)
-    reserve_for_demand(entry, articles, required, only:, top_up: only.nil?)
+    reserve_for_demand(entry, articles, required, only:)
   end
 
   # Fair-sharing second pass: reserve only from orderable supplier capacity.
@@ -129,7 +128,7 @@ class ArticlePackingPlanner
   end
 
   # Shared reservation path for fulfill_demand and fulfill_orderable_shortfall.
-  def reserve_for_demand(entry, articles, units, only: nil, top_up: false, record_missing: false)
+  def reserve_for_demand(entry, articles, units, only: nil, record_missing: false)
     return 0 unless units.positive?
 
     piece_articles, bulk_articles = partition_articles(articles)
@@ -137,9 +136,7 @@ class ArticlePackingPlanner
     covered = allocate_units(piece_articles, bulk_articles, units, required_articles, only:)
 
     remaining = units - covered
-    top_up_whole_packages(remaining, articles, required_articles, entry) if top_up && remaining.positive?
-
-    add_missing_ingredient(entry, remaining) if record_missing && remaining.positive?
+    add_missing_ingredient(entry, remaining) if remaining.positive? && (record_missing || only.nil?)
     add_required_articles(entry, required_articles)
     covered
   end
@@ -149,13 +146,17 @@ class ArticlePackingPlanner
   end
 
   # Piece-sized packages are optimised globally; bulk articles fill the rest
-  # greedily in article order.
+  # greedily in article order. A second piece pass covers sub-package gaps
+  # left by bulk divmod.
   def allocate_units(piece_articles, bulk_articles, required_units, required_articles, only: nil)
     covered = reserve_piece_packages(piece_articles, required_units, required_articles, only:)
     still_needed = required_units - covered
-    return covered unless still_needed.positive?
-
-    covered + reserve_bulk_packages(bulk_articles, still_needed, required_articles, only:)
+    if still_needed.positive?
+      covered += reserve_bulk_packages(bulk_articles, still_needed, required_articles, only:)
+      still_needed = required_units - covered
+      covered += reserve_piece_packages(piece_articles, still_needed, required_articles, only:) if still_needed.positive?
+    end
+    covered
   end
 
   def reserve_piece_packages(articles, required_units, required_articles, only: nil)
@@ -183,32 +184,6 @@ class ArticlePackingPlanner
       remaining -= quantity_reserved * article.quantity
     end
     required_units - remaining
-  end
-
-  # Units that allocate_units could not cover exactly; try whole packages instead.
-  def top_up_whole_packages(shortfall, articles, required_articles, entry)
-    return unless shortfall.positive?
-
-    piece_articles, = partition_articles(articles)
-    if piece_articles.any?
-      covered = reserve_piece_packages(piece_articles, shortfall, required_articles)
-      shortfall -= covered
-    end
-
-    if shortfall.positive? && (article = select_filling_article(articles))
-      required_articles[article.id] += 1
-      reserved = article.reserve(1)
-      raise 'expected one package to be reserved' unless reserved == 1
-
-      shortfall -= reserved * article.quantity
-    end
-
-    add_missing_ingredient(entry, shortfall) if shortfall.positive?
-  end
-
-  # Smallest package first; priority breaks ties (lower number wins).
-  def select_filling_article(articles)
-    articles.select(&:available?).min_by { [it.quantity, it.priority] }
   end
 
   # Keeps GroupBoxArticle rows for packed boxes; replaces everything else.

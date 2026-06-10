@@ -2,6 +2,8 @@
 
 # Picks a combination of piece-sized article packages that covers at least the
 # required amount while minimising package count, then overshoot, then priority.
+# When demand cannot be fully met (full mode only), returns the combination with
+# the most units covered instead.
 #
 # Algorithm: depth-first search with backtracking over article types. Articles are
 # processed in fixed order (priority ascending, then package size descending).
@@ -35,19 +37,28 @@ class ArticlePiecePackageSelector
   def select
     return {} if @required <= 0 || @articles.empty?
 
-    search(0, 0, 0, {}, best_holder = { value: nil })
-    combination = best_holder[:value]&.fetch(:combination) || {}
+    search(0, 0, 0, {}, best_holder = { value: nil }, partial_holder = { value: nil })
+    combination = if best_holder[:value]
+                    best_holder[:value][:combination]
+                  elsif @only.nil? && partial_holder[:value]
+                    partial_holder[:value][:combination]
+                  else
+                    {}
+                  end
     combination.reject { |_, count| count.zero? }
   end
 
   private
 
-  def search(index, packages_used, units_covered, combination, best_holder)
+  def search(index, packages_used, units_covered, combination, best_holder, partial_holder)
     if units_covered >= @required
       consider_best(best_holder, packages_used, units_covered, combination)
       return
     end
-    return if index >= @articles.length
+    if index >= @articles.length
+      consider_partial(partial_holder, packages_used, units_covered, combination) if @only.nil?
+      return
+    end
     return if dominated?(best_holder[:value], packages_used, units_covered)
 
     article = @articles[index]
@@ -58,7 +69,8 @@ class ArticlePiecePackageSelector
         packages_used + count,
         units_covered + (count * article.quantity),
         new_combination,
-        best_holder
+        best_holder,
+        partial_holder
       )
     end
   end
@@ -98,6 +110,33 @@ class ArticlePiecePackageSelector
     }
     current = best_holder[:value]
     best_holder[:value] = candidate if current.nil? || better?(candidate, current)
+  end
+
+  def consider_partial(partial_holder, packages_used, units_covered, combination)
+    return if units_covered.zero?
+
+    candidate = {
+      packages: packages_used,
+      units_covered: units_covered,
+      priority_score: priority_score(combination),
+      combination: combination
+    }
+    current = partial_holder[:value]
+    partial_holder[:value] = candidate if current.nil? || better_partial?(candidate, current)
+  end
+
+  def better_partial?(candidate, current)
+    (
+      [
+        candidate[:units_covered],
+        -candidate[:packages],
+        -candidate[:priority_score]
+      ] <=> [
+        current[:units_covered],
+        -current[:packages],
+        -current[:priority_score]
+      ]
+    ) == 1
   end
 
   def better?(candidate, current)

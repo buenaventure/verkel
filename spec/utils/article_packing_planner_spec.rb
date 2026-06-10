@@ -57,12 +57,9 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
       expect(requirement).to have_attributes(quantity: 0, stock: 3, ordered: 0)
     end
 
-    it 'tops up a sub-package remainder with one whole smallest package', :aggregate_failures do
-      # Demand 120 against a 100-piece and a 30-piece package. The main loop
-      # reserves 1x100 (remainder 20) and then 0x30 (20 < 30). The leftover 20
-      # cannot be covered by a fraction of a package, so top_up_whole_packages reserves
-      # ONE whole package of the smallest available article (select_filling_article
-      # = min by [quantity, priority]) -> a single 30, overshooting to 130.
+    it 'covers 120 with optimised piece packages when demand sits between pack sizes', :aggregate_failures do
+      # ArticlePiecePackageSelector minimises packages while covering >= demand:
+      # 120 Stk is reached with 1x100 + 1x30, not 1x100 plus a fractional gap.
       big = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 100, stock: 10)
       small = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 30, stock: 10)
       add_demand(group:, box:, ingredient:, quantity: 120, unit: 'Stk')
@@ -79,10 +76,8 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
   # Regressions found by script/battle_test_article_packing_planner.rb
   # ---------------------------------------------------------------------------
   describe 'battle-test regressions' do
-    it 'reports missing pieces after topping up with the last in-stock package', :aggregate_failures do
-      # Optimised piece selection cannot reach the full demand from stock alone.
-      # top_up_whole_packages may add one whole package, but anything still short must
-      # become MissingIngredient (not silently dropped).
+    it 'reports missing pieces when stock cannot cover demand', :aggregate_failures do
+      # Selector packs the best partial combination from stock; the rest is missing.
       create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 16, stock: 1)
       add_demand(group:, box:, ingredient:, quantity: 32, unit: 'Stk')
 
