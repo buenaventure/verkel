@@ -8,11 +8,12 @@
 #     process_ingredient_unit          — one ingredient+unit across all boxes
 #       process_ingredient_unit_in_box — reset article planners for this box
 #         process_with_fair_sharing    — proportional split when stock is scarce
-#           reserve_for_demand         — immediate pass, then orderable remainder
+#           fulfill_demand             — immediate share per group
+#           fulfill_orderable_shortfall  — orderable share for the rest
 #         fulfill_demand               — single-group path
 #           reserve_for_demand
 #             allocate_units             — piece packages first, then bulk
-#             handle_remaining           — whole-package top-up (full mode only)
+#             top_up_whole_packages      — round up sub-package gaps (full mode only)
 #       add_order_requirements
 #     update_plan
 #     finish_articles                  — release hoard bookkeeping on articles
@@ -96,7 +97,7 @@ class ArticlePackingPlanner
 
     entries.each do |entry|
       covered = fulfill_demand(entry, articles, immediate_shares.fetch(entry), only: :immediate)
-      fulfill_remainder(entry, articles, entry.quantity - covered) if entry.quantity > covered
+      fulfill_orderable_shortfall(entry, articles, entry.quantity - covered) if entry.quantity > covered
     end
   end
 
@@ -117,17 +118,17 @@ class ArticlePackingPlanner
   end
 
   # only — passed through to ArticleAvailabilityPlanner#reserve
-  # Returns units covered by allocate_units (excludes handle_remaining top-up).
+  # Returns units covered by allocate_units (excludes whole-package top-up).
   def fulfill_demand(entry, articles, required, only: nil)
     reserve_for_demand(entry, articles, required, only:, top_up: only.nil?)
   end
 
-  # Second fair-sharing pass: may only draw from orderable supplier capacity.
-  def fulfill_remainder(entry, articles, remaining)
-    reserve_for_demand(entry, articles, remaining, only: :orderable, record_missing: true)
+  # Fair-sharing second pass: reserve only from orderable supplier capacity.
+  def fulfill_orderable_shortfall(entry, articles, shortfall)
+    reserve_for_demand(entry, articles, shortfall, only: :orderable, record_missing: true)
   end
 
-  # Shared reservation path for fulfill_demand and fulfill_remainder.
+  # Shared reservation path for fulfill_demand and fulfill_orderable_shortfall.
   def reserve_for_demand(entry, articles, units, only: nil, top_up: false, record_missing: false)
     return 0 unless units.positive?
 
@@ -136,7 +137,7 @@ class ArticlePackingPlanner
     covered = allocate_units(piece_articles, bulk_articles, units, required_articles, only:)
 
     remaining = units - covered
-    handle_remaining(remaining, articles, required_articles, entry) if top_up && remaining.positive?
+    top_up_whole_packages(remaining, articles, required_articles, entry) if top_up && remaining.positive?
 
     add_missing_ingredient(entry, remaining) if record_missing && remaining.positive?
     add_required_articles(entry, required_articles)
@@ -184,26 +185,25 @@ class ArticlePackingPlanner
     required_units - remaining
   end
 
-  # After fractional bulk/piece allocation, try one more optimised piece pass
-  # then reserve a single whole package of the smallest available article.
-  def handle_remaining(quantity, articles, required_articles, entry)
-    return unless quantity.positive?
+  # Units that allocate_units could not cover exactly; try whole packages instead.
+  def top_up_whole_packages(shortfall, articles, required_articles, entry)
+    return unless shortfall.positive?
 
     piece_articles, = partition_articles(articles)
     if piece_articles.any?
-      covered = reserve_piece_packages(piece_articles, quantity, required_articles)
-      quantity -= covered
+      covered = reserve_piece_packages(piece_articles, shortfall, required_articles)
+      shortfall -= covered
     end
 
-    if quantity.positive? && (article = select_filling_article(articles))
+    if shortfall.positive? && (article = select_filling_article(articles))
       required_articles[article.id] += 1
       reserved = article.reserve(1)
       raise 'expected one package to be reserved' unless reserved == 1
 
-      quantity -= reserved * article.quantity
+      shortfall -= reserved * article.quantity
     end
 
-    add_missing_ingredient(entry, quantity) if quantity.positive?
+    add_missing_ingredient(entry, shortfall) if shortfall.positive?
   end
 
   # Smallest package first; priority breaks ties (lower number wins).

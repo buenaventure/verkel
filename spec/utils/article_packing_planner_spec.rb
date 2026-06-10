@@ -60,7 +60,7 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
     it 'tops up a sub-package remainder with one whole smallest package', :aggregate_failures do
       # Demand 120 against a 100-piece and a 30-piece package. The main loop
       # reserves 1x100 (remainder 20) and then 0x30 (20 < 30). The leftover 20
-      # cannot be covered by a fraction of a package, so handle_remaining reserves
+      # cannot be covered by a fraction of a package, so top_up_whole_packages reserves
       # ONE whole package of the smallest available article (select_filling_article
       # = min by [quantity, priority]) -> a single 30, overshooting to 130.
       big = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 100, stock: 10)
@@ -81,7 +81,7 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
   describe 'battle-test regressions' do
     it 'reports missing pieces after topping up with the last in-stock package', :aggregate_failures do
       # Optimised piece selection cannot reach the full demand from stock alone.
-      # handle_remaining may add one whole package, but anything still short must
+      # top_up_whole_packages may add one whole package, but anything still short must
       # become MissingIngredient (not silently dropped).
       create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 16, stock: 1)
       add_demand(group:, box:, ingredient:, quantity: 32, unit: 'Stk')
