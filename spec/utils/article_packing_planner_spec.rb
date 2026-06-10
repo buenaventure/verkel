@@ -75,6 +75,50 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
     end
   end
 
+  # ---------------------------------------------------------------------------
+  # Regressions found by script/battle_test_article_packing_planner.rb
+  # ---------------------------------------------------------------------------
+  describe 'battle-test regressions' do
+    it 'reports missing pieces after topping up with the last in-stock package', :aggregate_failures do
+      # Optimised piece selection cannot reach the full demand from stock alone.
+      # handle_remaining may add one whole package, but anything still short must
+      # become MissingIngredient (not silently dropped).
+      create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 16, stock: 1)
+      add_demand(group:, box:, ingredient:, quantity: 32, unit: 'Stk')
+
+      described_class.new.run
+
+      packed_pieces =
+        GroupBoxArticle.where(group:, box:).joins(:article).sum('group_box_articles.quantity * articles.quantity')
+      expect(packed_pieces).to eq(16)
+      missing = MissingIngredient.find_by(group:, box:, ingredient:)
+      expect(missing).to have_attributes(unit: 'Stk', quantity: 16)
+    end
+
+    it 'merges fair-sharing stock and order passes into one GroupBoxArticle row', :aggregate_failures do
+      # Fair sharing calls add_required_articles twice per group (immediate, then
+      # orderable). insert_all unique_by must not drop the first batch of rows.
+      future_box = create(:box, datetime: 2.days.from_now)
+      other_group = create(:group)
+      article = create(:article, :bulk, ingredient:, supplier:, stock: 100, order_limit: 50)
+      add_demand(group:, box: future_box, ingredient:, quantity: 100, unit: 'g')
+      add_demand(group: other_group, box: future_box, ingredient:, quantity: 100, unit: 'g')
+
+      described_class.new.run
+
+      # First group: 50g immediate stock + 50g ordered, merged into a single row.
+      expect(GroupBoxArticle.where(group:, box: future_box, article:).sum(:quantity)).to eq(100)
+      expect(GroupBoxArticle.where(group:, box: future_box, article:).count).to eq(1)
+      # Second group: other half of stock, remainder missing once order limit is exhausted.
+      expect(GroupBoxArticle.where(group: other_group, box: future_box, article:).sum(:quantity)).to eq(50)
+      missing = MissingIngredient.find_by(group: other_group, box: future_box, ingredient:)
+      expect(missing.quantity.to_i).to eq(50)
+      # Order requirements are per box: all stock plus one shared order batch.
+      requirement = ArticleBoxOrderRequirement.find_by(article:, box: future_box)
+      expect(requirement).to have_attributes(stock: 100, quantity: 50, ordered: 0)
+    end
+  end
+
   describe 'demand that cannot be covered' do
     it 'reports a missing ingredient when no article matches the demand unit', :aggregate_failures do
       # No article exists for this ingredient/unit at all, so the demand falls
