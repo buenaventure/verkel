@@ -59,23 +59,23 @@ RSpec.describe ArticlePiecePackageSelector do
       expect(combination).to eq(preferred.id => 1)
     end
 
-    it 'with immediate_only considers only stock and incoming orders', :aggregate_failures do
+    it 'with only: :immediate considers only stock and incoming orders', :aggregate_failures do
       future_box = create(:box, datetime: 2.days.from_now)
       article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 20, stock: 1, order_limit: 10)
       planners = [ArticleAvailabilityPlanner.new(article).tap { it.start_processing(future_box) }]
 
-      combination = described_class.new(20, planners, immediate_only: true).select
+      combination = described_class.new(20, planners, only: :immediate).select
 
       expect(combination).to eq(article.id => 1)
-      expect(described_class.new(40, planners, immediate_only: true).select).to eq({})
+      expect(described_class.new(40, planners, only: :immediate).select).to eq({})
     end
 
-    it 'with orderable_only ignores stock', :aggregate_failures do
+    it 'with only: :orderable ignores stock', :aggregate_failures do
       future_box = create(:box, datetime: 2.days.from_now)
       article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 20, stock: 5, order_limit: 3)
       planners = [ArticleAvailabilityPlanner.new(article).tap { it.start_processing(future_box) }]
 
-      combination = described_class.new(40, planners, orderable_only: true).select
+      combination = described_class.new(40, planners, only: :orderable).select
 
       expect(combination).to eq(article.id => 2)
       expect(planners.first.immediate_packages).to eq(5)

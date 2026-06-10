@@ -74,7 +74,7 @@ class ArticlePackingPlanner
 
     entries.each do |entry|
       immediate_share = immediate_shares.fetch(entry)
-      covered = fulfill_demand(entry, articles, immediate_share, immediate_only: true)
+      covered = fulfill_demand(entry, articles, immediate_share, only: :immediate)
       remaining = entry.quantity - covered
       fulfill_remainder(entry, articles, remaining) if remaining.positive?
     end
@@ -98,7 +98,7 @@ class ArticlePackingPlanner
     fulfill_demand(entry, articles, entry.quantity)
   end
 
-  def fulfill_demand(entry, articles, required, immediate_only: false)
+  def fulfill_demand(entry, articles, required, only: nil)
     return 0 unless required.positive?
 
     piece_articles, bulk_articles = articles.partition(&:piece?)
@@ -108,12 +108,11 @@ class ArticlePackingPlanner
       bulk_articles,
       required,
       required_articles,
-      immediate_only:,
-      orderable_only: false
+      only:
     )
     remaining = required - covered
 
-    handle_remaining(remaining, articles, required_articles, entry) if !immediate_only && remaining.positive?
+    handle_remaining(remaining, articles, required_articles, entry) if only.nil? && remaining.positive?
 
     add_required_articles(entry, required_articles)
     covered
@@ -127,21 +126,19 @@ class ArticlePackingPlanner
       bulk_articles,
       remaining,
       required_articles,
-      immediate_only: false,
-      orderable_only: true
+      only: :orderable
     )
     uncovered = remaining - covered
     add_missing_ingredient(entry, uncovered) if uncovered.positive?
     add_required_articles(entry, required_articles)
   end
 
-  def allocate_units(piece_articles, bulk_articles, required_units, required_articles, immediate_only:, orderable_only:)
+  def allocate_units(piece_articles, bulk_articles, required_units, required_articles, only: nil)
     covered = reserve_piece_packages(
       piece_articles,
       required_units,
       required_articles,
-      immediate_only:,
-      orderable_only:
+      only:
     )
     still_needed = required_units - covered
     return covered unless still_needed.positive?
@@ -150,37 +147,35 @@ class ArticlePackingPlanner
       bulk_articles,
       still_needed,
       required_articles,
-      immediate_only:,
-      orderable_only:
+      only:
     )
   end
 
-  def reserve_piece_packages(articles, required_units, required_articles, immediate_only: false, orderable_only: false)
+  def reserve_piece_packages(articles, required_units, required_articles, only: nil)
     return 0 if required_units <= 0 || articles.empty?
 
     package_plan = ArticlePiecePackageSelector.new(
       required_units,
       articles,
-      immediate_only:,
-      orderable_only:
+      only:
     ).select
     covered = 0
     package_plan.each do |article_id, package_count|
       article = articles.find { it.id == article_id }
-      quantity_reserved = article.reserve(package_count, immediate_only:, orderable_only:)
+      quantity_reserved = article.reserve(package_count, only:)
       required_articles[article_id] += quantity_reserved
       covered += quantity_reserved * article.quantity
     end
     covered
   end
 
-  def reserve_bulk_packages(articles, required_units, required_articles, immediate_only: false, orderable_only: false)
+  def reserve_bulk_packages(articles, required_units, required_articles, only: nil)
     return 0 if required_units <= 0
 
     remaining = required_units
     articles.each do |article|
       quantity_fit, = remaining.divmod(article.quantity)
-      quantity_reserved = article.reserve(quantity_fit, immediate_only:, orderable_only:)
+      quantity_reserved = article.reserve(quantity_fit, only:)
       required_articles[article.id] += quantity_reserved
       remaining -= quantity_reserved * article.quantity
     end

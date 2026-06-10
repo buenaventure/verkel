@@ -3,11 +3,12 @@
 # Picks a combination of piece-sized article packages that covers at least the
 # required amount while minimising package count, then overshoot, then priority.
 class ArticlePiecePackageSelector
-  def initialize(required_units, articles, immediate_only: false, orderable_only: false)
+  def initialize(required_units, articles, only: nil)
+    raise ArgumentError, "invalid only: #{only.inspect}" unless ArticleAvailabilityPlanner::RESERVE_ONLY.include?(only)
+
     @required = required_units
     @articles = articles.select(&:available?).sort_by { [it.priority, -it.quantity] }
-    @immediate_only = immediate_only
-    @orderable_only = orderable_only
+    @only = only
   end
 
   def select
@@ -55,12 +56,10 @@ class ArticlePiecePackageSelector
   def max_packages(article)
     needed = [(@required + article.quantity - 1) / article.quantity, 0].max
     available =
-      if @immediate_only
-        article.immediate_packages
-      elsif @orderable_only
-        article.orderable_packages
-      else
-        article.max_packages
+      case @only
+      when :immediate then article.immediate_packages
+      when :orderable then article.orderable_packages
+      else article.max_packages
       end
 
     return needed if available == Float::INFINITY

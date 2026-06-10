@@ -37,23 +37,30 @@ RSpec.describe ArticleAvailabilityPlanner do
       expect { planner.reserve(-1) }.to raise_error('quantity may not be negative')
     end
 
-    it 'with immediate_only does not place new orders', :aggregate_failures do
+    it 'with only: :immediate does not place new orders', :aggregate_failures do
       future_box = create(:box, datetime: 2.days.from_now)
       article = create(:article, :bulk, ingredient:, supplier:, stock: 30, order_limit: nil)
       planner = planner_for(article, future_box)
 
-      expect(planner.reserve(50, immediate_only: true)).to eq(30)
+      expect(planner.reserve(50, only: :immediate)).to eq(30)
       expect(planner).to have_attributes(stock: 30, ordered: 0, order_requirement: 0)
     end
 
-    it 'with orderable_only does not touch stock or incoming orders', :aggregate_failures do
+    it 'with only: :orderable does not touch stock or incoming orders', :aggregate_failures do
       future_box = create(:box, datetime: 2.days.from_now)
       article = create(:article, :bulk, ingredient:, supplier:, stock: 30, order_limit: 50)
       planner = planner_for(article, future_box)
 
-      expect(planner.reserve(20, orderable_only: true)).to eq(20)
+      expect(planner.reserve(20, only: :orderable)).to eq(20)
       expect(planner).to have_attributes(stock: 0, ordered: 0, order_requirement: 20)
       expect(planner.immediate_packages).to eq(30)
+    end
+
+    it 'raises when only is invalid' do
+      article = create(:article, :bulk, ingredient:, supplier:, stock: 10)
+      planner = planner_for(article, create(:box))
+
+      expect { planner.reserve(1, only: :full) }.to raise_error(ArgumentError, 'invalid only: :full')
     end
 
     it 'respects the article order limit', :aggregate_failures do

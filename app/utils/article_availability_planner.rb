@@ -4,6 +4,7 @@ class ArticleAvailabilityPlanner
     immediate: %i[stock ordered],
     orderable: %i[orderable]
   }.freeze
+  RESERVE_ONLY = [nil, :immediate, :orderable].freeze
 
   def initialize(article)
     @article = article
@@ -30,11 +31,12 @@ class ArticleAvailabilityPlanner
     advance_hoards_to(box.datetime)
   end
 
-  def reserve(quantity, immediate_only: false, orderable_only: false)
+  def reserve(quantity, only: nil)
     raise 'quantity may not be negative' if quantity.negative?
+    raise ArgumentError, "invalid only: #{only.inspect}" unless RESERVE_ONLY.include?(only)
 
     remaining = quantity
-    reserve_mode(immediate_only:, orderable_only:).sum do |source|
+    reserve_sources(only).sum do |source|
       reserved = send(:"reserve_#{source}", remaining)
       remaining -= reserved
       reserved
@@ -61,12 +63,7 @@ class ArticleAvailabilityPlanner
 
   private
 
-  def reserve_mode(immediate_only:, orderable_only:)
-    return RESERVE_SOURCES[:orderable] if orderable_only
-    return RESERVE_SOURCES[:immediate] if immediate_only
-
-    RESERVE_SOURCES[:full]
-  end
+  def reserve_sources(only) = RESERVE_SOURCES.fetch(only || :full)
 
   def orderable_until?(datetime) = @next_possible_delivery <= datetime
 
