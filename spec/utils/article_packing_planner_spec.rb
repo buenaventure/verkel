@@ -10,10 +10,9 @@ require 'rails_helper'
 # ArticleBoxOrderRequirement (what still has to be ordered) and
 # MissingIngredient (demand that cannot be covered at all).
 #
-# These specs pin down the *current* behaviour so the planner can be refactored
-# safely. Two of the contexts (tagged "PROBLEM CASE") deliberately assert the
-# present, suboptimal behaviour we want to improve later; their comments explain
-# both why it happens today and what we would prefer instead.
+# These specs pin down planner behaviour so it can be refactored safely.
+# The "PROBLEM CASE" contexts document scenarios that used to be handled
+# suboptimally (greedy package selection and unfair scarcity sharing).
 #
 # Demand is injected via the :demand_cache helper (see spec/support/demand_cache.rb),
 # which swaps the read-only materialized view for a writable table for the
@@ -132,56 +131,40 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
   # PROBLEM CASE 1 — greedy packing overshoots and uses too many packages.
   #
   # "32 Würste geben 1x20 und 2x10": with a 20-piece and a 10-piece package and
-  # a demand of 32, the planner reserves 1x20 (remainder 12), then 1x10
-  # (remainder 2), then tops the remaining 2 up with the *smallest* package, a
-  # second 10. Result: 1x20 + 2x10 = 40 pieces across THREE packages.
-  #
-  # 40 is indeed the smallest coverable amount here, but it could be reached with
-  # 2x20 (two packages) or a single 40 package. The current algorithm is greedy
-  # and remainder-driven: it never reconsiders earlier choices to minimise the
-  # number of packages (or total overshoot). This is the behaviour we want to
-  # improve; the spec locks in today's output so a future optimiser can replace
-  # it intentionally rather than by accident.
+  # a demand of 32, a greedy algorithm reserves 1x20 + 2x10 = 40 pieces across
+  # three packages. The smallest coverable amount is still 40, but 2x20 reaches
+  # it with only two packages.
   # ---------------------------------------------------------------------------
-  describe 'PROBLEM CASE 1: greedy package selection' do
-    it 'covers 32 with 1x20 + 2x10 instead of 2x20', :aggregate_failures do
+  describe 'PROBLEM CASE 1: optimal package selection' do
+    it 'covers 32 with 2x20 instead of 1x20 + 2x10', :aggregate_failures do
       pack20 = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 20, stock: 10)
       pack10 = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 10, stock: 10)
       add_demand(group:, box:, ingredient:, quantity: 32, unit: 'Stk')
 
       described_class.new.run
 
-      expect(GroupBoxArticle.where(group:, box:, article: pack20).sum(:quantity)).to eq(1)
-      expect(GroupBoxArticle.where(group:, box:, article: pack10).sum(:quantity)).to eq(2)
+      expect(GroupBoxArticle.where(group:, box:, article: pack20).sum(:quantity)).to eq(2)
+      expect(GroupBoxArticle.where(group:, box:, article: pack10).sum(:quantity)).to eq(0)
 
-      # Documents the overshoot: 40 pieces packed for a demand of 32, and the
-      # package count (3) is higher than the achievable optimum (2x20).
       packed_pieces =
         GroupBoxArticle.where(group:, box:).joins(:article).sum('group_box_articles.quantity * articles.quantity')
       expect(packed_pieces).to eq(40)
-      expect(GroupBoxArticle.where(group:, box:).sum(:quantity)).to eq(3)
+      expect(GroupBoxArticle.where(group:, box:).sum(:quantity)).to eq(2)
     end
   end
 
   # ---------------------------------------------------------------------------
   # PROBLEM CASE 2 — scarce stock is not shared fairly between groups.
   #
-  # When there is not enough stock for everyone (e.g. an order is delayed), the
-  # planner serves groups sequentially from one shared availability pool. The
-  # first group(s) processed grab everything that is in stock; later groups find
-  # the pool empty and end up fully in MissingIngredient.
-  #
-  # We would prefer to balance scarcity, so every group gets roughly the same
-  # percentage of its needs (here ~50% each). The spec captures the current
-  # all-or-nothing split. It asserts in an order-independent way (we don't rely
-  # on which group the unordered demand query happens to serve first), only that
-  # exactly one group is fully covered and the other fully missing.
+  # When there is not enough stock for everyone (e.g. an order is delayed), each
+  # group should receive a proportional share of the immediately available stock
+  # before the remainder is reported as missing.
   # ---------------------------------------------------------------------------
-  describe 'PROBLEM CASE 2: unbalanced scarcity' do
-    it 'gives one group everything and the other nothing instead of splitting 50/50', :aggregate_failures do
+  describe 'PROBLEM CASE 2: balanced scarcity' do
+    it 'splits scarce stock proportionally between groups', :aggregate_failures do
       other_group = create(:group)
       # 100g in stock, not orderable in time (default box / 24h delivery), two
-      # groups each needing 100g -> only enough for one of them.
+      # groups each needing 100g -> each should get 50g covered and 50g missing.
       article = create(:article, :bulk, ingredient:, supplier:, stock: 100)
       add_demand(group:, box:, ingredient:, quantity: 100, unit: 'g')
       add_demand(group: other_group, box:, ingredient:, quantity: 100, unit: 'g')
@@ -190,14 +173,10 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
 
       covered = GroupBoxArticle.where(box:, article:).pluck(:group_id, :quantity)
       missing = MissingIngredient.where(box:, ingredient:).pluck(:group_id, :quantity)
+      normalize = ->(rows) { rows.map { |group_id, quantity| [group_id, quantity.to_i] } }
 
-      expect(covered.size).to eq(1)
-      expect(missing.size).to eq(1)
-      # The lucky group gets the full 100g; the other gets none of it and is
-      # fully missing -> the imbalance we want to fix (ideal would be 50/50).
-      expect(covered.first.last).to eq(100)
-      expect(missing.first.last).to eq(100)
-      expect(covered.first.first).not_to eq(missing.first.first)
+      expect(normalize.call(covered)).to contain_exactly([group.id, 50], [other_group.id, 50])
+      expect(normalize.call(missing)).to contain_exactly([group.id, 50], [other_group.id, 50])
     end
   end
 end

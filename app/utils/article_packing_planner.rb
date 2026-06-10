@@ -49,26 +49,155 @@ class ArticlePackingPlanner
     return if box.packed? # skip boxes which are done
 
     articles.each { |a| a.start_processing box }
-    entries.each do |entry|
-      process_ingredient_unit_in_group_box(entry, articles)
+    if needs_fair_sharing?(entries, articles)
+      process_with_fair_sharing(entries, articles)
+    else
+      entries.each do |entry|
+        process_ingredient_unit_in_group_box(entry, articles)
+      end
     end
     add_order_requirements(box, articles)
   end
 
-  def process_ingredient_unit_in_group_box(entry, articles)
-    required = entry.quantity
-    required_articles = Hash.new(0)
-    articles.each do |article|
-      quantity_fit, = required.divmod(article.quantity)
-      quantity_reserved = article.reserve(quantity_fit)
-      required -= quantity_reserved * article.quantity
-      required_articles[article.id] += quantity_reserved
+  def needs_fair_sharing?(entries, articles)
+    return false unless entries.many?
+
+    total_demand = entries.sum(&:quantity)
+    total_coverable = articles.sum(&:total_coverable_units)
+    total_coverable < total_demand
+  end
+
+  def process_with_fair_sharing(entries, articles)
+    total_demand = entries.sum(&:quantity)
+    total_immediate = articles.sum(&:immediate_units)
+    immediate_shares = proportional_shares(entries, total_immediate, total_demand)
+
+    entries.each do |entry|
+      immediate_share = immediate_shares.fetch(entry)
+      covered = fulfill_demand(entry, articles, immediate_share, immediate_only: true)
+      remaining = entry.quantity - covered
+      fulfill_remainder(entry, articles, remaining) if remaining.positive?
     end
-    handle_remaining(required, articles, required_articles, entry)
+  end
+
+  def proportional_shares(entries, total_available, total_demand)
+    return entries.index_with { 0 } unless total_demand.positive?
+
+    allocations = entries.map do |entry|
+      exact_share = Rational(total_available) * entry.quantity / total_demand
+      { entry:, floor: exact_share.floor, fraction: exact_share - exact_share.floor }
+    end
+    remainder = total_available - allocations.sum { |allocation| allocation[:floor] }
+    allocations.sort_by { |allocation| [-allocation[:fraction], allocation[:entry].group_id] }
+               .first(remainder)
+               .each { |allocation| allocation[:floor] += 1 }
+    allocations.to_h { |allocation| [allocation[:entry], allocation[:floor]] }
+  end
+
+  def process_ingredient_unit_in_group_box(entry, articles)
+    fulfill_demand(entry, articles, entry.quantity)
+  end
+
+  def fulfill_demand(entry, articles, required, immediate_only: false)
+    return 0 unless required.positive?
+
+    piece_articles, bulk_articles = articles.partition(&:piece?)
+    required_articles = Hash.new(0)
+    covered = allocate_units(
+      piece_articles,
+      bulk_articles,
+      required,
+      required_articles,
+      immediate_only:,
+      orderable_only: false
+    )
+    remaining = required - covered
+
+    unless immediate_only
+      handle_remaining(remaining, articles, required_articles, entry) if remaining.positive?
+    end
+
+    add_required_articles(entry, required_articles)
+    covered
+  end
+
+  def fulfill_remainder(entry, articles, remaining)
+    piece_articles, bulk_articles = articles.partition(&:piece?)
+    required_articles = Hash.new(0)
+    covered = allocate_units(
+      piece_articles,
+      bulk_articles,
+      remaining,
+      required_articles,
+      immediate_only: false,
+      orderable_only: true
+    )
+    uncovered = remaining - covered
+    add_missing_ingredient(entry, uncovered) if uncovered.positive?
     add_required_articles(entry, required_articles)
   end
 
+  def allocate_units(piece_articles, bulk_articles, required_units, required_articles, immediate_only:, orderable_only:)
+    covered = reserve_piece_packages(
+      piece_articles,
+      required_units,
+      required_articles,
+      immediate_only:,
+      orderable_only:
+    )
+    still_needed = required_units - covered
+    return covered unless still_needed.positive?
+
+    covered + reserve_bulk_packages(
+      bulk_articles,
+      still_needed,
+      required_articles,
+      immediate_only:,
+      orderable_only:
+    )
+  end
+
+  def reserve_piece_packages(articles, required_units, required_articles, immediate_only: false, orderable_only: false)
+    return 0 if required_units <= 0 || articles.empty?
+
+    package_plan = ArticlePiecePackageSelector.new(
+      required_units,
+      articles,
+      immediate_only:,
+      orderable_only:
+    ).select
+    covered = 0
+    package_plan.each do |article_id, package_count|
+      article = articles.find { |candidate| candidate.id == article_id }
+      quantity_reserved = article.reserve(package_count, immediate_only:, orderable_only:)
+      required_articles[article_id] += quantity_reserved
+      covered += quantity_reserved * article.quantity
+    end
+    covered
+  end
+
+  def reserve_bulk_packages(articles, required_units, required_articles, immediate_only: false, orderable_only: false)
+    return 0 if required_units <= 0
+
+    remaining = required_units
+    articles.each do |article|
+      quantity_fit, = remaining.divmod(article.quantity)
+      quantity_reserved = article.reserve(quantity_fit, immediate_only:, orderable_only:)
+      required_articles[article.id] += quantity_reserved
+      remaining -= quantity_reserved * article.quantity
+    end
+    required_units - remaining
+  end
+
   def handle_remaining(quantity, articles, required_articles, entry)
+    return unless quantity.positive?
+
+    piece_articles = articles.select(&:piece?)
+    if piece_articles.any?
+      covered = reserve_piece_packages(piece_articles, quantity, required_articles)
+      quantity -= covered
+    end
+
     return unless quantity.positive?
 
     if (article = select_filling_article(articles))

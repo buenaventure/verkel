@@ -13,7 +13,7 @@ class ArticleAvailabilityPlanner
 
   attr_reader :order_requirement, :stock, :ordered
 
-  delegate :id, :quantity, :priority, to: :@article
+  delegate :id, :quantity, :priority, :piece?, to: :@article
 
   def start_processing(box)
     @order_requirement = 0
@@ -24,13 +24,49 @@ class ArticleAvailabilityPlanner
     advance_hoards_to(box.datetime)
   end
 
-  def reserve(quantity)
+  def reserve(quantity, immediate_only: false, orderable_only: false)
     raise 'quantity may not be negative' if quantity.negative?
 
-    reserved = reserve_stock(quantity)
-    reserved += reserve_ordered(quantity - reserved)
-    reserved += reserve_orderable(quantity - reserved)
-    reserved
+    if orderable_only
+      reserve_orderable(quantity)
+    elsif immediate_only
+      reserve_immediate(quantity)
+    else
+      reserved = reserve_stock(quantity)
+      reserved += reserve_ordered(quantity - reserved)
+      reserved += reserve_orderable(quantity - reserved)
+      reserved
+    end
+  end
+
+  def immediate_units
+    immediate_packages * quantity
+  end
+
+  def immediate_packages
+    @available_stock + @available_ordered
+  end
+
+  def orderable?
+    @orderable && (@available_to_order.nil? || @available_to_order.positive?)
+  end
+
+  def orderable_packages
+    return 0 unless orderable?
+
+    @available_to_order || Float::INFINITY
+  end
+
+  def max_packages
+    immediate_packages + orderable_packages
+  end
+
+  def total_coverable_units
+    if orderable? && @available_to_order.nil?
+      Float::INFINITY
+    else
+      immediate_units + (orderable? ? @available_to_order * quantity : 0)
+    end
   end
 
   def available?
@@ -52,6 +88,11 @@ class ArticleAvailabilityPlanner
 
   def orderable_until?(datetime)
     @next_possible_delivery <= datetime
+  end
+
+  def reserve_immediate(quantity)
+    reserved = reserve_stock(quantity)
+    reserved + reserve_ordered(quantity - reserved)
   end
 
   def reserve_stock(quantity)
