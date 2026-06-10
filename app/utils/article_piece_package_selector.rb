@@ -5,7 +5,7 @@
 class ArticlePiecePackageSelector
   def initialize(required_units, articles, immediate_only: false, orderable_only: false)
     @required = required_units
-    @articles = articles.select(&:available?).sort_by { |a| [a.priority, -a.quantity] }
+    @articles = articles.select(&:available?).sort_by { [it.priority, -it.quantity] }
     @immediate_only = immediate_only
     @orderable_only = orderable_only
   end
@@ -49,7 +49,7 @@ class ArticlePiecePackageSelector
   end
 
   def max_remaining_units
-    @articles.sum { |article| max_packages(article) * article.quantity }
+    @articles.sum { max_packages(it) * it.quantity }
   end
 
   def max_packages(article)
@@ -99,6 +99,6 @@ class ArticlePiecePackageSelector
   end
 
   def article_for(article_id)
-    @articles.find { |article| article.id == article_id }
+    @articles.find { it.id == article_id }
   end
 end

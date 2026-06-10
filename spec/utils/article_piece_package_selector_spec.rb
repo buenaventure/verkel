@@ -11,7 +11,7 @@ RSpec.describe ArticlePiecePackageSelector do
 
   def planners_for(*articles)
     articles.map do |article|
-      ArticleAvailabilityPlanner.new(article).tap { |planner| planner.start_processing(box) }
+      ArticleAvailabilityPlanner.new(article).tap { it.start_processing(box) }
     end
   end
 
@@ -62,7 +62,7 @@ RSpec.describe ArticlePiecePackageSelector do
     it 'with immediate_only considers only stock and incoming orders', :aggregate_failures do
       future_box = create(:box, datetime: 2.days.from_now)
       article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 20, stock: 1, order_limit: 10)
-      planners = [ArticleAvailabilityPlanner.new(article).tap { |planner| planner.start_processing(future_box) }]
+      planners = [ArticleAvailabilityPlanner.new(article).tap { it.start_processing(future_box) }]
 
       combination = described_class.new(20, planners, immediate_only: true).select
 
@@ -73,7 +73,7 @@ RSpec.describe ArticlePiecePackageSelector do
     it 'with orderable_only ignores stock', :aggregate_failures do
       future_box = create(:box, datetime: 2.days.from_now)
       article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 20, stock: 5, order_limit: 3)
-      planners = [ArticleAvailabilityPlanner.new(article).tap { |planner| planner.start_processing(future_box) }]
+      planners = [ArticleAvailabilityPlanner.new(article).tap { it.start_processing(future_box) }]
 
       combination = described_class.new(40, planners, orderable_only: true).select
 

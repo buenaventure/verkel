@@ -7,7 +7,7 @@ RSpec.describe ArticleAvailabilityPlanner do
   let(:ingredient) { create(:ingredient) }
 
   def planner_for(article, box)
-    described_class.new(article).tap { |planner| planner.start_processing(box) }
+    described_class.new(article).tap { it.start_processing(box) }
   end
 
   describe '#reserve' do

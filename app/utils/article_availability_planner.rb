@@ -55,7 +55,7 @@ class ArticleAvailabilityPlanner
 
   def available? = immediate_packages.positive? || orderable?
 
-  def finish = @hoards.each { |hoard| add_hoard_as_available(hoard) }
+  def finish = @hoards.each { add_hoard_as_available(it) }
 
   def order_requirements? = ![order_requirement, stock, ordered].all?(&:zero?)
 
@@ -95,13 +95,13 @@ class ArticleAvailabilityPlanner
   end
 
   def advance_orders_to(datetime)
-    remove_due(@order_articles) { |order_article| order_article.order.coverage_begin <= datetime }
-      .each { |order_article| add_order_article_as_available(order_article) }
+    remove_due(@order_articles) { it.order.coverage_begin <= datetime }
+      .each { add_order_article_as_available(it) }
   end
 
   def advance_hoards_to(datetime)
-    remove_due(@hoards) { |hoard| hoard.until <= datetime }
-      .each { |hoard| add_hoard_as_available(hoard) }
+    remove_due(@hoards) { it.until <= datetime }
+      .each { add_hoard_as_available(it) }
   end
 
   def remove_due(items, &)

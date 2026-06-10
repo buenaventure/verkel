@@ -29,7 +29,7 @@ class ArticlePackingPlanner
 
   def load_data
     @all_articles = Article.all.group_by(&:ingredient_unit).transform_values do |articles|
-      articles.map { |a| ArticleAvailabilityPlanner.new(a) }
+      articles.map { ArticleAvailabilityPlanner.new(it) }
     end
     @demands = GroupBoxIngredientUnitCache
                .includes(:ingredient, :box)
@@ -40,7 +40,7 @@ class ArticlePackingPlanner
 
   def process_ingredient_unit(ingredient_unit, ingredient_entries)
     articles = @all_articles.fetch(ingredient_unit, [])
-    ingredient_entries.sort_by { |e| e.box.datetime }.group_by(&:box).each do |box, entries|
+    ingredient_entries.sort_by { it.box.datetime }.group_by(&:box).each do |box, entries|
       process_ingredient_unit_in_box(box, entries, articles)
     end
   end
@@ -48,7 +48,7 @@ class ArticlePackingPlanner
   def process_ingredient_unit_in_box(box, entries, articles)
     return if box.packed? # skip boxes which are done
 
-    articles.each { |a| a.start_processing box }
+    articles.each { it.start_processing box }
     if needs_fair_sharing?(entries, articles)
       process_with_fair_sharing(entries, articles)
     else
@@ -87,11 +87,11 @@ class ArticlePackingPlanner
       exact_share = Rational(total_available) * entry.quantity / total_demand
       { entry:, floor: exact_share.floor, fraction: exact_share - exact_share.floor }
     end
-    remainder = total_available - allocations.sum { |allocation| allocation[:floor] }
-    allocations.sort_by { |allocation| [-allocation[:fraction], allocation[:entry].group_id] }
+    remainder = total_available - allocations.sum { it[:floor] }
+    allocations.sort_by { [-it[:fraction], it[:entry].group_id] }
                .first(remainder)
-               .each { |allocation| allocation[:floor] += 1 }
-    allocations.to_h { |allocation| [allocation[:entry], allocation[:floor]] }
+               .each { it[:floor] += 1 }
+    allocations.to_h { [it[:entry], it[:floor]] }
   end
 
   def process_ingredient_unit_in_group_box(entry, articles)
@@ -166,7 +166,7 @@ class ArticlePackingPlanner
     ).select
     covered = 0
     package_plan.each do |article_id, package_count|
-      article = articles.find { |candidate| candidate.id == article_id }
+      article = articles.find { it.id == article_id }
       quantity_reserved = article.reserve(package_count, immediate_only:, orderable_only:)
       required_articles[article_id] += quantity_reserved
       covered += quantity_reserved * article.quantity
@@ -208,7 +208,7 @@ class ArticlePackingPlanner
   end
 
   def select_filling_article(articles)
-    articles.select(&:available?).min_by { |a| [a.quantity, a.priority] }
+    articles.select(&:available?).min_by { [it.quantity, it.priority] }
   end
 
   def update_plan
@@ -269,6 +269,6 @@ class ArticlePackingPlanner
   end
 
   def finish_articles
-    @all_articles.each_value { |articles| articles.each(&:finish) }
+    @all_articles.each_value { it.each(&:finish) }
   end
 end

@@ -62,7 +62,7 @@ class ArticlePackingPlannerBattleTest
 
   def run
     puts "ArticlePackingPlanner battle test — #{@trials} trials, seed #{@seed}"
-    @trials.times { |trial| run_trial(trial) }
+    @trials.times { run_trial(it) }
     report
   end
 
@@ -105,8 +105,8 @@ class ArticlePackingPlannerBattleTest
       seed: @seed,
       demands:,
       articles_by_id: articles.index_by(&:id),
-      initial_stock: articles.to_h { |article| [article.id, article.stock + article.packing_lane_stock] },
-      initial_order_limits: articles.to_h { |article| [article.id, article.current_order_limit] },
+      initial_stock: articles.to_h { [it.id, it.stock + it.packing_lane_stock] },
+      initial_order_limits: articles.to_h { [it.id, it.current_order_limit] },
       packed_box_snapshots: packed_snapshots,
       suppliers_by_id: suppliers.index_by(&:id)
     )
@@ -366,7 +366,7 @@ class ArticlePackingPlannerBattleTest
     )
 
     boxes_for_ingredient(scenario, article.ingredient_id).each do |box|
-      abor = abors.find { |row| row.box_id == box.id }
+      abor = abors.find { it.box_id == box.id }
       simulator.process_box(box.datetime, abor:)
     end
     simulator.finish_remaining_hoards
@@ -392,7 +392,7 @@ class ArticlePackingPlannerBattleTest
   end
 
   def boxes_for_ingredient(scenario, ingredient_id)
-    box_ids = scenario.demands.filter_map { |demand| demand[:box_id] if demand[:ingredient_id] == ingredient_id }.uniq
+    box_ids = scenario.demands.filter_map { it[:box_id] if it[:ingredient_id] == ingredient_id }.uniq
     Box.where(id: box_ids).order(:datetime)
   end
 
@@ -604,7 +604,7 @@ class ArticlePackingPlannerBattleTest
     end
 
     puts "FAILED — #{@failures.size}/#{@trials} trials violated invariants:"
-    @failures.each { |failure| puts "  trial #{failure[:trial]}: #{failure[:message]}" }
+    @failures.each { puts "  trial #{it[:trial]}: #{it[:message]}" }
     exit 1
   end
 
@@ -633,7 +633,7 @@ class ArticlePackingPlannerBattleTest
     end
 
     def finish_remaining_hoards
-      @pending_hoards.dup.each { |hoard| release_hoard(hoard) }
+      @pending_hoards.dup.each { release_hoard(it) }
     end
 
     private
