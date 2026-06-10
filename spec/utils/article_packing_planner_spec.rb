@@ -72,6 +72,44 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
     end
   end
 
+  # Replays ArticleAvailabilityPlanner through a box and returns leftover pools.
+  def remaining_capacity_after_box(article, box)
+    planner = ArticleAvailabilityPlanner.new(article.reload)
+    planner.start_processing(box)
+    abor = ArticleBoxOrderRequirement.find_by(article:, box:)
+    if abor
+      planner.send(:reserve_stock, abor.stock.to_d)
+      planner.send(:reserve_ordered, abor.ordered.to_d)
+      planner.send(:reserve_orderable, abor.quantity.to_d)
+    end
+    {
+      stock: planner.instance_variable_get(:@available_stock).to_d,
+      ordered: planner.instance_variable_get(:@available_ordered).to_d,
+      orderable: planner.instance_variable_get(:@available_to_order),
+      orderable_flag: planner.orderable?
+    }
+  end
+
+  def expect_capacity_exhausted_for_ingredient!(box:, ingredient:, unit:, missing_required: true)
+    if missing_required
+      expect(MissingIngredient.where(box:, ingredient:, unit:).where('quantity > 0')).to exist
+    end
+
+    Article.where(ingredient:, unit:).find_each do |article|
+      remaining = remaining_capacity_after_box(article, box)
+      stock_left = remaining[:stock]
+      ordered_left = remaining[:ordered]
+      orderable_left = remaining[:orderable]
+      orderable_open = remaining[:orderable_flag] &&
+                       (orderable_left.nil? || orderable_left.to_d.positive?)
+
+      expect(stock_left).to eq(0), "article #{article.id} still has stock #{stock_left}"
+      expect(ordered_left).to eq(0), "article #{article.id} still has ordered #{ordered_left}"
+      expect(orderable_open).to be(false),
+                                "article #{article.id} still has orderable #{orderable_left.inspect}"
+    end
+  end
+
   # ---------------------------------------------------------------------------
   # Regressions found by script/battle_test_article_packing_planner.rb
   # ---------------------------------------------------------------------------
@@ -111,6 +149,96 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
       # Order requirements are per box: all stock plus one shared order batch.
       requirement = ArticleBoxOrderRequirement.find_by(article:, box: future_box)
       expect(requirement).to have_attributes(stock: 100, quantity: 50, ordered: 0)
+    end
+
+    # Invariant #17 — capacity_exhausted_when_missing
+    describe 'capacity exhausted when missing' do
+      it 'leaves no stock on the shelf when a shortfall is reported', :aggregate_failures do
+        # Demand exceeds all on-hand packages (battle invariant #17).
+        article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 10, stock: 2)
+        add_demand(group:, box:, ingredient:, quantity: 35, unit: 'Stk')
+
+        described_class.new.run
+
+        expect(GroupBoxArticle.where(group:, box:, article:).sum(:quantity)).to eq(2)
+        missing = MissingIngredient.find_by(group:, box:, ingredient:)
+        expect(missing).to have_attributes(unit: 'Stk', quantity: 15)
+        expect_capacity_exhausted_for_ingredient!(box:, ingredient:, unit: 'Stk')
+      end
+
+      it 'assigns the last stock package when the first pass stops one pack short', :aggregate_failures do
+        # Best-partial selection kept one 10-pack on the shelf for demand 26;
+        # exhaust_remaining_capacity! should overshoot and clear the gap.
+        article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 10, stock: 3)
+        add_demand(group:, box:, ingredient:, quantity: 26, unit: 'Stk')
+
+        described_class.new.run
+
+        expect(GroupBoxArticle.where(group:, box:, article:).sum(:quantity)).to eq(3)
+        expect(MissingIngredient.where(group:, box:, ingredient:)).not_to exist
+        expect_capacity_exhausted_for_ingredient!(box:, ingredient:, unit: 'Stk', missing_required: false)
+      end
+
+      it 'orders every available package when demand exceeds the order limit', :aggregate_failures do
+        # Orderable-only piece selection returned {} once shortfall passed the
+        # remaining limit, leaving dozens of orderable packages unused.
+        future_box = create(:box, datetime: 2.days.from_now)
+        article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk',
+                                   quantity: 10, stock: 0, order_limit: 4)
+        add_demand(group:, box: future_box, ingredient:, quantity: 50, unit: 'Stk')
+
+        described_class.new.run
+
+        expect(GroupBoxArticle.where(group:, box: future_box, article:).sum(:quantity)).to eq(4)
+        missing = MissingIngredient.find_by(group:, box: future_box, ingredient:)
+        expect(missing).to have_attributes(unit: 'Stk', quantity: 10)
+        requirement = ArticleBoxOrderRequirement.find_by(article:, box: future_box)
+        expect(requirement).to have_attributes(stock: 0, quantity: 4, ordered: 0)
+        expect_capacity_exhausted_for_ingredient!(box: future_box, ingredient:, unit: 'Stk')
+      end
+
+      it 'drains the shared order limit when fair sharing still leaves gaps', :aggregate_failures do
+        # Sequential orderable pass only served the first group when shortfall
+        # exceeded the limit; without partial orderable selection nothing was
+        # ordered and the whole limit sat unused.
+        future_box = create(:box, datetime: 2.days.from_now)
+        other_group = create(:group)
+        article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk',
+                                   quantity: 10, stock: 0, order_limit: 4)
+        add_demand(group:, box: future_box, ingredient:, quantity: 50, unit: 'Stk')
+        add_demand(group: other_group, box: future_box, ingredient:, quantity: 50, unit: 'Stk')
+
+        described_class.new.run
+
+        expect(GroupBoxArticle.where(group:, box: future_box, article:).sum(:quantity)).to eq(4)
+        expect(GroupBoxArticle.where(group: other_group, box: future_box, article:).sum(:quantity)).to eq(0)
+        missing = MissingIngredient.where(box: future_box, ingredient:, unit: 'Stk')
+                                   .where('quantity > 0')
+        expect(missing.pluck(:group_id, :quantity).map { |group_id, quantity| [group_id, quantity.to_i] })
+          .to contain_exactly([group.id, 10], [other_group.id, 50])
+        requirement = ArticleBoxOrderRequirement.find_by(article:, box: future_box)
+        expect(requirement).to have_attributes(stock: 0, quantity: 4, ordered: 0)
+        expect_capacity_exhausted_for_ingredient!(box: future_box, ingredient:, unit: 'Stk')
+      end
+
+      it 'spends immediate stock left after proportional shortfall caps', :aggregate_failures do
+        # allocate_shared_shortfall! caps each allowance at the entry shortfall, so
+        # leftover immediate units stayed unused while groups still had gaps.
+        other_group = create(:group)
+        article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk',
+                                   quantity: 10, stock: 7)
+        add_demand(group:, box:, ingredient:, quantity: 55, unit: 'Stk')
+        add_demand(group: other_group, box:, ingredient:, quantity: 55, unit: 'Stk')
+
+        described_class.new.run
+
+        expect(GroupBoxArticle.where(box:, article:).sum(:quantity)).to eq(7)
+        missing = MissingIngredient.where(box:, ingredient:, unit: 'Stk')
+        expect(missing.sum(:quantity).to_i).to eq(40)
+        requirement = ArticleBoxOrderRequirement.find_by(article:, box:)
+        expect(requirement).to have_attributes(stock: 7, quantity: 0, ordered: 0)
+        expect_capacity_exhausted_for_ingredient!(box:, ingredient:, unit: 'Stk')
+      end
     end
   end
 
