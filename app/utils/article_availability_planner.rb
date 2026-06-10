@@ -1,4 +1,10 @@
 class ArticleAvailabilityPlanner
+  RESERVE_SOURCES = {
+    full: %i[stock ordered orderable],
+    immediate: %i[stock ordered],
+    orderable: %i[orderable]
+  }.freeze
+
   def initialize(article)
     @article = article
     @available_stock = article.stock + article.packing_lane_stock # quantity that is already there
@@ -27,110 +33,81 @@ class ArticleAvailabilityPlanner
   def reserve(quantity, immediate_only: false, orderable_only: false)
     raise 'quantity may not be negative' if quantity.negative?
 
-    if orderable_only
-      reserve_orderable(quantity)
-    elsif immediate_only
-      reserve_immediate(quantity)
-    else
-      reserved = reserve_stock(quantity)
-      reserved += reserve_ordered(quantity - reserved)
-      reserved += reserve_orderable(quantity - reserved)
+    remaining = quantity
+    reserve_mode(immediate_only:, orderable_only:).sum do |source|
+      reserved = send(:"reserve_#{source}", remaining)
+      remaining -= reserved
       reserved
     end
   end
 
-  def immediate_units
-    immediate_packages * quantity
-  end
+  def immediate_packages = @available_stock + @available_ordered
 
-  def immediate_packages
-    @available_stock + @available_ordered
-  end
+  def immediate_units = immediate_packages * quantity
 
-  def orderable?
-    @orderable && (@available_to_order.nil? || @available_to_order.positive?)
-  end
+  def orderable? = @orderable && remaining_orderable?
 
-  def orderable_packages
-    return 0 unless orderable?
+  def orderable_packages = orderable? ? (@available_to_order || Float::INFINITY) : 0
 
-    @available_to_order || Float::INFINITY
-  end
+  def max_packages = immediate_packages + orderable_packages
 
-  def max_packages
-    immediate_packages + orderable_packages
-  end
+  def total_coverable_units = unlimited_orderable? ? Float::INFINITY : immediate_units + (orderable_packages * quantity)
 
-  def total_coverable_units
-    if orderable? && @available_to_order.nil?
-      Float::INFINITY
-    else
-      immediate_units + (orderable? ? @available_to_order * quantity : 0)
-    end
-  end
+  def available? = immediate_packages.positive? || orderable?
 
-  def available?
-    @available_stock.positive? || @available_ordered.positive? ||
-      (@orderable && (@available_to_order.nil? || @available_to_order.positive?))
-  end
+  def finish = @hoards.each { |hoard| add_hoard_as_available(hoard) }
 
-  def finish
-    @hoards.each do |hoard|
-      add_hoard_as_available(hoard)
-    end
-  end
-
-  def order_requirements?
-    !@order_requirement.zero? || !@stock.zero? || !@ordered.zero?
-  end
+  def order_requirements? = ![order_requirement, stock, ordered].all?(&:zero?)
 
   private
 
-  def orderable_until?(datetime)
-    @next_possible_delivery <= datetime
+  def reserve_mode(immediate_only:, orderable_only:)
+    return RESERVE_SOURCES[:orderable] if orderable_only
+    return RESERVE_SOURCES[:immediate] if immediate_only
+
+    RESERVE_SOURCES[:full]
   end
 
-  def reserve_immediate(quantity)
-    reserved = reserve_stock(quantity)
-    reserved + reserve_ordered(quantity - reserved)
-  end
+  def orderable_until?(datetime) = @next_possible_delivery <= datetime
 
-  def reserve_stock(quantity)
-    possible_quantity = [quantity, @available_stock].min
-    @available_stock -= possible_quantity
-    @stock += possible_quantity
-    possible_quantity
-  end
+  def remaining_orderable? = @available_to_order.nil? || @available_to_order.positive?
 
-  def reserve_ordered(quantity)
-    possible_quantity = [quantity, @available_ordered].min
-    @available_ordered -= possible_quantity
-    @ordered += possible_quantity
-    possible_quantity
+  def unlimited_orderable? = orderable? && @available_to_order.nil?
+
+  def reserve_stock(quantity) = transfer(quantity, :@available_stock, :@stock)
+
+  def reserve_ordered(quantity) = transfer(quantity, :@available_ordered, :@ordered)
+
+  def transfer(quantity, pool_ivar, usage_ivar)
+    taken = [quantity, instance_variable_get(pool_ivar)].min
+    instance_variable_set(pool_ivar, instance_variable_get(pool_ivar) - taken)
+    instance_variable_set(usage_ivar, instance_variable_get(usage_ivar) + taken)
+    taken
   end
 
   def reserve_orderable(quantity)
     return 0 unless @orderable
 
-    if @available_to_order.nil? # unlimited
-      possible_quantity = quantity
-    else
-      possible_quantity = [quantity, @available_to_order].min
-      @available_to_order -= possible_quantity
-    end
-    @order_requirement += possible_quantity
-    possible_quantity
+    taken = @available_to_order.nil? ? quantity : [quantity, @available_to_order].min
+    @available_to_order -= taken unless @available_to_order.nil?
+    @order_requirement += taken
+    taken
   end
 
   def advance_orders_to(datetime)
-    @order_articles.map! do |order_article|
-      if order_article.order.coverage_begin <= datetime
-        add_order_article_as_available(order_article)
-        nil
-      else
-        order_article
-      end
-    end.compact!
+    remove_due(@order_articles) { |order_article| order_article.order.coverage_begin <= datetime }
+      .each { |order_article| add_order_article_as_available(order_article) }
+  end
+
+  def advance_hoards_to(datetime)
+    remove_due(@hoards) { |hoard| hoard.until <= datetime }
+      .each { |hoard| add_hoard_as_available(hoard) }
+  end
+
+  def remove_due(items, &)
+    due_items, remaining = items.partition(&)
+    items.replace(remaining)
+    due_items
   end
 
   def add_order_article_as_available(order_article)
@@ -140,17 +117,6 @@ class ArticleAvailabilityPlanner
       when 'delivered' then order_article.quantity_delivered
       else 0
       end
-  end
-
-  def advance_hoards_to(datetime)
-    @hoards.map! do |hoard|
-      if hoard.until <= datetime
-        add_hoard_as_available(hoard)
-        nil
-      else
-        hoard
-      end
-    end.compact!
   end
 
   def add_hoard_as_available(hoard)
