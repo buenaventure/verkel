@@ -19,5 +19,19 @@ FactoryBot.find_definitions unless FactoryBot.factories.any?
 trials = ARGV.fetch(0, 25).to_i
 seed = ENV.fetch('SEED', Random.new_seed).to_i
 verbose = ENV['VERBOSE'] == '1'
+planner_class =
+  case ENV.fetch('PLANNER', 'current')
+  when 'legacy' then ArticlePackingPlannerLegacy
+  when 'current' then ArticlePackingPlanner
+  else abort("Unknown PLANNER=#{ENV['PLANNER'].inspect} (use legacy or current)")
+  end
+skip_invariants =
+  if ENV.key?('SKIP_INVARIANTS')
+    ENV['SKIP_INVARIANTS'].split(',').map(&:strip)
+  elsif planner_class == ArticlePackingPlannerLegacy
+    %w[8 17]
+  else
+    []
+  end
 
-ArticlePackingPlannerBattleTest.run(trials:, seed:, verbose:)
+ArticlePackingPlannerBattleTest.run(trials:, seed:, verbose:, planner_class:, skip_invariants:)

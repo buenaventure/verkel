@@ -48,30 +48,80 @@ class ArticlePackingPlannerBattleTest
     :initial_stock,
     :initial_order_limits,
     :packed_box_snapshots,
-    :suppliers_by_id
+    :suppliers_by_id,
+    :boxes_by_id
   )
 
-  def self.run(trials: 25, seed: Random.new_seed, verbose: false)
-    new(trials:, seed:, verbose:).run
+  def self.run(trials: 25, seed: Random.new_seed, verbose: false, planner_class: ArticlePackingPlanner,
+               skip_invariants: [])
+    new(trials:, seed:, verbose:, planner_class:, skip_invariants:).run
   end
 
-  def initialize(trials:, seed:, verbose:)
+  def self.compare(trials: 25, seed: Random.new_seed, legacy_class: ArticlePackingPlannerLegacy,
+                   current_class: ArticlePackingPlanner)
+    new(trials:, seed:, verbose: false, planner_class: current_class).compare_with(legacy_class:)
+  end
+
+  INVARIANT_ALIASES = {
+    :'8' => :idempotent_plan,
+    :'17' => :capacity_exhausted_when_missing,
+    idempotent_plan: :idempotent_plan,
+    capacity_exhausted_when_missing: :capacity_exhausted_when_missing
+  }.freeze
+
+  def initialize(trials:, seed:, verbose:, planner_class: ArticlePackingPlanner, skip_invariants: [])
     @trials = trials
     @rng = Random.new(seed)
     @seed = seed
     @verbose = verbose
+    @planner_class = planner_class
+    @skip_invariants = skip_invariants.map { normalize_invariant_name(it) }.to_set
     @failures = []
+    @demand_cache_ready = false
   end
 
   def run
-    puts "ArticlePackingPlanner battle test — #{@trials} trials, seed #{@seed}"
+    label = @planner_class.name
+    puts "#{label} battle test — #{@trials} trials, seed #{@seed}"
     @trials.times { run_trial(it) }
     report
+  end
+
+  def compare_with(legacy_class:)
+    puts "Comparing #{legacy_class.name} vs #{@planner_class.name} — #{@trials} trials, seed #{@seed}"
+    @trials.times do |trial|
+      legacy_plan = nil
+      current_plan = nil
+      scenario = nil
+      ActiveRecord::Base.transaction do
+        @rng = Random.new(@seed)
+        @demand_cache_ready = false
+        trial.times { |index| build_scenario(index) }
+        scenario = build_scenario(trial)
+        hoard_snapshot = hoard_missing_snapshot
+
+        legacy_class.new.run
+        legacy_plan = snapshot_plan
+
+        reset_between_planner_runs!(scenario, hoard_snapshot)
+
+        @planner_class.new.run
+        current_plan = snapshot_plan
+        raise ActiveRecord::Rollback
+      end
+      next if legacy_plan == current_plan
+
+      print_plan_diff(trial:, scenario:, legacy_class:, legacy_plan:, current_plan:)
+      return
+    end
+    puts
+    puts "OK — identical plans across #{@trials} trials"
   end
 
   private
 
   def run_trial(trial)
+    @demand_cache_ready = false
     ActiveRecord::Base.transaction do
       scenario = build_scenario(trial)
       print '.' if @verbose
@@ -87,7 +137,8 @@ class ArticlePackingPlannerBattleTest
 
   def build_scenario(trial)
     clear_planner_outputs!
-    fake_demand_cache!
+    fake_demand_cache! unless @demand_cache_ready
+    @demand_cache_ready = true
     ensure_units!
 
     suppliers = Array.new(rand_range(1, 2)) { create_supplier }
@@ -111,12 +162,49 @@ class ArticlePackingPlannerBattleTest
       initial_stock: articles.to_h { [it.id, it.stock + it.packing_lane_stock] },
       initial_order_limits: articles.to_h { [it.id, it.current_order_limit] },
       packed_box_snapshots: packed_snapshots,
-      suppliers_by_id: suppliers.index_by(&:id)
+      suppliers_by_id: suppliers.index_by(&:id),
+      boxes_by_id: boxes.index_by(&:id)
     )
   end
 
   def planner_run(_scenario)
-    ArticlePackingPlanner.new.run
+    @planner_class.new.run
+  end
+
+  def run_planner_on_trial(trial, planner_class)
+    plan = nil
+    ActiveRecord::Base.transaction do
+      prepare_trial_rng!(trial)
+      build_scenario(trial)
+      planner_class.new.run
+      plan = snapshot_plan
+      raise ActiveRecord::Rollback
+    end
+    plan
+  end
+
+  def hoard_missing_snapshot
+    Hoard.all.to_h { [it.id, it.missing_quantity.to_d] }
+  end
+
+  def reset_between_planner_runs!(scenario, hoard_snapshot)
+    clear_planner_outputs!
+    scenario.packed_box_snapshots.each do |(group_id, box_id, article_id), quantity|
+      GroupBoxArticle.create!(group_id:, box_id:, article_id:, quantity:)
+    end
+    hoard_snapshot.each do |hoard_id, missing_quantity|
+      Hoard.where(id: hoard_id).update_all(missing_quantity:)
+    end
+  end
+
+  def prepare_trial_rng!(trial)
+    @rng = Random.new(@seed)
+    trial.times do |index|
+      ActiveRecord::Base.transaction do
+        build_scenario(index)
+        raise ActiveRecord::Rollback
+      end
+    end
   end
 
   def verify_invariants!(scenario)
@@ -132,13 +220,15 @@ class ArticlePackingPlannerBattleTest
     check_whole_piece_packages!(scenario)
     check_uniqueness!
     check_hoards_respected!(scenario)
-    check_capacity_exhausted_when_missing!(scenario)
+    check_capacity_exhausted_when_missing!(scenario) unless skip_invariant?(:capacity_exhausted_when_missing)
     check_article_availability_replay!(scenario)
   end
 
   def verify_idempotency!(scenario)
+    return if skip_invariant?(:idempotent_plan)
+
     first = snapshot_plan
-    ArticlePackingPlanner.new.run
+    @planner_class.new.run
     second = snapshot_plan
     return if first == second
 
@@ -523,7 +613,7 @@ class ArticlePackingPlannerBattleTest
 
   def fake_demand_cache!
     connection = ActiveRecord::Base.connection
-    connection.execute('DROP MATERIALIZED VIEW IF EXISTS group_box_ingredient_unit_caches')
+    drop_demand_cache_object!(connection)
     connection.execute(<<~SQL.squish)
       CREATE TABLE group_box_ingredient_unit_caches (
         group_id bigint NOT NULL,
@@ -533,6 +623,17 @@ class ArticlePackingPlannerBattleTest
         quantity numeric
       )
     SQL
+  end
+
+  def drop_demand_cache_object!(connection)
+    [
+      'DROP MATERIALIZED VIEW IF EXISTS group_box_ingredient_unit_caches',
+      'DROP TABLE IF EXISTS group_box_ingredient_unit_caches'
+    ].each do |sql|
+      connection.execute(sql)
+    rescue ActiveRecord::StatementInvalid => e
+      raise unless e.message.include?('is not a table') || e.message.include?('is not a materialized view')
+    end
   end
 
   def ensure_units!
@@ -651,6 +752,74 @@ class ArticlePackingPlannerBattleTest
                "[#{name}]"
              end
     raise InvariantViolation, "#{prefix}: #{detail}"
+  end
+
+  def skip_invariant?(name)
+    @skip_invariants.include?(name.to_sym)
+  end
+
+  def normalize_invariant_name(name)
+    INVARIANT_ALIASES.fetch(name.to_sym) { name.to_sym }
+  end
+
+  def print_plan_diff(trial:, scenario:, legacy_class:, legacy_plan:, current_plan:)
+    puts
+    puts "FIRST DIFF at trial #{trial} (seed #{@seed})"
+    puts '=' * 72
+    print_scenario_context!(scenario)
+    PLAN_SNAPSHOT_LABELS.each do |key, label|
+      legacy_rows = legacy_plan.fetch(key)
+      current_rows = current_plan.fetch(key)
+      next if legacy_rows == current_rows
+
+      legacy_only = legacy_rows - current_rows
+      current_only = current_rows - legacy_rows
+      puts
+      puts "#{label}:"
+      legacy_only.each { |row| puts "  only #{legacy_class.name}: #{format_plan_row(key, row)}" }
+      current_only.each { |row| puts "  only #{@planner_class.name}: #{format_plan_row(key, row)}" }
+    end
+    puts '=' * 72
+    puts 'Review whether the current planner output is preferable to the legacy output.'
+  end
+
+  def print_scenario_context!(scenario)
+    puts
+    puts 'Scenario demands:'
+    scenario.demands.each do |demand|
+      row = demand.is_a?(Hash) ? demand : demand.attributes.symbolize_keys.slice(:group_id, :box_id, :ingredient_id, :unit, :quantity)
+      box = scenario.boxes_by_id.fetch(row[:box_id])
+      puts "  group=#{row[:group_id]} box=#{row[:box_id]} (#{box.datetime.iso8601}) " \
+           "ingredient=#{row[:ingredient_id]} #{row[:unit]} qty=#{row[:quantity].to_d}"
+    end
+    puts 'Articles:'
+    scenario.articles_by_id.sort_by { |id, _article| id }.each do |article_id, article|
+      puts "  article=#{article_id} ingredient=#{article.ingredient_id} #{article.unit} " \
+           "pack=#{article.quantity.to_d} #{article.packing_type} stock=#{article.stock.to_d} " \
+           "order_limit=#{article.current_order_limit.inspect}"
+    end
+  end
+
+  PLAN_SNAPSHOT_LABELS = {
+    group_box_articles: 'GroupBoxArticle (group_id, box_id, article_id, quantity)',
+    missing_ingredients: 'MissingIngredient (group_id, box_id, ingredient_id, unit, quantity)',
+    order_requirements: 'ArticleBoxOrderRequirement (article_id, box_id, quantity, stock, ordered)'
+  }.freeze
+
+  def format_plan_row(key, row)
+    case key
+    when :group_box_articles
+      group_id, box_id, article_id, quantity = row
+      "group=#{group_id} box=#{box_id} article=#{article_id} qty=#{quantity.to_d}"
+    when :missing_ingredients
+      group_id, box_id, ingredient_id, unit, quantity = row
+      "group=#{group_id} box=#{box_id} ingredient=#{ingredient_id} #{unit} missing=#{quantity.to_d}"
+    when :order_requirements
+      article_id, box_id, quantity, stock, ordered = row
+      "article=#{article_id} box=#{box_id} to_order=#{quantity.to_d} stock=#{stock.to_d} ordered=#{ordered.to_d}"
+    else
+      row.inspect
+    end
   end
 
   def report
