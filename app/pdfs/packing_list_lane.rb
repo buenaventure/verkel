@@ -85,24 +85,12 @@ class PackingListLane < Prawn::Document
     packing_lane_articles.map do |packing_lane_article|
       [
         packing_lane_article.article.packing_name,
-        humanize_quantity(packing_lane_article, :required),
-        humanize_quantity(packing_lane_article, :available),
-        humanize_quantity(packing_lane_article, :difference),
+        packing_lane_article.humanize_quantity(:required),
+        packing_lane_article.humanize_quantity(:available),
+        packing_lane_article.humanize_quantity(:difference),
         ''
       ]
     end
-  end
-
-  def humanize_quantity(packing_lane_article, kind)
-    raise ArgumentError unless %i[required available difference].include?(kind)
-
-    number_with_delimiter(
-      case packing_lane_article.article.packing_type
-      when 'bulk' then packing_lane_article.send("quantity_unit_#{kind}").humanize
-      when 'piece' then packing_lane_article.send("quantity_#{kind}")
-      else raise ArgumentError
-      end
-    )
   end
 
   def missing_ingredients_table
