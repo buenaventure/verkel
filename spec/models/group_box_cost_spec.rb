@@ -52,4 +52,14 @@ RSpec.describe GroupBoxCost do
     expect(article_cost.line_total).to be_nil
     expect(GroupBoxArticleCost.missing_price).to contain_exactly(article_cost)
   end
+
+  it 'aggregates totals per box across groups', :aggregate_failures do
+    other_group = create(:group)
+    create(:group_box_article, group: other_group, box: packed_box, article:, quantity: 1)
+
+    totals = described_class.totals_by_box
+
+    expect(totals[packed_box.id]).to eq(12)
+    expect(totals[planned_box.id]).to eq(4)
+  end
 end

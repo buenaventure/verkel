@@ -95,5 +95,43 @@
         </tr>
       <% end %>
     </tbody>
+
+    <tfoot>
+      <tr class="fw-semibold">
+        <td>Summe</td>
+        <% @group_spending_overview.boxes.each do |box| %>
+          <td class="text-end <%= box.packed? ? 'table-success' : 'table-warning' %>">
+            <% box_total = @group_spending_overview.totals_by_box[box.id] %>
+            <% if box_total %>
+              <%= euro box_total, delimiter: '.' %>
+            <% else %>
+              —
+            <% end %>
+          </td>
+        <% end %>
+        <td class="text-end">
+          <% if @group_spending_overview.total_budget.positive? %>
+            <%= euro @group_spending_overview.total_budget, delimiter: '.' %>
+          <% else %>
+            —
+          <% end %>
+        </td>
+        <td></td>
+        <td class="text-end table-success">
+          <% if @group_spending_overview.total_final_total %>
+            <%= euro @group_spending_overview.total_final_total, delimiter: '.' %>
+          <% else %>
+            —
+          <% end %>
+        </td>
+        <td class="text-end table-warning">
+          <% if @group_spending_overview.total_total_estimate %>
+            <%= euro @group_spending_overview.total_total_estimate, delimiter: '.' %>
+          <% else %>
+            —
+          <% end %>
+        </td>
+      </tr>
+    </tfoot>
   </table>
 </div>

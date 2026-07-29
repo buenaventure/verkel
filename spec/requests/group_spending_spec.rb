@@ -36,6 +36,18 @@ RSpec.describe 'Group spendings' do
         expect(response.body).to include('data-controller="group-spending-sparkline"')
         expect(response.body).to include("5.000,0\u00A0€")
       end
+
+      it 'shows a sum row totalling each column', :aggregate_failures do
+        other_group = create(:group, budget: 2_000)
+        create(:group_box_article, group: other_group, box: packed_box, article:, quantity: 1)
+
+        get group_spendings_path
+
+        expect(response.body).to include('Summe')
+        expect(response.body).to include('1.875,75') # packed box column total
+        expect(response.body).to include('7.000,0') # total budget
+        expect(response.body).to include('3.751,5') # bottom-right grand total
+      end
     end
 
     context 'when signed in as read-only user' do

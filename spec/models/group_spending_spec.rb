@@ -83,6 +83,27 @@ RSpec.describe GroupSpending do
     end
   end
 
+  describe '.overview totals' do
+    let(:planned_box) { create(:box, datetime: 1.day.from_now) }
+
+    before do
+      group.update!(budget: 100)
+      other_group = create(:group, budget: 50)
+      create(:group_box_article, group: other_group, box: packed_box, article:, quantity: 1)
+      create(:group_box_article, group:, box: planned_box, article:, quantity: 3)
+    end
+
+    it 'sums totals across groups and boxes', :aggregate_failures do
+      overview = described_class.overview
+
+      expect(overview.totals_by_box[packed_box.id]).to eq(12)
+      expect(overview.totals_by_box[planned_box.id]).to eq(12)
+      expect(overview.total_budget).to eq(150)
+      expect(overview.total_final_total).to eq(12)
+      expect(overview.total_total_estimate).to eq(24)
+    end
+  end
+
   describe 'budget helpers' do
     it 'detects over and near budget', :aggregate_failures do
       group.update!(budget: 8.5)

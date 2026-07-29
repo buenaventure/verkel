@@ -29,6 +29,22 @@ class GroupSpending
       @total_totals_by_group ||= GroupBoxCost.totals_by_group
     end
 
+    def totals_by_box
+      @totals_by_box ||= GroupBoxCost.totals_by_box
+    end
+
+    def total_budget
+      @total_budget ||= groups.filter_map(&:budget).sum
+    end
+
+    def total_final_total
+      @total_final_total ||= final_totals_by_group.values.sum
+    end
+
+    def total_total_estimate
+      @total_total_estimate ||= total_totals_by_group.values.sum
+    end
+
     def missing_price_article_counts_by_group
       @missing_price_article_counts_by_group ||=
         GroupBoxArticleCost.missing_price.group(:group_id).distinct.count(:article_id)

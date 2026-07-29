@@ -14,6 +14,10 @@ class GroupBoxCost < ApplicationRecord
     final.group(:group_id).sum(:total_cost)
   end
 
+  def self.totals_by_box
+    group(:box_id).sum(:total_cost)
+  end
+
   def self.indexed_by_group_and_box
     includes(:box).index_by { |cost| [cost.group_id, cost.box_id] }
   end
