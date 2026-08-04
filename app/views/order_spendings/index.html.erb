@@ -1,0 +1,74 @@
+<h1>Kostenübersicht (Bestellungen)</h1>
+
+<p class="text-muted">
+  Kosten nach geschätztem Liefertag. Gelieferte/eingelagerte Bestellungen sind endgültig, bestellte Ware ist
+  unterwegs, ausstehende Bedarfe wurden noch nicht bestellt und sind geschätzt.
+</p>
+
+<%= render 'spendings/comparison', order_overview: @order_spending_overview %>
+
+<div class="mb-3">
+  <span class="badge text-bg-success me-2">Geliefert</span> Bestellung geliefert oder eingelagert
+  <span class="badge text-bg-info ms-3 me-2">Bestellt</span> Bestellung unterwegs, noch nicht geliefert
+  <span class="badge text-bg-warning ms-3 me-2">Ausstehend</span> Bedarf ohne zugehörige Bestellung (Schätzung)
+  <span class="badge text-bg-danger ms-3 me-2">Preis fehlt</span> Enthält Artikel ohne Preis
+</div>
+
+<% if @order_spending_overview.days.empty? %>
+  <p class="text-muted">Keine Bestellungen oder Bedarfe vorhanden.</p>
+<% else %>
+  <div class="table-responsive">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Tag</th>
+          <th class="text-end table-success">Geliefert</th>
+          <th class="text-end table-info">Bestellt</th>
+          <th class="text-end table-warning">Ausstehend</th>
+          <th class="text-end">Summe</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @order_spending_overview.days.each do |day| %>
+          <% delivered = @order_spending_overview.delivered_by_day[day]
+             ordered = @order_spending_overview.ordered_by_day[day]
+             pending = @order_spending_overview.pending_by_day[day] %>
+          <tr>
+            <td><%= link_to l(day), order_spending_path(day) %></td>
+            <td class="text-end table-success">
+              <%= delivered ? euro(delivered, delimiter: '.') : '—' %>
+            </td>
+            <td class="text-end table-info">
+              <%= ordered ? euro(ordered, delimiter: '.') : '—' %>
+            </td>
+            <td class="text-end table-warning">
+              <%= pending ? euro(pending, delimiter: '.') : '—' %>
+            </td>
+            <td class="text-end fw-semibold">
+              <%= link_to euro([delivered, ordered, pending].compact.sum, delimiter: '.'), order_spending_path(day), class: 'text-reset' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+
+      <tfoot>
+        <tr class="fw-semibold">
+          <td>Summe</td>
+          <td class="text-end table-success"><%= euro @order_spending_overview.total_delivered, delimiter: '.' %></td>
+          <td class="text-end table-info"><%= euro @order_spending_overview.total_ordered, delimiter: '.' %></td>
+          <td class="text-end table-warning"><%= euro @order_spending_overview.total_pending, delimiter: '.' %></td>
+          <td class="text-end"><%= euro @order_spending_overview.total_projected, delimiter: '.' %></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+<% end %>
+
+<% if @order_spending_overview.missing_price_article_count.positive? %>
+  <div class="alert alert-danger">
+    <strong>Preis fehlt:</strong>
+    <%= @order_spending_overview.missing_price_article_count %> Artikel ohne Preis sind in dieser Übersicht nicht
+    vollständig berücksichtigt.
+  </div>
+<% end %>

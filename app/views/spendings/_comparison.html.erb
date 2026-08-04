@@ -1,0 +1,55 @@
+<%# locals: (group_overview: nil, order_overview: nil) %>
+<%
+  group_overview ||= GroupSpending.overview
+  order_overview ||= OrderSpending.overview
+  final_delta = order_overview.total_final - group_overview.total_final_total
+  projected_delta = order_overview.total_projected - group_overview.total_total_estimate
+%>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h2 class="h6 card-title">Kostenvergleich: eingehend (Bestellungen) vs. ausgehend (Kochgruppen)</h2>
+    <div class="table-responsive">
+      <table class="table table-sm mb-0">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="text-end">Eingehend</th>
+            <th class="text-end">Ausgehend</th>
+            <th class="text-end">Differenz</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Endgültig</td>
+            <td class="text-end">
+              <%= link_to euro(order_overview.total_final, delimiter: '.'), order_spendings_path, class: 'text-reset' %>
+            </td>
+            <td class="text-end">
+              <%= link_to euro(group_overview.total_final_total, delimiter: '.'), group_spendings_path, class: 'text-reset' %>
+            </td>
+            <td class="text-end <%= 'text-danger fw-semibold' if final_delta.positive? %>">
+              <%= euro final_delta, delimiter: '.' %>
+            </td>
+          </tr>
+          <tr>
+            <td>Gesamt (geschätzt)</td>
+            <td class="text-end">
+              <%= link_to euro(order_overview.total_projected, delimiter: '.'), order_spendings_path, class: 'text-reset' %>
+            </td>
+            <td class="text-end">
+              <%= link_to euro(group_overview.total_total_estimate, delimiter: '.'), group_spendings_path, class: 'text-reset' %>
+            </td>
+            <td class="text-end <%= 'text-danger fw-semibold' if projected_delta.positive? %>">
+              <%= euro projected_delta, delimiter: '.' %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-muted small mb-0 mt-2">
+      Eine positive Differenz bedeutet, dass mehr eingekauft als (bisher) an Kochgruppen ausgegeben wurde – ein
+      Hinweis auf möglichen Schwund durch Überbestand, Verderb o. Ä.
+    </p>
+  </div>
+</div>

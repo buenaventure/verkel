@@ -1,6 +1,4 @@
 class GroupBoxArticle < ApplicationRecord
-  include ActionView::Helpers::NumberHelper
-
   belongs_to :group
   belongs_to :box
   belongs_to :article
@@ -11,12 +9,12 @@ class GroupBoxArticle < ApplicationRecord
     article.quantity_unit * quantity
   end
 
+  def article_quantity
+    ArticleQuantity.new(article, quantity)
+  end
+
   def humanize_quantity
-    case article.packing_type
-    when 'bulk' then quantity_unit.humanize
-    when 'piece' then number_with_delimiter(quantity)
-    else raise ArgumentError
-    end
+    article_quantity.humanize
   end
 
   def warm?

@@ -131,11 +131,8 @@ class PackingListsLaneArticles < Prawn::Document
   def humanize_quantity_sum(article, packing_lane_articles, kind)
     raise ArgumentError unless %i[required available difference].include?(kind)
 
-    case article.packing_type
-    when 'bulk' then QuantityUnit.sum(packing_lane_articles.map { |pla| pla.send("quantity_unit_#{kind}") }).humanize
-    when 'piece' then number_with_delimiter(packing_lane_articles.sum { |pla| pla.send("quantity_#{kind}") })
-    else raise ArgumentError
-    end
+    total_quantity = packing_lane_articles.sum { |pla| pla.send("quantity_#{kind}") }
+    ArticleQuantity.new(article, total_quantity).humanize
   end
 
   def missing_ingredients_table(ingredient)

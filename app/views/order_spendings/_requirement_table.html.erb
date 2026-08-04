@@ -1,0 +1,42 @@
+<%# locals: (requirements:, hoards:) %>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Artikel</th>
+      <th>Bedarf</th>
+      <th class="text-end">Menge</th>
+      <th class="text-end">Einzelpreis</th>
+      <th class="text-end">Summe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% (requirements + hoards).each do |requirement| %>
+      <tr class="<%= 'table-danger' if requirement.missing_price? %>">
+        <td><%= link_to requirement.article.packing_name, requirement.article %></td>
+        <td>
+          <% if requirement.is_a?(Hoard) %>
+            Vorrat bis <%= l(requirement.until.to_date) %>
+          <% else %>
+            <%= link_to l(requirement.box.datetime), requirement.box %>
+          <% end %>
+        </td>
+        <td class="text-end"><%= requirement.article_quantity.humanize %></td>
+        <td class="text-end">
+          <% if requirement.missing_price? %>
+            <span class="fw-semibold">Fehlt</span>
+          <% else %>
+            <%= euro requirement.article.price %>
+          <% end %>
+        </td>
+        <td class="text-end"><%= requirement.missing_price? ? '—' : euro(requirement.line_total) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="4" class="text-end">Summe</th>
+      <th class="text-end"><%= euro (requirements + hoards).filter_map(&:line_total).sum %></th>
+    </tr>
+  </tfoot>
+</table>

@@ -1,6 +1,4 @@
 PackingLaneArticle = Struct.new(:article, :quantity_required, :stock, :packing_lane, :box, keyword_init: true) do
-  include ActionView::Helpers::NumberHelper
-
   def quantity_available
     if stock.nil?
       0
@@ -28,13 +26,7 @@ PackingLaneArticle = Struct.new(:article, :quantity_required, :stock, :packing_l
   def humanize_quantity(kind)
     raise ArgumentError unless %i[required available difference].include?(kind)
 
-    number_with_delimiter(
-      case article.packing_type
-      when 'bulk' then send("quantity_unit_#{kind}").humanize
-      when 'piece' then send("quantity_#{kind}")
-      else raise ArgumentError
-      end
-    )
+    ArticleQuantity.new(article, send("quantity_#{kind}")).humanize
   end
 
   def quantities_not_null?

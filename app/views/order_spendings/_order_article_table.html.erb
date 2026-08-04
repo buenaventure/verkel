@@ -1,0 +1,40 @@
+<%# locals: (order_articles:, kind:) %>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Artikel</th>
+      <th>Bestellung</th>
+      <th class="text-end">Menge</th>
+      <th class="text-end">Einzelpreis</th>
+      <th class="text-end">Summe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% order_articles.each do |order_article| %>
+      <% total = kind == :delivered ? order_article.price_delivered : order_article.price_ordered
+         article_quantity = kind == :delivered ? order_article.delivered_article_quantity : order_article.ordered_article_quantity %>
+      <tr class="<%= 'table-danger' if order_article.article.price.nil? %>">
+        <td><%= link_to order_article.article.packing_name, order_article.article %></td>
+        <td><%= link_to order_article.order.supplier.to_s, order_article.order %></td>
+        <td class="text-end"><%= article_quantity.humanize %></td>
+        <td class="text-end">
+          <% if order_article.article.price.nil? %>
+            <span class="fw-semibold">Fehlt</span>
+          <% else %>
+            <%= euro order_article.article.price %>
+          <% end %>
+        </td>
+        <td class="text-end"><%= total ? euro(total) : '—' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="4" class="text-end">Summe</th>
+      <th class="text-end">
+        <%= euro order_articles.filter_map { |order_article| kind == :delivered ? order_article.price_delivered : order_article.price_ordered }.sum %>
+      </th>
+    </tr>
+  </tfoot>
+</table>

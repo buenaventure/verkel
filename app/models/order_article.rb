@@ -13,12 +13,22 @@ class OrderArticle < ApplicationRecord
   end
 
   def price_ordered
-    return nil if article&.price.nil?
+    ordered_article_quantity.line_total
+  end
 
-    (quantity_ordered * article.price).round(2)
+  def price_delivered
+    delivered_article_quantity.line_total
   end
 
   def quantity_unit_delivered
     article.quantity_unit * quantity_delivered
+  end
+
+  def ordered_article_quantity
+    ArticleQuantity.new(article, quantity_ordered)
+  end
+
+  def delivered_article_quantity
+    ArticleQuantity.new(article, quantity_delivered)
   end
 end

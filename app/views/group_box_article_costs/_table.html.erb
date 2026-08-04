@@ -13,7 +13,7 @@
     <% article_costs.each do |article_cost| %>
       <tr class="<%= 'table-danger' if article_cost.missing_price? %>">
         <td><%= link_to article_cost.article.packing_name, article_cost.article %></td>
-        <td class="text-end"><%= article_cost.humanize_quantity %></td>
+        <td class="text-end"><%= article_cost.article_quantity.humanize %></td>
         <td class="text-end">
           <% if article_cost.missing_price? %>
             <span class="fw-semibold">Fehlt</span>

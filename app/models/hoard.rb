@@ -7,4 +7,10 @@ class Hoard < ApplicationRecord
   def quantity_unit
     article.quantity_unit * quantity
   end
+
+  def article_quantity
+    ArticleQuantity.new(article, missing_quantity)
+  end
+
+  delegate :missing_price?, :line_total, to: :article_quantity
 end

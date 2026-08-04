@@ -1,3 +1,9 @@
+<div class="btn-group float-end" role="group">
+  <% if can?(:index, OrderSpending) %>
+    <%= link_to 'Kostenübersicht', order_spendings_path, class: 'btn btn-secondary' %>
+  <% end %>
+</div>
+
 <h1>Bestellungen</h1>
 
 <%= render 'table', orders: @orders %>

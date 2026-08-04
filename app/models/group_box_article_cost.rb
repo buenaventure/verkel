@@ -2,8 +2,6 @@
 
 # Cost calculation row for one article assigned to a group box.
 class GroupBoxArticleCost < ApplicationRecord
-  include ActionView::Helpers::NumberHelper
-
   self.primary_key = :group_box_article_id
 
   belongs_to :group
@@ -17,11 +15,7 @@ class GroupBoxArticleCost < ApplicationRecord
     unit_price.nil?
   end
 
-  def humanize_quantity
-    case article.packing_type
-    when 'bulk' then (article.quantity_unit * quantity).humanize
-    when 'piece' then number_with_delimiter(quantity)
-    else raise ArgumentError
-    end
+  def article_quantity
+    ArticleQuantity.new(article, quantity)
   end
 end

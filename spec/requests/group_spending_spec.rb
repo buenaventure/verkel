@@ -48,6 +48,23 @@ RSpec.describe 'Group spendings' do
         expect(response.body).to include('7.000,0') # total budget
         expect(response.body).to include('3.751,5') # bottom-right grand total
       end
+
+      it 'shows the cross-linked cost comparison panel', :aggregate_failures do
+        get group_spendings_path
+
+        expect(response.body).to include('Kostenvergleich')
+        expect(response.body).to include(order_spendings_path)
+      end
+
+      it 'does not highlight the delta when outgoing spending exceeds incoming cost', :aggregate_failures do
+        # no OrderSpending data exists in this spec, so incoming cost is 0 and the
+        # delta (0 minus the real outgoing totals) is negative, not highlighted
+        get group_spendings_path
+
+        expect(response.body).not_to include('text-danger fw-semibold')
+        expect(response.body).to include('1.250,5 €') # outgoing final total shown in the panel
+        expect(response.body).to include('3.126,25 €') # outgoing projected total shown in the panel
+      end
     end
 
     context 'when signed in as read-only user' do

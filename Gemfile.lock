@@ -212,6 +212,7 @@ GEM
       net-smtp
     marcel (1.2.1)
     matrix (0.4.3)
+    memery (1.8.0)
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
@@ -529,6 +530,7 @@ DEPENDENCIES
   kramdown-parser-gfm (~> 1.0)
   listen (~> 3.3)
   matrix
+  memery
   nokogiri
   ostruct
   pg

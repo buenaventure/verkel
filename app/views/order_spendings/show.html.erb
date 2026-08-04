@@ -1,0 +1,45 @@
+<p>
+  <%= link_to 'Zurück zur Kostenübersicht', order_spendings_path %>
+</p>
+
+<h1>Kosten am <%= l(@order_spending.day) %></h1>
+
+<dl class="row mb-4">
+  <dt class="col-sm-3">Geliefert</dt>
+  <dd class="col-sm-3 text-end"><%= @order_spending.delivered_total.positive? ? euro(@order_spending.delivered_total) : '—' %></dd>
+  <dt class="col-sm-3">Bestellt</dt>
+  <dd class="col-sm-3 text-end"><%= @order_spending.ordered_total.positive? ? euro(@order_spending.ordered_total) : '—' %></dd>
+  <dt class="col-sm-3">Ausstehend</dt>
+  <dd class="col-sm-3 text-end"><%= @order_spending.pending_total.positive? ? euro(@order_spending.pending_total) : '—' %></dd>
+  <dt class="col-sm-3 fw-semibold">Summe</dt>
+  <dd class="col-sm-3 text-end fw-semibold"><%= euro @order_spending.total %></dd>
+</dl>
+
+<% if @order_spending.delivered_order_articles.any? %>
+  <h2 class="h5 mt-4">
+    Geliefert / eingelagert
+    <span class="badge text-bg-success ms-2">endgültig</span>
+  </h2>
+  <%= render 'order_spendings/order_article_table', order_articles: @order_spending.delivered_order_articles, kind: :delivered %>
+<% end %>
+
+<% if @order_spending.ordered_order_articles.any? %>
+  <h2 class="h5 mt-4">
+    Bestellt (unterwegs)
+    <span class="badge text-bg-info ms-2">in Transit</span>
+  </h2>
+  <%= render 'order_spendings/order_article_table', order_articles: @order_spending.ordered_order_articles, kind: :ordered %>
+<% end %>
+
+<% if @order_spending.box_requirements.any? || @order_spending.hoards.any? %>
+  <h2 class="h5 mt-4">
+    Ausstehend (kein Auftrag)
+    <span class="badge text-bg-warning ms-2">geschätzt</span>
+  </h2>
+  <%= render 'order_spendings/requirement_table', requirements: @order_spending.box_requirements, hoards: @order_spending.hoards %>
+<% end %>
+
+<% if @order_spending.delivered_order_articles.empty? && @order_spending.ordered_order_articles.empty? &&
+      @order_spending.box_requirements.empty? && @order_spending.hoards.empty? %>
+  <p class="text-muted">Keine Kosten für diesen Tag vorhanden.</p>
+<% end %>

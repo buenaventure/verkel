@@ -38,6 +38,7 @@ Rails.application.routes.draw do
     end
   end
   resources :group_spendings, only: %i[index show], param: :group_id
+  resources :order_spendings, only: %i[index show], param: :day
   resources :groups do
     resources :group_meal_participations, shallow: true, except: :show, path: 'meal_participations'
     get 'meals_overview', on: :collection
