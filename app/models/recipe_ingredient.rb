@@ -3,8 +3,8 @@ class RecipeIngredient < ApplicationRecord
 
   belongs_to :recipe
   belongs_to :ingredient
-  has_many :positive_diet_ingredients
-  has_many :negative_diet_ingredients
+  has_many :positive_diet_ingredients, dependent: :delete_all
+  has_many :negative_diet_ingredients, dependent: :delete_all
   has_many :positive_diets, through: :positive_diet_ingredients, class_name: 'Diet', source: :diet
   has_many :negative_diets, through: :negative_diet_ingredients, class_name: 'Diet', source: :diet
 

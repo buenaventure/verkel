@@ -51,6 +51,18 @@ RSpec.describe Recipe do
         expect(recipe.ingredients.size).to eq(0)
       end
 
+      it 'removes ingredients that have diets attached' do
+        recipe = described_class.create!(name: 'test', content: '**5 g Mandeln (+vegan,-nussfrei)**')
+        recipe_ingredient = recipe.recipe_ingredients.first
+        expect(recipe_ingredient.positive_diet_ingredients).not_to be_empty
+        expect(recipe_ingredient.negative_diet_ingredients).not_to be_empty
+
+        recipe.content = 'nix'
+
+        expect { recipe.save! }.not_to raise_error
+        expect(recipe.ingredients.size).to eq(0)
+      end
+
       it 'edits and removes ingredients in one update' do
         recipe = described_class.create!(name: 'test', content: '**5 g Zucker** **10 g Mehl**')
         original_first_id = recipe.recipe_ingredients.first.id
