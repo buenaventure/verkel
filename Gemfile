@@ -30,7 +30,6 @@ gem 'prawn-table'
 gem 'puma', '~> 8.0'
 gem 'rails', '~> 8.0.0'
 gem 'rails-i18n', '~> 8.0.0'
-gem 'roo', '~> 2.10.1', require: false
 gem 'safe_yaml'
 gem 'scenic'
 gem 'simple_form'
