@@ -35,7 +35,7 @@ gem 'prawn-table'
 gem 'puma', '~> 8.0'
 gem 'rails', '~> 8.1.0'
 gem 'rails-i18n', '~> 8.1.0'
-gem 'ruby-vips', '~> 2.2'
+gem 'ruby-vips', '~> 2.2', require: false
 gem 'safe_yaml'
 gem 'scenic'
 gem 'simple_form'
