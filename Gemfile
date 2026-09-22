@@ -18,6 +18,11 @@ gem 'httparty'
 gem 'image_processing', '~> 1.2'
 gem 'jbuilder', '~> 2.7'
 gem 'jsbundling-rails'
+# Rails 8.1.3.1 calls JSON.parse with a positional options hash, which json 3
+# rejects, so every request that reads the session cookie raises an
+# ArgumentError. Fixed on rails/rails main and 8-1-stable; drop this pin once
+# the Rails release we run includes that fix (next 8.1 patch release, or 8.2).
+gem 'json', '< 3'
 gem 'kramdown', '~> 2.3'
 gem 'kramdown-parser-gfm', '~> 1.0'
 gem 'matrix'
