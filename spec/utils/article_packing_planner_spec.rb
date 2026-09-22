@@ -110,6 +110,40 @@ RSpec.describe ArticlePackingPlanner, :demand_cache do
     end
   end
 
+  describe 'covering demand from an open order' do
+    # The order has to cover the box: advance_orders_to only releases an order
+    # once its coverage starts at or before the box, and the :order factory
+    # defaults to a week out. The default box sits "now" with a 24h supplier
+    # delivery time, so nothing is orderable on top and `quantity` stays 0.
+    let(:open_coverage) { (1.day.ago..1.week.from_now) }
+
+    it 'records demand covered by an ordered order as `ordered`' do
+      article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 10, stock: 0)
+      order = create(:order, supplier:, state: :ordered, coverage: open_coverage)
+      create(:order_article, order:, article:, quantity_ordered: 5, quantity_delivered: 0)
+      add_demand(group:, box:, ingredient:, quantity: 30, unit: 'Stk')
+
+      described_class.new.run
+
+      expect(ArticleBoxOrderRequirement.find_by(article:, box:))
+        .to have_attributes(quantity: 0, stock: 0, ordered: 3)
+    end
+
+    it 'uses the delivered quantity once the order has been delivered' do
+      # Only 2 of the 5 ordered packages actually arrived, so the plan can rely
+      # on 2 and the rest of the demand stays uncovered.
+      article = create(:article, ingredient:, supplier:, packing_type: :piece, unit: 'Stk', quantity: 10, stock: 0)
+      order = create(:order, supplier:, state: :delivered, coverage: open_coverage)
+      create(:order_article, order:, article:, quantity_ordered: 5, quantity_delivered: 2)
+      add_demand(group:, box:, ingredient:, quantity: 30, unit: 'Stk')
+
+      described_class.new.run
+
+      expect(ArticleBoxOrderRequirement.find_by(article:, box:))
+        .to have_attributes(quantity: 0, stock: 0, ordered: 2)
+    end
+  end
+
   describe 'packed boxes' do
     it 'leaves an existing plan untouched and ignores new demand for it', :aggregate_failures do
       # Packed boxes are "done": process_ingredient_unit_in_box returns early and

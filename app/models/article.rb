@@ -11,6 +11,9 @@ class Article < ApplicationRecord
   has_many :order_articles, dependent: :restrict_with_error
   has_many :packing_lane_article_stocks, dependent: :delete_all
   has_many :active_packing_lane_article_stocks, -> { where(box: Box.picked) }, class_name: 'PackingLaneArticleStock'
+  has_many :incoming_order_articles,
+           -> { where(order: Order.where(state: %i[ordered delivered])) },
+           class_name: 'OrderArticle'
   has_many :hoards
   has_many :stock_changes, -> { order(created_at: :desc) }, dependent: :destroy
 
@@ -26,6 +29,9 @@ class Article < ApplicationRecord
   default_scope { order(priority: :asc, quantity: :desc) }
 
   scope :lexical, -> { joins(:ingredient).reorder('ingredients.commodity_group', 'ingredients.name', 'priority') }
+  scope :with_surplus_data, lambda {
+    includes(:active_packing_lane_article_stocks, :article_box_order_requirements, incoming_order_articles: :order)
+  }
 
   delegate :on_demand?, to: :ingredient
 
@@ -91,6 +97,11 @@ class Article < ApplicationRecord
     order_articles.joins(:order).merge(Order.delivered_or_stored).sum(&:quantity_delivered)
   end
 
+  # Open orders not yet booked into `stock` (unlike #quantity_delivered, excludes stored ones).
+  def quantity_incoming
+    incoming_order_articles.sum(&:quantity_incoming)
+  end
+
   def quantity_unit_stock
     quantity_unit * stock
   end
@@ -109,5 +120,15 @@ class Article < ApplicationRecord
 
   def quantity_unit_surplus
     quantity_unit * surplus
+  end
+
+  # Surplus once all open orders are booked in: what we have or will get,
+  # minus what the packing plan covers from stock and from open orders.
+  def expected_surplus
+    surplus + quantity_incoming - article_box_order_requirements.sum(&:ordered)
+  end
+
+  def quantity_unit_expected_surplus
+    quantity_unit * expected_surplus
   end
 end

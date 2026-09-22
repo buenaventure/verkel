@@ -93,12 +93,7 @@ class ArticleAvailabilityPlanner
   end
 
   def add_order_article_as_available(order_article)
-    @available_ordered +=
-      case order_article.order.state
-      when 'ordered' then order_article.quantity_ordered
-      when 'delivered' then order_article.quantity_delivered
-      else 0
-      end
+    @available_ordered += order_article.quantity_incoming
   end
 
   def advance_hoards_to(datetime)

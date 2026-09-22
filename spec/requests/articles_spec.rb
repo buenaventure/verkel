@@ -31,6 +31,30 @@ RSpec.describe 'Articles' do
 
       expect(response.body).to include('Fehlt')
     end
+
+    it 'shows the expected surplus next to the current one', :aggregate_failures do
+      get articles_path
+
+      expect(response.body).to include('akt. Überschuss')
+      expect(response.body).to include('vorauss. Überschuss')
+    end
+  end
+
+  describe 'GET /articles/:id' do
+    it 'shows the expected surplus including deliveries that are not booked in yet', :aggregate_failures do
+      article = create(:article, supplier:, ingredient:, unit: 'g', packing_type: :piece, quantity: 500, stock: 10)
+      order = create(:order, supplier:, state: :ordered)
+      create(:order_article, order:, article:, quantity_ordered: 7, quantity_delivered: 0)
+
+      get article_path(article)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('Aktueller Überschuss')
+      expect(response.body).to include('Voraussichtlicher Überschuss')
+      # 10 in stock, 7 on their way, nothing reserved for a box yet.
+      expect(article.reload).to have_attributes(surplus: 10, expected_surplus: 17)
+      expect(response.body).to include('7 unterwegs')
+    end
   end
 
   describe 'shared article table' do

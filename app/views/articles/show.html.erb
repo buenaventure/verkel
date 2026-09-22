@@ -19,10 +19,16 @@
     <%= number_with_delimiter @article.packing_lane_stock %>
     <small><%= @article.quantity_unit_packing_lane_stock.humanize %></small>
   </dd>
-  <dt>Überschuss</dt>
+  <dt>Aktueller Überschuss</dt>
   <dd>
     <%= number_with_delimiter @article.surplus %>
     <small><%= @article.quantity_unit_surplus.humanize %></small>
+  </dd>
+  <dt>Voraussichtlicher Überschuss</dt>
+  <dd>
+    <%= number_with_delimiter @article.expected_surplus %>
+    <small><%= @article.quantity_unit_expected_surplus.humanize %></small>
+    (<%= number_with_delimiter @article.quantity_incoming %> unterwegs)
   </dd>
   <dt>Preis</dt>
   <dd><%= number_with_delimiter @article.price %> €</dd>

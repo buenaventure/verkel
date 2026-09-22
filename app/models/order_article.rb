@@ -24,6 +24,15 @@ class OrderArticle < ApplicationRecord
     article.quantity_unit * quantity_delivered
   end
 
+  # Quantity on its way that is not yet part of article.stock.
+  def quantity_incoming
+    case order.state
+    when 'ordered' then quantity_ordered
+    when 'delivered' then quantity_delivered
+    else 0
+    end
+  end
+
   def ordered_article_quantity
     ArticleQuantity.new(article, quantity_ordered)
   end

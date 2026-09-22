@@ -9,7 +9,8 @@
       <% if ingredient %><th>Prio</th><% end %>
       <th>Nr.</th>
       <th class="text-end">Lager</th>
-      <th class="text-end">Überschuss</th>
+      <th class="text-end">akt. Überschuss</th>
+      <th class="text-end">vorauss. Überschuss</th>
       <th class="text-end">Preis</th>
       <% if show_base_price %>
         <th class="text-end">Grundpreis</th>
@@ -35,6 +36,7 @@
         <td><%= article.nr %></td>
         <td class="text-end"><%= number_with_delimiter article.stock %></td>
         <td class="text-end"><%= article.surplus %></td>
+        <td class="text-end"><%= article.expected_surplus %></td>
         <td class="text-end">
           <% if article.price %>
             <%= euro article.price %>

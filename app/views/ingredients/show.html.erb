@@ -71,7 +71,7 @@
 <div class="d-flex justify-content-end mb-2 mt-4">
   <%= link_to 'Neuen Artikel anlegen', new_article_path(ingredient_id: @ingredient), class: 'btn btn-sm btn-primary' %>
 </div>
-<%= render 'articles/table', articles: @ingredient.articles, ingredient: true %>
+<%= render 'articles/table', articles: @ingredient.articles.with_surplus_data, ingredient: true %>
 
 <table class="table table-sm">
   <thead>
