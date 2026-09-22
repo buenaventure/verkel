@@ -1,8 +1,13 @@
-require('datatables.net-bs5')
-require('datatables.net-fixedcolumns-bs5')
-require('datatables.net-fixedheader-bs5')
+import $ from 'jquery'
+import DataTable from 'datatables.net-bs5'
+import 'datatables.net-fixedcolumns-bs5'
+import 'datatables.net-fixedheader-bs5'
 
-$.extend(true, $.fn.dataTable.defaults, {
+// DataTables 3 dropped its jQuery dependency, so it has to be handed the
+// jQuery instance webpack provides for the $().DataTable() calls below to work.
+DataTable.use($)
+
+$.extend(true, DataTable.defaults, {
   fixedHeader: true,
   paging: false,
   language: {
