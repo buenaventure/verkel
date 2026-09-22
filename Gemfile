@@ -16,9 +16,9 @@ gem 'devise-i18n'
 gem 'hotwire-rails', '~> 0.1'
 gem 'httparty'
 gem 'image_processing', '~> 1.2'
-gem 'jbuilder', '~> 2.7'
+gem 'jbuilder', '~> 2.15'
 gem 'jsbundling-rails'
-gem 'kramdown', '~> 2.3'
+gem 'kramdown', '~> 2.5'
 gem 'kramdown-parser-gfm', '~> 1.0'
 gem 'matrix'
 gem 'memery'
@@ -50,7 +50,7 @@ end
 group :development do
   gem 'bundle_update_interactive'
   gem 'debug', '>= 1.0.0'
-  gem 'listen', '~> 3.3'
+  gem 'listen', '~> 3.10'
   gem 'rack-mini-profiler', '~> 5.0'
   gem 'rubocop', require: false
   gem 'rubocop-factory_bot', require: false
