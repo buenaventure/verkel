@@ -1,0 +1,55 @@
+version: 2
+
+updates:
+  # Ruby gems (Gemfile / Gemfile.lock)
+  - package-ecosystem: bundler
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      gems-minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # JS packages (package.json / yarn.lock)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      rails-js:
+        patterns:
+          - "@rails/*"
+          - "@hotwired/*"
+      datatables:
+        patterns:
+          - "datatables.net*"
+      build-tooling:
+        patterns:
+          - "webpack*"
+          - "sass"
+      js-minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # GitHub Actions used in .github/workflows
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns:
+          - "*"
+
+  # Base image in the Dockerfile
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
