@@ -2,11 +2,11 @@
 
 ## Cursor Cloud specific instructions
 
-VerKeL is a single Rails 8 monolith (Ruby 3.4.8, PostgreSQL, Yarn/Webpack + Sass). See `README.md` for the basics; this section covers non-obvious Cloud VM details.
+VerKeL is a single Rails 8 monolith (Ruby 3.4.10, PostgreSQL, Yarn/Webpack + Sass). See `README.md` for the basics; this section covers non-obvious Cloud VM details.
 
 ### System prerequisites (one-time per VM)
 
-- **Ruby 3.4.8** via rbenv (see `.ruby-version`). Ensure `~/.bashrc` initializes rbenv (`eval "$(rbenv init - bash)"`).
+- **Ruby 3.4.10** via rbenv (see `.ruby-version`). Ensure `~/.bashrc` initializes rbenv (`eval "$(rbenv init - bash)"`).
 - **PostgreSQL 18** (required): `db/structure.sql` sets `transaction_timeout`, which needs PG 17+. CI uses `postgres:18-alpine`. Ubuntu’s default PG 16 package is insufficient for `bin/rails db:prepare` / `db:schema:load`.
   - Start before Rails commands: `sudo pg_ctlcluster 18 main start` (cluster must listen on port **5432** for default `config/database.yml`).
   - Dev credentials used in CI and locally: `DATABASE_USER=postgres`, `DATABASE_PASSWORD=postgres`, `DATABASE_HOST=127.0.0.1`.
