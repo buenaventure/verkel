@@ -10,6 +10,7 @@ RUN apk --update --no-cache add \
     postgresql-client \
     postgresql-dev \
     tzdata \
+    vips \
     yarn \
     yaml-dev \
     && rm -rf /var/cache/apk/*
@@ -40,6 +41,7 @@ FROM ruby:4.0.7-alpine
 RUN apk --update --no-cache add \
     postgresql-client \
     tzdata \
+    vips \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /verkel
