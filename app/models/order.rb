@@ -41,7 +41,7 @@ class Order < ApplicationRecord
   def hoard_requirements
     Hoard
       .joins(:article).where('articles.supplier_id': supplier_id)
-      .where("'%s' <= until", coverage.begin)
+      .where("'%s' <= hoards.until", coverage.begin)
   end
 
   def required_articles
