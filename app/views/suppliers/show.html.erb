@@ -28,6 +28,6 @@
 <div class="d-flex justify-content-end mb-2">
   <%= link_to 'Neuen Artikel anlegen', new_article_path(supplier_id: @supplier), class: 'btn btn-sm btn-primary' %>
 </div>
-<%= render 'articles/table', articles: @supplier.articles, supplier: true %>
+<%= render 'articles/table', articles: @supplier.articles.with_surplus_data, supplier: true %>
 
 <%= render 'orders/table', orders: @supplier.orders, supplier: @supplier %>

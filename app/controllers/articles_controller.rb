@@ -5,7 +5,8 @@ class ArticlesController < ApplicationController
   def index
     @articles =
       Article
-      .includes(:supplier, :ingredient, :active_packing_lane_article_stocks, :article_box_order_requirements)
+      .includes(:supplier, :ingredient)
+      .with_surplus_data
       .joins(:ingredient).lexical
     @order_counts = OrderArticle.all.group(:article_id).count
   end
@@ -73,7 +74,7 @@ class ArticlesController < ApplicationController
   private
 
   def set_article
-    @article = Article.find(params[:id])
+    @article = Article.includes(incoming_order_articles: :order).find(params[:id])
   end
 
   def article_params
