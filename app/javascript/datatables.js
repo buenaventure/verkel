@@ -28,4 +28,7 @@ document.addEventListener("turbo:load", function () {
   });
   $('#participants-table').DataTable();
   $('#orders-table').DataTable();
+  $('#group-spendings-table').DataTable({
+    order: [],
+  });
 })

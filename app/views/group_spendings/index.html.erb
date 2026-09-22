@@ -14,7 +14,7 @@
 </div>
 
 <div class="table-responsive">
-  <table class="table table-sm">
+  <table class="table table-sm" id="group-spendings-table">
     <thead>
       <tr>
         <th>Kochgruppe</th>
@@ -25,7 +25,7 @@
           </th>
         <% end %>
         <th class="text-end">Budget</th>
-        <th>Verlauf</th>
+        <th data-orderable="false">Verlauf</th>
         <th class="text-end table-success">Summe endgültig</th>
         <th class="text-end table-warning">Summe gesamt</th>
       </tr>
@@ -46,7 +46,8 @@
           </td>
           <% @group_spending_overview.boxes.each do |box| %>
             <% cost = @group_spending_overview.costs_by_group_and_box[[spending.id, box.id]] %>
-            <td class="text-end <%= box.packed? ? 'table-success' : 'table-warning' %>">
+            <td class="text-end <%= box.packed? ? 'table-success' : 'table-warning' %>"
+                data-order="<%= cost&.total_cost || -1 %>">
               <% if cost&.total_cost %>
                 <%= link_to euro(cost.total_cost, delimiter: '.'), box_group_path(box, spending.group, anchor: 'costs'),
                             class: box.packed? ? 'text-success-emphasis' : 'text-warning-emphasis' %>
@@ -55,7 +56,7 @@
               <% end %>
             </td>
           <% end %>
-          <td class="text-end">
+          <td class="text-end" data-order="<%= spending.budget || -1 %>">
             <% if spending.budget.present? %>
               <%= euro spending.budget, delimiter: '.' %>
             <% else %>
@@ -79,14 +80,14 @@
               —
             <% end %>
           </td>
-          <td class="text-end table-success fw-semibold">
+          <td class="text-end table-success fw-semibold" data-order="<%= spending.final_total || -1 %>">
             <% if spending.final_total %>
               <%= euro spending.final_total, delimiter: '.' %>
             <% else %>
               —
             <% end %>
           </td>
-          <td class="text-end table-warning fw-semibold">
+          <td class="text-end table-warning fw-semibold" data-order="<%= spending.total_estimate || -1 %>">
             <% if spending.total_estimate %>
               <%= link_to euro(spending.total_estimate, delimiter: '.'), group_spending_path(spending),
                           class: 'text-warning-emphasis' %>
