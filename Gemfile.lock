@@ -549,6 +549,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   jbuilder (~> 2.7)
   jsbundling-rails
+  json (< 3)
   kramdown (~> 2.3)
   kramdown-parser-gfm (~> 1.0)
   listen (~> 3.3)
