@@ -30,6 +30,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
       # Add or replace dependency steps here
+      - name: Install libvips
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvips42t64
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
