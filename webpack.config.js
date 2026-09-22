@@ -17,10 +17,12 @@ module.exports = {
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1
     }),
+    // jQuery 4 ships an ESM entry point, so the default export has to be
+    // named explicitly - otherwise webpack provides the module namespace.
     new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery',
+      $: ['jquery', 'default'],
+      jQuery: ['jquery', 'default'],
+      'window.jQuery': ['jquery', 'default'],
       Popper: ['popper.js', 'default']
     })
   ],
