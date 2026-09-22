@@ -9,7 +9,24 @@ updates:
       day: monday
     open-pull-requests-limit: 10
     groups:
+      # Rails minor releases (8.0 -> 8.1) are feature releases, so only
+      # patches are grouped. Minor/major Rails bumps come as their own PR.
+      rails:
+        patterns:
+          - "rails"
+          - "railties"
+          - "rails-i18n"
+          - "action*"
+          - "active*"
+        update-types:
+          - patch
       gems-minor-and-patch:
+        exclude-patterns:
+          - "rails"
+          - "railties"
+          - "rails-i18n"
+          - "action*"
+          - "active*"
         update-types:
           - minor
           - patch
@@ -22,9 +39,15 @@ updates:
       day: monday
     open-pull-requests-limit: 10
     groups:
+      # Keep @rails/* in lockstep with the Rails gems: patches only here,
+      # minor/major bumps come as their own PR.
       rails-js:
         patterns:
           - "@rails/*"
+        update-types:
+          - patch
+      hotwired:
+        patterns:
           - "@hotwired/*"
       datatables:
         patterns:
@@ -34,6 +57,8 @@ updates:
           - "webpack*"
           - "sass"
       js-minor-and-patch:
+        exclude-patterns:
+          - "@rails/*"
         update-types:
           - minor
           - patch
