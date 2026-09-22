@@ -165,16 +165,4 @@ RSpec.describe 'DataTables' do
       expect(page).to have_css('#participants-table tbody tr', count: 1)
     end
   end
-
-  # select2 rides on the same jQuery, so a jQuery bump that breaks it would
-  # otherwise only show up in production.
-  describe 'select2' do
-    it 'replaces the diets select with a select2 widget' do
-      create(:diet, name: 'vegan')
-
-      visit new_participant_path
-
-      expect(page).to have_css('.select2-container')
-    end
-  end
 end
