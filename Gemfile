@@ -15,7 +15,7 @@ gem 'devise'
 gem 'devise-i18n'
 gem 'hotwire-rails', '~> 0.1'
 gem 'httparty'
-gem 'image_processing', '~> 1.2'
+gem 'image_processing', '~> 2.1'
 gem 'jbuilder', '~> 2.15'
 gem 'jsbundling-rails'
 # Rails 8.1.3.1 calls JSON.parse with a positional options hash, which json 3
