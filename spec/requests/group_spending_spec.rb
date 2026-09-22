@@ -37,12 +37,6 @@ RSpec.describe 'Group spendings' do
         expect(response.body).to include("5.000,0\u00A0€")
       end
 
-      it 'renders the overview as a searchable table' do
-        get group_spendings_path
-
-        expect(response.body).to include('id="group-spendings-table"')
-      end
-
       it 'shows a sum row totalling each column', :aggregate_failures do
         other_group = create(:group, budget: 2_000)
         create(:group_box_article, group: other_group, box: packed_box, article:, quantity: 1)

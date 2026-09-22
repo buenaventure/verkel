@@ -126,6 +126,36 @@ RSpec.describe 'DataTables' do
     end
   end
 
+  describe 'the group spendings table' do
+    before do
+      article = create(:article, price: 10, unit: 'g', packing_type: :piece, quantity: 500)
+      box = create(:box, :packed)
+      { 'Anton' => 125, 'Berta' => 2, 'Cäsar' => 30 }.each do |name, quantity|
+        create(:group_box_article, group: create(:group, name:), box:, article:, quantity:)
+      end
+      create(:group, name: 'Dora')
+
+      visit group_spendings_path
+      wait_for_datatable('group-spendings-table')
+    end
+
+    it 'filters the groups by name', :aggregate_failures do
+      search_box.fill_in with: 'Berta'
+
+      expect(page).to have_css('#group-spendings-table tbody tr', count: 1)
+      expect(column_values('group-spendings-table', 0)).to eq(%w[Berta])
+    end
+
+    # Formatted amounts like "1.250,50 €" sort wrongly as text, and groups
+    # without costs show "—", so the cells carry their raw value to sort by.
+    it 'sorts the cost columns by amount' do
+      sort_by('group-spendings-table', 'Summe gesamt')
+
+      expect(page).to have_css('#group-spendings-table tbody tr:first-child', text: 'Dora')
+      expect(column_values('group-spendings-table', 0)).to eq(%w[Dora Berta Cäsar Anton])
+    end
+  end
+
   # The FixedColumns plugin is bundled as well, but no table configures it, so
   # the console check in JavascriptErrors is all that guards it.
   describe 'the FixedHeader plugin' do
