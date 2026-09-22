@@ -451,13 +451,20 @@ cross-spawn@^7.0.3:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-datatables.net-bs5@^2, datatables.net-bs5@^2.2.1:
+datatables.net-bs5@^2:
   version "2.3.7"
   resolved "https://registry.yarnpkg.com/datatables.net-bs5/-/datatables.net-bs5-2.3.7.tgz#ddef957ee23b03c2d4bc1d48735b39c6182e5d53"
   integrity sha512-RiCEMpMXDBeMDwjSrMpmcXDU6mibRMuOn7Wk7k3SlOfLEY3FQHO7S2m+K7teXYeaNlCLyjJMU+6BUUwlBCpLFw==
   dependencies:
     datatables.net "2.3.7"
     jquery ">=1.7"
+
+datatables.net-bs5@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/datatables.net-bs5/-/datatables.net-bs5-3.0.4.tgz#b873be9ca2afaf40e0d41d79db2ebe91a9351b59"
+  integrity sha512-LoI5dVCM7qAoDLFcx27ANHi0T9sMjtiYowpzf2qBvltgp2PFBRed0wVyk7ScWkrXXWwb7sSbA1MIauF5oOotnw==
+  dependencies:
+    datatables.net "3.0.4"
 
 datatables.net-fixedcolumns-bs5@^5.0.4:
   version "5.0.5"
@@ -499,6 +506,11 @@ datatables.net@2.3.7, datatables.net@^2:
   integrity sha512-AvsjG/Nkp6OxeyBKYZauemuzQCPogE1kOtKwG4sYjvdqGCSLiGaJagQwXv4YxG+ts5vaJr6qKGG9ec3g6vTo3w==
   dependencies:
     jquery ">=1.7"
+
+datatables.net@3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-3.0.4.tgz#9baf6b49ecd185ede74043e840a632d6b77f182f"
+  integrity sha512-jbT0Pc4Xq1i5kTYVhqg0vh11DsqWj3AkgVgdJLUqK7264Xi+QWLI4ekee8X50sRPKzJQxaXDHrxh5hnGO49BqQ==
 
 detect-libc@^2.0.3:
   version "2.1.2"
