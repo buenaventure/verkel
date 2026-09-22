@@ -51,7 +51,7 @@ group :development do
   gem 'bundle_update_interactive'
   gem 'debug', '>= 1.0.0'
   gem 'listen', '~> 3.3'
-  gem 'rack-mini-profiler', '~> 3.3'
+  gem 'rack-mini-profiler', '~> 5.0'
   gem 'rubocop', require: false
   gem 'rubocop-factory_bot', require: false
   gem 'rubocop-performance', require: false
