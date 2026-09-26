@@ -66,6 +66,7 @@ Metrics/AbcSize:
     - 'app/utils/packing_lane_box.rb'
     - 'db/migrate/20221211121557_init.rb'
     - 'db/migrate/20250222095439_change_quantity_precision.rb'
+    - 'lib/article_packing_planner_battle_test.rb'
 
 # Offense count: 3
 # Configuration parameters: CountComments, Max, CountAsOne, AllowedMethods, AllowedPatterns, inherit_mode.
@@ -89,6 +90,7 @@ Metrics/ClassLength:
     - 'app/utils/article_packing_planner.rb'
     - 'app/utils/packing_lane_box.rb'
     - 'db/migrate/20221211121557_init.rb'
+    - 'lib/article_packing_planner_battle_test.rb'
 
 # Offense count: 5
 # Configuration parameters: AllowedMethods, AllowedPatterns, Max.
@@ -99,6 +101,7 @@ Metrics/CyclomaticComplexity:
     - 'app/helpers/ingredients_helper.rb'
     - 'app/helpers/orders_helper.rb'
     - 'app/pdfs/packing_lists_articles.rb'
+    - 'lib/article_packing_planner_battle_test.rb'
 
 # Offense count: 50
 # Configuration parameters: CountComments, Max, CountAsOne, AllowedMethods, AllowedPatterns.
@@ -139,6 +142,7 @@ Metrics/MethodLength:
     - 'db/migrate/20221212175242_create_group_changes.rb'
     - 'db/migrate/20240719063509_add_diet_ingredients_f_ks.rb'
     - 'db/migrate/20250222095439_change_quantity_precision.rb'
+    - 'lib/article_packing_planner_battle_test.rb'
 
 # Offense count: 2
 # Configuration parameters: AllowedMethods, AllowedPatterns, Max.
@@ -146,6 +150,7 @@ Metrics/PerceivedComplexity:
   Exclude:
     - 'app/helpers/ingredients_helper.rb'
     - 'app/pdfs/packing_lists_articles.rb'
+    - 'lib/article_packing_planner_battle_test.rb'
 
 # Offense count: 4
 # Configuration parameters: Mode, AllowedMethods, AllowedPatterns, AllowBangMethods, WaywardPredicates.
