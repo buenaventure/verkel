@@ -431,47 +431,47 @@ cross-spawn@^7.0.6:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-datatables.net-bs5@^3.0.4, datatables.net-bs5@^3.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/datatables.net-bs5/-/datatables.net-bs5-3.1.1.tgz#379c4a79c0aa7c8a3f6a6085588357cd032d3009"
-  integrity sha512-nvcwbnq46fsfWS4Fr9W17SKAX55nw4yx7F/z1BXD4cUuAsGOisrts5Q17fkteN0khpREd/osQcCl6Z5zqOPSWw==
+datatables.net-bs5@^3.1, datatables.net-bs5@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/datatables.net-bs5/-/datatables.net-bs5-3.1.2.tgz#033bded69fc74ec17da6477efa2ce50bb999a247"
+  integrity sha512-scWB81ZdmF5wF0r1/uuh1RnmJA4liwlkkIPSAjZQfw+IuRb/eMEd53ouroZWavEbKMzggqvTIMNRgmXVgWd3xg==
   dependencies:
-    datatables.net "3.1.1"
+    datatables.net "3.1.2"
 
-datatables.net-fixedcolumns-bs5@^6.0.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/datatables.net-fixedcolumns-bs5/-/datatables.net-fixedcolumns-bs5-6.1.0.tgz#94dfe3b8dd5f538b8be7cd99312dedc4adbcb836"
-  integrity sha512-UEiRjfIvqI3A58VP3X1uti/8MVDk5iNScwfxxs0UQstKP3XptrXF6RJj7mkMVXw/vcj8iFH4E2PlN5GsqgiCwA==
+datatables.net-fixedcolumns-bs5@^6.1.1:
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/datatables.net-fixedcolumns-bs5/-/datatables.net-fixedcolumns-bs5-6.1.1.tgz#3b319d81545114c84abf65f25dba010fe627025f"
+  integrity sha512-X7qKXGTgHxs8c5UKWnym80WwN+N4MDWChEY1P3McaTlY9/MF5E9nuwr1OVtxJ/y4HCLAp91HXUBsGupS0TuUuQ==
   dependencies:
     datatables.net-bs5 "^3.1"
-    datatables.net-fixedcolumns "6.1.0"
+    datatables.net-fixedcolumns "6.1.1"
 
-datatables.net-fixedcolumns@6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/datatables.net-fixedcolumns/-/datatables.net-fixedcolumns-6.1.0.tgz#6c70a0c27d301c3030cd00243559d48f357f6204"
-  integrity sha512-3cAOnYUOnRuAlPtdyN2IQecAMdiqVC3VGY98Wc2K8ZANzTW4gKuBifxKBLlbIxjL0u/CK6WSSKf2LVJ3zPV+IA==
+datatables.net-fixedcolumns@6.1.1:
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/datatables.net-fixedcolumns/-/datatables.net-fixedcolumns-6.1.1.tgz#8eaff0e32569fa2309814c14c09db306ee461611"
+  integrity sha512-mYgv5Eb8YO5fbgw1mThYsCSN5viupCJJjv5kwZYqQVXEWA1lGE6Ah9OSdHk4hrVMzR2+FLBABcz7p5IjJXEgsA==
   dependencies:
     datatables.net "^3.1"
 
-datatables.net-fixedheader-bs5@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/datatables.net-fixedheader-bs5/-/datatables.net-fixedheader-bs5-5.1.0.tgz#ac782da345d1da40c308484d3330453e5e8b9351"
-  integrity sha512-7X1fAQmKW0q9LyAYMWq90c6ZY6gVcqBb/fK6xf1fr/J/BP3sl8o+mwaYYRfzV986wGdDUA+UWguwgi0brb+qnw==
+datatables.net-fixedheader-bs5@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/datatables.net-fixedheader-bs5/-/datatables.net-fixedheader-bs5-5.1.1.tgz#2aae04873c021d8a159cc577c65a605a121e479a"
+  integrity sha512-TfwSqceppI8f4v0mc9d+DeztEyzi/od1k5+YBJ1eVIImacFRqKd7lx6ivniSmAjg3O/tZtneaynbOXmDPfkKRg==
   dependencies:
     datatables.net-bs5 "^3.1"
-    datatables.net-fixedheader "5.1.0"
+    datatables.net-fixedheader "5.1.1"
 
-datatables.net-fixedheader@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/datatables.net-fixedheader/-/datatables.net-fixedheader-5.1.0.tgz#7f981443f24f3a77e96879027028817e594b242c"
-  integrity sha512-8iN+gNAWJ1RT1MhzNe46wknN5Z7Z/SQgCIVAkuubj/R5TS/KVz2/IXHj6XVtVRkSqZZH/Bhabsfk6BMb2AnYNA==
+datatables.net-fixedheader@5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/datatables.net-fixedheader/-/datatables.net-fixedheader-5.1.1.tgz#98fe559b6e5029f9fb553e45b715041ca28268f9"
+  integrity sha512-EVhYPTV64ABEI9aBO6K9BL+cDcybDS+G+BoEHUbYXL/XjIj//GlPRuvdKuf0vTeIvr+zvmboqLlnkRWWT/ncFA==
   dependencies:
     datatables.net "^3.1"
 
-datatables.net@3.1.1, datatables.net@^3.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-3.1.1.tgz#dfbf94f14e5d5e04ce6dfe05aaa458d45e3e09b8"
-  integrity sha512-dETxh14+KkQrFTZFIVtnKuIcNuglSLnraITbvrkztA+2yM6AeNtEAiMVucZ5o6vkJnJrtoApSALggSmc0czs0w==
+datatables.net@3.1.2, datatables.net@^3.1:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-3.1.2.tgz#a5a50257bf87b0f70eca710f6ef0feeb763c5556"
+  integrity sha512-6PnhPw9lrPASP2n1t13zW595aKB41j3Qt6iykFVV6aohGtSF3CTjwQ+RsdlrGUQTj/Ji0or8+9Q7mMpf4YY1cQ==
 
 detect-libc@^2.0.3:
   version "2.1.2"
@@ -800,10 +800,10 @@ select2@^4.1.0:
   resolved "https://registry.yarnpkg.com/select2/-/select2-4.1.0.tgz#8b037e02a3c025beda07fed7f9ecc7d298036e1a"
   integrity sha512-i9KalWOP4/LRRGc8+rj2krNm0ZqP14cV+j1TRCEBSsOhCPkKH8rYZ2MCRXcgvqIqN+llqGci0hj9aVkCMvL0+g==
 
-serialize-javascript@^7.1.1:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.1.tgz#c3b0a7ac13df6cf2fcda71cbb142ba9392a710b9"
-  integrity sha512-k3CMsaIvvdSwm8oLB4MXSl0wH2/cwlH7xGcnRd2DaeRmBkbzYmyT8j0tsX60DwD1eRwHTpNpH8ljKu9oUT1MeQ==
+serialize-javascript@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.2.tgz#0161010a0815dd7b7e011cbc5a3644850b8c2289"
+  integrity sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==
 
 shallow-clone@^3.0.0:
   version "3.0.1"
