@@ -1,0 +1,17 @@
+<h1>API-Token „<%= @api_token.name %>“ erstellt</h1>
+
+<div class="alert alert-warning">
+  Kopiere das Token jetzt. Es wird nur dieses eine Mal angezeigt; VerKeL speichert nur eine Prüfsumme davon.
+</div>
+
+<pre class="border rounded p-3"><code><%= @api_token.plain_token %></code></pre>
+
+<p>So benutzt ein Programm das Token:</p>
+<pre class="border rounded p-3"><code>curl -H 'Authorization: Bearer <%= @api_token.plain_token %>' <%= meals_url(format: :json) %></code></pre>
+
+<p>
+  Welche Daten es gibt, steht in der <%= link_to 'API-Dokumentation', '/api-docs' %>
+  (für Programme: <%= link_to openapi_url(format: :json), openapi_path(format: :json) %>).
+</p>
+
+<%= link_to 'Zurück zu den API-Tokens', api_tokens_path, class: 'btn btn-primary' %>

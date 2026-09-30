@@ -32,8 +32,14 @@
 de:
   true: Ja
   false: Nein
+  devise:
+    failure:
+      invalid_token: API-Token ist ungültig, abgelaufen oder widerrufen.
   activerecord:
     models:
+      api_token:
+        one: API-Token
+        other: API-Tokens
       article: Artikel
       box:
         one: Kiste
@@ -95,6 +101,14 @@ de:
         one: Einheit
         other: Einheiten
     attributes:
+      api_token:
+        name: Name
+        scopes: Rechte
+        last_used_at: Zuletzt benutzt
+        expires_at: Gültig bis
+        revoked_at: Widerrufen am
+        created_at: Erstellt am
+        user: Benutzer
       article:
         ingredient: Zutat
         needs_cooling: Kühlbedarf

@@ -1,0 +1,33 @@
+json.meal do
+  json.id @meal.id
+  json.name @meal.name
+  json.datetime @meal.datetime
+  json.optional @meal.optional
+  json.bundle @meal.bundle
+  json.estimated_share @meal.estimated_share&.to_f
+  json.servings @meal.servings
+  json.recipe do
+    json.id @meal.recipe.id
+    json.name @meal.recipe.name
+    json.servings @meal.recipe.servings&.to_f
+  end
+  if @meal.box
+    json.box do
+      json.id @meal.box.id
+      json.datetime @meal.box.datetime
+    end
+  else
+    json.box nil
+  end
+  json.servings_per_group do
+    json.array! @meal.group_meals.includes(:group) do |group_meal|
+      json.group do
+        json.id group_meal.group.id
+        json.name group_meal.group.name
+      end
+      json.servings @servings.fetch(group_meal.group_id, 0)
+    end
+  end
+  json.created_at @meal.created_at
+  json.updated_at @meal.updated_at
+end

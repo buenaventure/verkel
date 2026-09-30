@@ -1,0 +1,15 @@
+json.recipes do
+  json.array! @recipes do |recipe|
+    json.id recipe.id
+    json.name recipe.name
+    json.servings recipe.servings&.to_f
+    json.diet_notes recipe.diet_notes
+    json.meals do
+      json.array! recipe.meals do |meal|
+        json.id meal.id
+        json.name meal.name
+        json.datetime meal.datetime
+      end
+    end
+  end
+end

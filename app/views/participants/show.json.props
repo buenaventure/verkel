@@ -1,0 +1,47 @@
+# No comment, external_id or lama_uuid: free text and identifiers from other systems stay out.
+json.participant do
+  json.id @participant.id
+  if @participant.group
+    json.group do
+      json.id @participant.group.id
+      json.name @participant.group.name
+    end
+  else
+    json.group nil
+  end
+  json.age @participant.age
+  json.diets do
+    json.array! @participant.diets do |diet|
+      json.id diet.id
+      json.name diet.name
+    end
+  end
+  json.group_changes do
+    json.array! @participant.group_changes.includes(:group).order(:timeframe) do |group_change|
+      json.id group_change.id
+      if group_change.group
+        json.group do
+          json.id group_change.group.id
+          json.name group_change.group.name
+        end
+      else
+        json.group nil
+      end
+      json.begins_at group_change.timeframe_begin
+      json.ends_at group_change.timeframe_end
+    end
+  end
+  json.meals do
+    json.array! @participant.group_meal_participants.includes(:meal, :group) do |group_meal_participant|
+      json.id group_meal_participant.meal.id
+      json.name group_meal_participant.meal.name
+      json.datetime group_meal_participant.meal.datetime
+      json.group do
+        json.id group_meal_participant.group.id
+        json.name group_meal_participant.group.name
+      end
+    end
+  end
+  json.created_at @participant.created_at
+  json.updated_at @participant.updated_at
+end

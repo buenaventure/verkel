@@ -1,17 +1,19 @@
 class ApplicationController < ActionController::Base
+  include ApiTokenAuthentication
+
   before_action :authenticate_user!
   check_authorization unless: :devise_controller?
 
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
-      format.json { head :forbidden }
+      format.json { render json: { error: exception.message }, status: :forbidden }
       format.html { redirect_back fallback_location: root_path, alert: exception.message }
       format.pdf { redirect_back fallback_location: root_path, alert: exception.message }
     end
   end
 
   def render(*args)
-    @breadcrumbs = guess_breadcrumbs if @breadcrumbs.nil? && !devise_controller?
+    @breadcrumbs = guess_breadcrumbs if @breadcrumbs.nil? && !devise_controller? && !request.format.json?
     super
   end
 

@@ -1,0 +1,16 @@
+json.meals do
+  json.array! @meals do |meal|
+    json.id meal.id
+    json.name meal.name
+    json.datetime meal.datetime
+    json.optional meal.optional
+    json.bundle meal.bundle
+    json.estimated_share meal.estimated_share&.to_f
+    json.servings @servings.fetch(meal.id, 0)
+    json.recipe do
+      json.id meal.recipe.id
+      json.name meal.recipe.name
+    end
+    json.box_id meal.box&.id
+  end
+end

@@ -33,6 +33,7 @@
     <%= link_to 'Import', import_root_path, class: 'dropdown-item' if can? :manage, :import %>
     <%= link_to 'Benutzer', users_path, class: 'dropdown-item' if can? :manage, User %>
     <%= link_to 'Einheiten', units_path, class: 'dropdown-item' %>
+    <%= link_to 'API-Tokens', api_tokens_path, class: 'dropdown-item' %>
   </div>
 </li>
 <% end %>

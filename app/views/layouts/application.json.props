@@ -1,0 +1,8 @@
+# Every JSON response is { "data": …, "meta": … }; lists sit under a key inside data.
+json.data do
+  _.call(json)
+end
+
+json.meta do
+  json.generated_at Time.current
+end

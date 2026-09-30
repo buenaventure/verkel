@@ -5,6 +5,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :rememberable, :lockable, :trackable
   enum :role, { read_only: 0, laga: 1, office: 2, admin: 3 }
 
+  has_many :api_tokens, dependent: :destroy
+
   def to_s
     email
   end

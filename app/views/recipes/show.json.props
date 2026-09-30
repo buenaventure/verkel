@@ -1,0 +1,38 @@
+json.recipe do
+  json.id @recipe.id
+  json.name @recipe.name
+  json.servings @recipe.servings&.to_f
+  json.diet_notes @recipe.diet_notes
+  json.content @recipe.content
+  json.ingredients do
+    json.array! @recipe.recipe_ingredients.includes(:ingredient, :positive_diets, :negative_diets) do |recipe_ingredient|
+      json.ingredient do
+        json.id recipe_ingredient.ingredient.id
+        json.name recipe_ingredient.ingredient.name
+      end
+      json.quantity recipe_ingredient.quantity&.to_f
+      json.unit recipe_ingredient.unit
+      json.positive_diets do
+        json.array! recipe_ingredient.positive_diets do |diet|
+          json.id diet.id
+          json.name diet.name
+        end
+      end
+      json.negative_diets do
+        json.array! recipe_ingredient.negative_diets do |diet|
+          json.id diet.id
+          json.name diet.name
+        end
+      end
+    end
+  end
+  json.meals do
+    json.array! @recipe.meals do |meal|
+      json.id meal.id
+      json.name meal.name
+      json.datetime meal.datetime
+    end
+  end
+  json.created_at @recipe.created_at
+  json.updated_at @recipe.updated_at
+end

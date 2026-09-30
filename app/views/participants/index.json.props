@@ -1,0 +1,24 @@
+# No comment, external_id or lama_uuid: free text and identifiers from other systems stay out.
+json.participants do
+  json.array! @participants do |participant|
+    json.id participant.id
+    if participant.group
+      json.group do
+        json.id participant.group.id
+        json.name participant.group.name
+      end
+    else
+      json.group nil
+    end
+    json.age participant.age
+    json.diets do
+      json.array! participant.diets do |diet|
+        json.id diet.id
+        json.name diet.name
+      end
+    end
+    json.meal_count @meal_count.fetch(participant.id, 0)
+    json.created_at participant.created_at
+    json.updated_at participant.updated_at
+  end
+end

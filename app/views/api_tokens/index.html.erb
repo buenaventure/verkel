@@ -1,0 +1,49 @@
+<h1>API-Tokens</h1>
+
+<%= link_to 'Neues API-Token erstellen', new_api_token_path, class: 'btn btn-sm btn-primary float-end' %>
+<p>
+  Mit einem API-Token können Programme wie KI-Assistenten die Daten von VerKeL als JSON lesen – mit genau den Rechten des Benutzers, dem das Token gehört.
+  <%= link_to 'API-Dokumentation', '/api-docs' %>
+</p>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th><%= ApiToken.human_attribute_name(:name) %></th>
+      <% if current_user.admin? %>
+        <th><%= ApiToken.human_attribute_name(:user) %></th>
+      <% end %>
+      <th><%= ApiToken.human_attribute_name(:scopes) %></th>
+      <th><%= ApiToken.human_attribute_name(:created_at) %></th>
+      <th><%= ApiToken.human_attribute_name(:last_used_at) %></th>
+      <th><%= ApiToken.human_attribute_name(:expires_at) %></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @api_tokens.each do |api_token| %>
+      <tr class="<%= 'text-body-secondary' unless api_token.active? %>">
+        <td><%= api_token.name %></td>
+        <% if current_user.admin? %>
+          <td><%= api_token.user %></td>
+        <% end %>
+        <td><%= api_token.scopes.join(', ') %></td>
+        <td><%= l api_token.created_at, format: :short %></td>
+        <td><%= api_token.last_used_at ? l(api_token.last_used_at, format: :short) : 'nie' %></td>
+        <td><%= api_token.expires_at ? l(api_token.expires_at, format: :short) : 'unbegrenzt' %></td>
+        <td class="text-end">
+          <% if api_token.revoked_at %>
+            widerrufen am <%= l api_token.revoked_at, format: :short %>
+          <% elsif !api_token.active? %>
+            abgelaufen
+          <% elsif can? :revoke, api_token %>
+            <%= button_to 'Widerrufen', revoke_api_token_path(api_token), method: :patch,
+                          form: { data: { turbo_confirm: 'Token wirklich widerrufen? Programme, die es benutzen, verlieren sofort den Zugriff.' } },
+                          class: 'btn btn-sm btn-outline-danger' %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

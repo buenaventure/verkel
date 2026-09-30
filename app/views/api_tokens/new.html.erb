@@ -1,0 +1,18 @@
+<h1>Neues API-Token</h1>
+
+<%= simple_form_for(@api_token, html: { data: { turbo: false } }) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name, hint: 'Wofür ist das Token, z. B. „Claude im Büro“?' %>
+    <%= f.input :expires_at, as: :date, html5: true,
+                             hint: 'Leer lassen, damit das Token gültig bleibt, bis es widerrufen wird.' %>
+  </div>
+
+  <p>Das Token darf nur lesen und hat dieselben Rechte wie dein Benutzer (<%= t "activerecord.attributes.user.role.#{current_user.role}" %>).</p>
+
+  <div class="form-actions">
+    <%= f.button :submit, 'Token erstellen', class: 'btn btn-success' %>
+    <%= link_to 'Abbrechen', api_tokens_path, class: 'btn btn-light' %>
+  </div>
+<% end %>

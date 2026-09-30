@@ -85,6 +85,13 @@ Rails.application.routes.draw do
     resource :extra_ingredients, only: :create
   end
   resources :users, except: :show
+  resources :api_tokens, only: %i[index new create] do
+    patch :revoke, on: :member
+  end
+  get 'openapi', to: 'openapi#show', as: :openapi, defaults: { format: :json }
+  authenticate :user do
+    mount Rswag::Ui::Engine => '/api-docs'
+  end
   resources :units, only: %i[index new create destroy]
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

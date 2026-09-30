@@ -28,6 +28,11 @@ class Ability
     end
 
     cannot :read, [GroupSpending, OrderSpending] unless user.office? || user.admin?
+
+    # Tokens are personal: everyone manages their own, admins can also see and revoke all.
+    cannot :manage, ApiToken
+    can %i[read create revoke], ApiToken, user_id: user.id
+    can %i[read revoke], ApiToken if user.admin?
     # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)

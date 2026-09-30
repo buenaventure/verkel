@@ -1,0 +1,703 @@
+---
+openapi: 3.0.1
+info:
+  title: VerKeL API
+  version: v1
+  description: |
+    Read access to VerKeL's planning data as JSON. Every endpoint is the same URL as the
+    HTML page with a `.json` suffix (or `Accept: application/json`).
+
+    Authenticate with `Authorization: Bearer <token>`; users create tokens under
+    Administration → API-Tokens. A token has exactly the permissions of its user's role,
+    and read tokens get 403 on anything but GET. Responses are `{ "data": …, "meta": … }`;
+    errors are `{ "error": "…" }`. Each token may make 120 requests per minute.
+paths:
+  "/meals.json":
+    get:
+      summary: List meals
+      tags:
+      - Meals
+      description: All meals in time order, with their recipe and the total number
+        of servings.
+      responses:
+        '200':
+          description: meals
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      meals:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/MealSummary"
+                    required:
+                    - meals
+                    additionalProperties: false
+                  meta:
+                    "$ref": "#/components/schemas/Meta"
+                required:
+                - data
+                - meta
+                additionalProperties: false
+        '401':
+          description: missing, unknown, expired or revoked token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+  "/meals/{id}.json":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show a meal
+      tags:
+      - Meals
+      description: One meal with its recipe, box and the servings each Kochgruppe
+        needs.
+      responses:
+        '200':
+          description: meal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      meal:
+                        "$ref": "#/components/schemas/Meal"
+                    required:
+                    - meal
+                    additionalProperties: false
+                  meta:
+                    "$ref": "#/components/schemas/Meta"
+                required:
+                - data
+                - meta
+                additionalProperties: false
+        '404':
+          description: no such meal
+  "/participants.json":
+    get:
+      summary: List participants
+      tags:
+      - Participants
+      description: |
+        All participants with Kochgruppe, age, diets and how many meals they take part in.
+        Comments and identifiers from other systems are never included.
+      responses:
+        '200':
+          description: participants
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      participants:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/ParticipantSummary"
+                    required:
+                    - participants
+                    additionalProperties: false
+                  meta:
+                    "$ref": "#/components/schemas/Meta"
+                required:
+                - data
+                - meta
+                additionalProperties: false
+  "/participants/{id}.json":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show a participant
+      tags:
+      - Participants
+      description: One participant with diets, group changes and the meals they eat,
+        by Kochgruppe.
+      responses:
+        '200':
+          description: participant
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      participant:
+                        "$ref": "#/components/schemas/Participant"
+                    required:
+                    - participant
+                    additionalProperties: false
+                  meta:
+                    "$ref": "#/components/schemas/Meta"
+                required:
+                - data
+                - meta
+                additionalProperties: false
+  "/recipes.json":
+    get:
+      summary: List recipes
+      tags:
+      - Recipes
+      description: All recipes by name, with the meals they are cooked for.
+      responses:
+        '200':
+          description: recipes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      recipes:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/RecipeSummary"
+                    required:
+                    - recipes
+                    additionalProperties: false
+                  meta:
+                    "$ref": "#/components/schemas/Meta"
+                required:
+                - data
+                - meta
+                additionalProperties: false
+  "/recipes/{id}.json":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show a recipe
+      tags:
+      - Recipes
+      description: |
+        One recipe with its preparation text (Markdown) and ingredients. `positive_diets` limits
+        an ingredient to participants with that diet (`+Diet` in the recipe), `negative_diets`
+        leaves it out for them (`-Diet`).
+      responses:
+        '200':
+          description: recipe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      recipe:
+                        "$ref": "#/components/schemas/Recipe"
+                    required:
+                    - recipe
+                    additionalProperties: false
+                  meta:
+                    "$ref": "#/components/schemas/Meta"
+                required:
+                - data
+                - meta
+                additionalProperties: false
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+      - error
+      additionalProperties: false
+    Meta:
+      type: object
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+      required:
+      - generated_at
+      additionalProperties: false
+    Ref:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+      - id
+      - name
+      additionalProperties: false
+    MealSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          nullable: true
+        datetime:
+          type: string
+          format: date-time
+          nullable: true
+        optional:
+          type: boolean
+        bundle:
+          type: boolean
+        estimated_share:
+          type: number
+          nullable: true
+        servings:
+          type: integer
+        recipe:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+          required:
+          - id
+          - name
+          additionalProperties: false
+        box_id:
+          type: integer
+          nullable: true
+      required:
+      - id
+      - name
+      - datetime
+      - optional
+      - bundle
+      - estimated_share
+      - servings
+      - recipe
+      - box_id
+      additionalProperties: false
+    Meal:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          nullable: true
+        datetime:
+          type: string
+          format: date-time
+          nullable: true
+        optional:
+          type: boolean
+        bundle:
+          type: boolean
+        estimated_share:
+          type: number
+          nullable: true
+        servings:
+          type: integer
+        recipe:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            servings:
+              type: number
+              nullable: true
+          required:
+          - id
+          - name
+          - servings
+          additionalProperties: false
+        box:
+          type: object
+          properties:
+            id:
+              type: integer
+            datetime:
+              type: string
+              format: date-time
+              nullable: true
+          required:
+          - id
+          - datetime
+          additionalProperties: false
+          nullable: true
+        servings_per_group:
+          type: array
+          items:
+            type: object
+            properties:
+              group:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                required:
+                - id
+                - name
+                additionalProperties: false
+              servings:
+                type: integer
+            required:
+            - group
+            - servings
+            additionalProperties: false
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - datetime
+      - optional
+      - bundle
+      - estimated_share
+      - servings
+      - recipe
+      - box
+      - servings_per_group
+      - created_at
+      - updated_at
+      additionalProperties: false
+    RecipeSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        servings:
+          type: number
+          nullable: true
+        diet_notes:
+          type: string
+          nullable: true
+        meals:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+                nullable: true
+              datetime:
+                type: string
+                format: date-time
+                nullable: true
+            required:
+            - id
+            - name
+            - datetime
+            additionalProperties: false
+      required:
+      - id
+      - name
+      - servings
+      - diet_notes
+      - meals
+      additionalProperties: false
+    Recipe:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        servings:
+          type: number
+          nullable: true
+        diet_notes:
+          type: string
+          nullable: true
+        content:
+          type: string
+          nullable: true
+        ingredients:
+          type: array
+          items:
+            type: object
+            properties:
+              ingredient:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                required:
+                - id
+                - name
+                additionalProperties: false
+              quantity:
+                type: number
+                nullable: true
+              unit:
+                type: string
+                nullable: true
+              positive_diets:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                  required:
+                  - id
+                  - name
+                  additionalProperties: false
+              negative_diets:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                  required:
+                  - id
+                  - name
+                  additionalProperties: false
+            required:
+            - ingredient
+            - quantity
+            - unit
+            - positive_diets
+            - negative_diets
+            additionalProperties: false
+        meals:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+                nullable: true
+              datetime:
+                type: string
+                format: date-time
+                nullable: true
+            required:
+            - id
+            - name
+            - datetime
+            additionalProperties: false
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - servings
+      - diet_notes
+      - content
+      - ingredients
+      - meals
+      - created_at
+      - updated_at
+      additionalProperties: false
+    ParticipantSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        group:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+          required:
+          - id
+          - name
+          additionalProperties: false
+          nullable: true
+        age:
+          type: integer
+        diets:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+            required:
+            - id
+            - name
+            additionalProperties: false
+        meal_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - group
+      - age
+      - diets
+      - meal_count
+      - created_at
+      - updated_at
+      additionalProperties: false
+    Participant:
+      type: object
+      properties:
+        id:
+          type: integer
+        group:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+          required:
+          - id
+          - name
+          additionalProperties: false
+          nullable: true
+        age:
+          type: integer
+        diets:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+            required:
+            - id
+            - name
+            additionalProperties: false
+        group_changes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              group:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                required:
+                - id
+                - name
+                additionalProperties: false
+                nullable: true
+              begins_at:
+                type: string
+                format: date-time
+                nullable: true
+              ends_at:
+                type: string
+                format: date-time
+                nullable: true
+            required:
+            - id
+            - group
+            - begins_at
+            - ends_at
+            additionalProperties: false
+        meals:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+                nullable: true
+              datetime:
+                type: string
+                format: date-time
+                nullable: true
+              group:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                required:
+                - id
+                - name
+                additionalProperties: false
+            required:
+            - id
+            - name
+            - datetime
+            - group
+            additionalProperties: false
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - group
+      - age
+      - diets
+      - group_changes
+      - meals
+      - created_at
+      - updated_at
+      additionalProperties: false
+security:
+- bearer: []
