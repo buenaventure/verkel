@@ -32,6 +32,7 @@
   <div class="dropdown-menu">
     <%= link_to 'Import', import_root_path, class: 'dropdown-item' if can? :manage, :import %>
     <%= link_to 'Benutzer', users_path, class: 'dropdown-item' if can? :manage, User %>
+    <%= link_to 'Backup', backup_path, class: 'dropdown-item' if can? :manage, :backup %>
     <%= link_to 'Einheiten', units_path, class: 'dropdown-item' %>
   </div>
 </li>

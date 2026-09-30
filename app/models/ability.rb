@@ -28,6 +28,7 @@ class Ability
     end
 
     cannot :read, [GroupSpending, OrderSpending] unless user.office? || user.admin?
+    cannot :manage, :backup unless user.admin?
     # Define abilities for the passed in user here. For example:
     #
     #   user ||= User.new # guest user (not logged in)
