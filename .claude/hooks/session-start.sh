@@ -123,6 +123,12 @@ quiet yarn install --non-interactive
 quiet yarn build
 quiet yarn build:css
 
+# The web image ships bun, and cssbundling-rails then runs `bun install` (from
+# yarn.lock) during test:prepare, leaving an untracked bun.lock behind.
+if [ -d .git/info ] && ! grep -qx '/bun.lock' .git/info/exclude 2>/dev/null; then
+  echo '/bun.lock' >> .git/info/exclude
+fi
+
 log "Preparing databases"
 quiet bin/rails db:prepare
 RAILS_ENV=test quiet bin/rails db:prepare
