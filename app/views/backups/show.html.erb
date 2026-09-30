@@ -1,0 +1,35 @@
+<h1>Backup</h1>
+
+<h2>Backup erstellen</h2>
+<p>
+  Erstellt eine Datei mit allen Daten von VerKeL (inkl. Benutzerkonten und angehängter Dateien)
+  und lädt sie herunter.
+</p>
+<p class="text-warning">
+  Die Datei enthält auch die (verschlüsselten) Passwörter aller Benutzer und sollte sicher aufbewahrt werden.
+</p>
+<%= link_to 'Backup herunterladen', download_backup_path, class: 'btn btn-primary', data: { turbo: false } %>
+
+<hr/>
+
+<h2>Backup einspielen</h2>
+<p>
+  Setzt VerKeL auf den Stand des Backups zurück.
+  <strong>Alle aktuellen Daten werden gelöscht und durch die Daten aus dem Backup ersetzt.</strong>
+</p>
+<p>
+  Die Benutzerkonten werden ebenfalls auf den Stand des Backups zurückgesetzt.
+  Ausgenommen ist dein eigenes Konto (<%= current_user.email %>):
+  Es behält sein aktuelles Passwort und die Rolle Admin, damit du dich weiterhin anmelden kannst.
+  Existiert es im Backup nicht, wird es neu angelegt.
+</p>
+<%= form_with url: restore_backup_path, multipart: true, data: { turbo: false } do |f| %>
+  <div class="mb-3">
+    <%= f.file_field :backup_file, accept: '.tar.gz,.tgz,application/gzip', class: 'form-control', required: true %>
+  </div>
+  <div class="form-check mb-3">
+    <%= f.check_box :confirm, class: 'form-check-input', required: true %>
+    <%= f.label :confirm, 'Ich habe verstanden, dass alle aktuellen Daten ersetzt werden.', class: 'form-check-label' %>
+  </div>
+  <%= f.submit 'Backup einspielen', class: 'btn btn-danger' %>
+<% end %>

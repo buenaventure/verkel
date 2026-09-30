@@ -286,3 +286,8 @@ de:
   calculatable:
     GroupBoxIngredientUnitCache: Bedarf
     ArticlePackingPlanner: Packplanung
+  backups:
+    restore:
+      file_missing: Bitte eine Backup-Datei auswählen.
+      not_confirmed: Bitte bestätigen, dass alle Daten ersetzt werden sollen.
+      success: Backup wurde erfolgreich eingespielt.
