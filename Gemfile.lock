@@ -170,14 +170,14 @@ GEM
       rails (>= 6.0.0)
       stimulus-rails
       turbo-rails
-    httparty (0.24.2)
+    httparty (0.24.3)
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
-    image_processing (2.1.0)
+    image_processing (2.2.0)
     io-console (0.9.4)
     irb (1.18.0)
       pp (>= 0.6.0)
@@ -201,7 +201,7 @@ GEM
       childprocess (~> 5.0)
       logger (~> 1.6)
     lint_roller (1.1.0)
-    listen (3.10.0)
+    listen (3.10.1)
       logger
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -261,11 +261,11 @@ GEM
     pastel (0.8.0)
       tty-color (~> 0.5)
     pdf-core (0.10.0)
-    pg (1.6.3-aarch64-linux-musl)
-    pg (1.6.3-arm64-darwin)
-    pg (1.6.3-x86_64-darwin)
-    pg (1.6.3-x86_64-linux)
-    pg (1.6.3-x86_64-linux-musl)
+    pg (1.7.0-aarch64-linux-musl)
+    pg (1.7.0-arm64-darwin)
+    pg (1.7.0-x86_64-darwin)
+    pg (1.7.0-x86_64-linux)
+    pg (1.7.0-x86_64-linux-musl)
     pp (0.6.4)
       prettyprint
     prawn (2.5.0)
@@ -411,10 +411,9 @@ GEM
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
     securerandom (0.4.1)
-    selenium-webdriver (4.49.0)
+    selenium-webdriver (4.50.0)
       base64 (~> 0.2)
       logger (~> 1.4)
-      rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
     shoulda-matchers (8.0.1)
@@ -543,7 +542,7 @@ DEPENDENCIES
   factory_bot_rails
   hotwire-rails (~> 0.1)
   httparty
-  image_processing (~> 2.1)
+  image_processing (~> 2.2)
   jbuilder (~> 2.15)
   jsbundling-rails
   kramdown (~> 2.5)
