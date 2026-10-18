@@ -6,6 +6,8 @@ class Diet < ApplicationRecord
   has_many :positive_diet_ingredients, dependent: :restrict_with_error
   has_many :negative_diet_ingredients, dependent: :restrict_with_error
 
+  normalizes :name, with: -> { it.strip }
+
   validates :name, presence: true, uniqueness: true
 
   def to_s

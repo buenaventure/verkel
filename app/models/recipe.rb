@@ -88,7 +88,7 @@ class Recipe < ApplicationRecord
   def parse_diets(diets)
     return [[], []] unless diets
 
-    result = diets.split(',').group_by { |diet| diet[0] }
+    result = diets.split(',').map(&:strip).group_by { |diet| diet[0] }
     [
       result.fetch('+', []).map { |diet| Diet.find_or_create_by(name: diet[1..]) },
       result.fetch('-', []).map { |diet| Diet.find_or_create_by(name: diet[1..]) }

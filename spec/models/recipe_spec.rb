@@ -81,6 +81,21 @@ RSpec.describe Recipe do
       end
     end
 
+    it 'links the existing ingredient when diets follow the name after a space' do
+      mandeln = create(:ingredient, name: 'Mandeln')
+      recipe = described_class.create!(name: 'test', content: '**5 g Mandeln (+vegan)**')
+
+      expect(recipe.recipe_ingredients.first.ingredient).to eq(mandeln)
+    end
+
+    it 'reads diets separated by comma and space', :aggregate_failures do
+      recipe = described_class.create!(name: 'test', content: '**5 g Mandeln ( +vegan, -nussfrei )**')
+      recipe_ingredient = recipe.recipe_ingredients.first
+
+      expect(recipe_ingredient.positive_diets.map(&:name)).to eq(['vegan'])
+      expect(recipe_ingredient.negative_diets.map(&:name)).to eq(['nussfrei'])
+    end
+
     it 'adds errors for ingredients that do not match the format instead of raising', :aggregate_failures do
       recipe = described_class.new(name: 'test', content: '**5 g Zucker** und **eine Prise Salz**')
 

@@ -20,6 +20,8 @@ class Ingredient < ApplicationRecord
       .where('("extra_ingredients"."id" IS NOT NULL OR "meals"."id" IS NOT NULL)').distinct
   }
 
+  normalizes :name, with: -> { it.strip }
+
   validates :name, presence: true
   validates :box_type, presence: true
   validates :uses_hunger_factor, inclusion: { in: [true, false] }
