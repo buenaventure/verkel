@@ -2,7 +2,12 @@
   <%= f.error_notification %>
   <%= f.input :name %>
   <%= f.input :servings %>
-  <%= f.input :content, input_html: { rows: 23 } %>
+  <%= f.input :content,
+              wrapper_html: { class: 'position-relative', data: recipe_ingredient_autocomplete_data },
+              input_html: { rows: 23, data: { recipe_ingredient_autocomplete_target: 'input' } },
+              hint: 'Zutaten fett schreiben, z. B. <code>**500 g Mehl**</code> oder ' \
+                    '<code>**5 g Mandeln (+vegan,-nussfrei)**</code>. Nach <code>**</code> erscheinen ' \
+                    'Vorschläge für Einheiten, Zutaten und Diäten.'.html_safe %>
   <% if recipe.errors[:recipe_ingredients] %>
     <ul>
     <% recipe.recipe_ingredients.select(&:invalid?).each do |recipe_ingredient| %>

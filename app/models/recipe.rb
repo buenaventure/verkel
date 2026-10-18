@@ -7,6 +7,7 @@ class Recipe < ApplicationRecord
   validates :name, presence: true
   validates :lama_uuid, uniqueness: true, if: :lama_uuid
   validates_associated :recipe_ingredients
+  validate :ingredients_parseable
 
   scope :with_meal, -> { joins(:meals) }
 
@@ -19,9 +20,16 @@ class Recipe < ApplicationRecord
   private
 
   def set_ingredients_from_content
+    @invalid_ingredients = []
     return unless content
 
-    recipe_ingredients = parse_ingredients(content)
+    matches = ingredient_texts(content).map { |text| [text, text.match(INGREDIENT_REGEXP)] }
+    @invalid_ingredients = matches.reject { |_text, match| match }.map(&:first)
+    # Leave the ingredients untouched (and create no Ingredient or Diet records)
+    # until every bold span parses; the validation below reports the rest.
+    return if @invalid_ingredients.any?
+
+    recipe_ingredients = build_recipe_ingredients(matches.map(&:last))
     if new_record?
       self.recipe_ingredients = recipe_ingredients
     else
@@ -49,24 +57,32 @@ class Recipe < ApplicationRecord
     end
   end
 
-  def parse_ingredients(content)
+  def ingredients_parseable
+    @invalid_ingredients&.each do |text|
+      errors.add(:content, "enthält die ungültige Zutat „#{text}“ (Format: „500 g Mehl“ oder " \
+                           '„5 g Mandeln (+vegan,-nussfrei)“)')
+    end
+  end
+
+  def ingredient_texts(content)
     Nokogiri::HTML
       .parse(Kramdown::Document.new(content).to_html)
       .xpath('//strong|//b')
-      .each_with_index.map do |b, i|
-        match = b.text.match(INGREDIENT_REGEXP)
-        raise "ungültige Zutat \"#{b.text}\"" unless match
+      .map(&:text)
+  end
 
-        positive_diets, negative_diets = parse_diets(match[:diets])
-        RecipeIngredient.new(
-          ingredient: Ingredient.find_or_create_by(name: match[:name]),
-          quantity: BigDecimal(match[:quantity].tr(',', '.')),
-          unit: match[:unit],
-          positive_diets: positive_diets,
-          negative_diets: negative_diets,
-          index: i
-        )
-      end
+  def build_recipe_ingredients(matches)
+    matches.each_with_index.map do |match, i|
+      positive_diets, negative_diets = parse_diets(match[:diets])
+      RecipeIngredient.new(
+        ingredient: Ingredient.find_or_create_by(name: match[:name]),
+        quantity: BigDecimal(match[:quantity].tr(',', '.')),
+        unit: match[:unit],
+        positive_diets: positive_diets,
+        negative_diets: negative_diets,
+        index: i
+      )
+    end
   end
 
   def parse_diets(diets)

@@ -1,13 +1,26 @@
 module NormalizedQuantityUnit
   extend ActiveSupport::Concern
 
+  # Spellings normalize_unit rewrites to an allowed unit before validation.
+  UNIT_ALIASES = { 'kg' => 'g', 'l' => 'ml', 'tl' => 'TL', 'el' => 'EL' }.freeze
+
   included do
     before_validation :normalize_unit
     validates :unit, presence: true, inclusion: {
-      in: -> { Unit.pluck(:name) + %w[g ml] },
+      in: -> { NormalizedQuantityUnit.allowed_units },
       message: '%<value>s ist keine erlaubte Einheit'
     }
     validates :quantity, numericality: true
+  end
+
+  def self.allowed_units
+    Unit.pluck(:name) + %w[g ml]
+  end
+
+  # Every unit a user may type, including the aliases that normalize to an allowed unit.
+  def self.accepted_units
+    allowed = allowed_units
+    allowed + UNIT_ALIASES.select { |_from, to| allowed.include?(to) }.keys
   end
 
   def quantity_unit

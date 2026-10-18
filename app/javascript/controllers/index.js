@@ -12,3 +12,6 @@ application.register("group-spending-chart", GroupSpendingChartController)
 
 import GroupSpendingSparklineController from "./group_spending_sparkline_controller.js"
 application.register("group-spending-sparkline", GroupSpendingSparklineController)
+
+import RecipeIngredientAutocompleteController from "./recipe_ingredient_autocomplete_controller.js"
+application.register("recipe-ingredient-autocomplete", RecipeIngredientAutocompleteController)

@@ -81,6 +81,27 @@ RSpec.describe Recipe do
       end
     end
 
+    it 'adds errors for ingredients that do not match the format instead of raising', :aggregate_failures do
+      recipe = described_class.new(name: 'test', content: '**5 g Zucker** und **eine Prise Salz**')
+
+      expect { recipe.valid? }.not_to raise_error
+      expect(recipe.errors[:content]).to contain_exactly(a_string_including('„eine Prise Salz“'))
+    end
+
+    it 'creates no ingredients while the content has unparseable ingredients', :aggregate_failures do
+      recipe = described_class.new(name: 'test', content: '**5 g Zucker** **Salz**')
+
+      expect { recipe.save }.not_to change(Ingredient, :count)
+      expect(recipe).not_to be_persisted
+    end
+
+    it 'keeps the existing ingredients when an update has unparseable ingredients', :aggregate_failures do
+      recipe = described_class.create!(name: 'test', content: '**5 g Zucker**')
+
+      expect(recipe.update(content: '**7 g Zucker** **Salz**')).to be(false)
+      expect(recipe.reload.recipe_ingredients.map(&:quantity)).to eq([5])
+    end
+
     it 'adds errors for disallowed units' do
       recipe = described_class.new(name: 'test', content: '**1 foo Zucker**')
 
