@@ -1,6 +1,13 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="<%= root_path %>">VerKeL</a>
+    <% if instance_name %>
+      <a class="navbar-brand navbar-brand-instance" href="<%= root_path %>">
+        <span class="navbar-brand-instance-name"><%= instance_name %></span>
+        <small class="navbar-brand-instance-app">VerKeL</small>
+      </a>
+    <% else %>
+      <a class="navbar-brand" href="<%= root_path %>">VerKeL</a>
+    <% end %>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>

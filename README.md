@@ -13,6 +13,8 @@ Things you may want to cover:
 
 * Configuration
   can be put into an `.env` file
+  - `INSTANCE_NAME` (optional): shown in the header and page title to tell
+    instances apart, e.g. `INSTANCE_NAME="Sommerlager 2026"`
 
 * Database creation and initialization
   `bin/rails db:setup`

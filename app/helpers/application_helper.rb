@@ -11,7 +11,11 @@ module ApplicationHelper
   end
 
   def page_title(breadcrumbs)
-    [breadcrumb_title(breadcrumbs), 'Verkel'].compact.join(' – ')
+    [breadcrumb_title(breadcrumbs), instance_name, 'Verkel'].compact.join(' – ')
+  end
+
+  def instance_name
+    Rails.application.config.instance_name
   end
 
   def feature(name)

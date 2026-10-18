@@ -32,6 +32,9 @@ module Verkel
 
     config.lama_sync = false
 
+    # Optional name shown in the header and page title to tell instances apart
+    config.instance_name = ENV['INSTANCE_NAME'].presence
+
     config.kramdown_options = {
       input: 'GFM',
       hard_wrap: false

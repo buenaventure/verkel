@@ -9,6 +9,20 @@ $breadcrumb-border-radius: 0.25rem;
 @import 'select2/dist/css/select2.min';
 @import 'select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min';
 
+// instance name stacked above the app name
+.navbar-brand-instance {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 1.1;
+}
+
+.navbar-brand-instance-app {
+    font-size: 0.7em;
+    opacity: 0.6;
+}
+
 // apply styles to HTML elements
 // to make views framework-neutral
 main {
