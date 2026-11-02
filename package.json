@@ -10,8 +10,8 @@
     "@rails/activestorage": "^8.1.400",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.6.1",
-    "datatables.net-bs5": "^3.1.4",
-    "datatables.net-fixedcolumns-bs5": "^6.1.1",
+    "datatables.net-bs5": "^3.1.5",
+    "datatables.net-fixedcolumns-bs5": "^6.1.2",
     "datatables.net-fixedheader-bs5": "^5.1.2",
     "jquery": "^4.0.0",
     "sass": "^1.106.1",
@@ -20,7 +20,7 @@
     "serialize-javascript": "^7.1.4",
     "trix": "^2.0.0",
     "webpack": "^5.112.2",
-    "webpack-cli": "^7.2.3"
+    "webpack-cli": "^7.3.1"
   },
   "version": "0.1.0",
   "devDependencies": {},
