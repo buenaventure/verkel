@@ -8,7 +8,7 @@
     "@rails/actioncable": "^8.1.401",
     "@rails/actiontext": "^8.1.401",
     "@rails/activestorage": "^8.1.401",
-    "bootstrap": "^5.3.3",
+    "bootstrap": "^5.3.9",
     "chart.js": "^4.6.1",
     "datatables.net-bs5": "^3.1.5",
     "datatables.net-fixedcolumns-bs5": "^6.1.2",
